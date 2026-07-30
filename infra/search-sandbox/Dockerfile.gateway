@@ -1,0 +1,25 @@
+FROM docker.io/searxng/searxng@sha256:d0aaeb14880e6e92bde1518fcc7261e995783367d63d95203383607bef9c6516
+
+LABEL org.opencontainers.image.title="YonerAI private Search Gateway"
+LABEL org.opencontainers.image.version="yonerai.search-gateway.v1"
+LABEL org.opencontainers.image.licenses="AGPL-3.0-or-later AND LicenseRef-YonerAI-Private"
+
+WORKDIR /opt/yonerai-discord
+USER root
+COPY infra/search-sandbox/gateway-requirements.lock /tmp/gateway-requirements.lock
+RUN /usr/local/searxng/.venv/bin/python -m pip install \
+      --disable-pip-version-check \
+      --no-cache-dir \
+      --only-binary=:all: \
+      --requirement /tmp/gateway-requirements.lock \
+    && rm /tmp/gateway-requirements.lock
+COPY --chown=searxng:searxng src/yonerai_discord ./yonerai_discord
+
+USER searxng:searxng
+
+# Fail the image build rather than producing a placeholder if the code-owned
+# server or its fixed runtime dependencies are missing.
+RUN /usr/local/searxng/.venv/bin/python -c "import yonerai_discord.search_fabric.server"
+
+ENTRYPOINT ["/usr/local/searxng/.venv/bin/python", "-m", "yonerai_discord.search_fabric.server"]
+CMD ["--bind", "0.0.0.0", "--port", "8787", "--searxng-origin", "http://searxng:8080"]

@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "module_id": "integration.provider-registry",
+  "capabilities": [
+    {
+      "id": "ai.text.generate",
+      "default_enabled": true,
+      "required_rbac": "everyone",
+      "risk": "medium",
+      "requires_consent": true,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "vision.understand",
+      "default_enabled": false,
+      "required_rbac": "everyone",
+      "risk": "medium",
+      "requires_consent": true,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "media.image.generate",
+      "default_enabled": false,
+      "required_rbac": "trusted",
+      "risk": "high",
+      "requires_consent": true,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "media.image.edit",
+      "default_enabled": false,
+      "required_rbac": "trusted",
+      "risk": "high",
+      "requires_consent": true,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "media.video.generate",
+      "default_enabled": false,
+      "required_rbac": "trusted",
+      "risk": "high",
+      "requires_consent": true,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "media.music.generate",
+      "default_enabled": false,
+      "required_rbac": "trusted",
+      "risk": "high",
+      "requires_consent": true,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "speech.tts",
+      "default_enabled": false,
+      "required_rbac": "trusted",
+      "risk": "medium",
+      "requires_consent": true,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "speech.stt",
+      "default_enabled": false,
+      "required_rbac": "trusted",
+      "risk": "high",
+      "requires_consent": true,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "retrieval.embed",
+      "default_enabled": false,
+      "required_rbac": "everyone",
+      "risk": "medium",
+      "requires_consent": true,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "retrieval.rerank",
+      "default_enabled": false,
+      "required_rbac": "everyone",
+      "risk": "medium",
+      "requires_consent": true,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "web.search",
+      "default_enabled": false,
+      "required_rbac": "everyone",
+      "risk": "medium",
+      "requires_consent": false,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "web.search.openai_paid",
+      "default_enabled": false,
+      "required_rbac": "bot_owner",
+      "risk": "medium",
+      "requires_consent": true,
+      "requires_confirmation": false,
+      "audit_required": true
+    },
+    {
+      "id": "web.browser.isolated",
+      "default_enabled": false,
+      "required_rbac": "bot_owner",
+      "risk": "high",
+      "requires_consent": false,
+      "requires_confirmation": true,
+      "audit_required": true
+    }
+  ],
+  "providers": [
+    {
+      "id": "searxng.local",
+      "kind": "local",
+      "adapter_id": "yonerai.search-gateway",
+      "capabilities": ["web.search"],
+      "enabled": true,
+      "resources": {
+        "target": "cpu",
+        "max_concurrency": 4,
+        "system_ram_budget_mb": 1024,
+        "load_policy": "always_loaded",
+        "offload_policy": "disabled",
+        "exclusive_gpu_lease": false
+      },
+      "setting_refs": ["env:YONERAI_SEARCH_GATEWAY_URL"],
+      "timeouts": {
+        "request_seconds": 12,
+        "health_seconds": 3
+      }
+    }
+  ],
+  "routes": [
+    {
+      "capability": "ai.text.generate",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": "ai.fast"},
+        {"tier": "balanced", "provider_ids": [], "model_alias": "ai.balanced"},
+        {"tier": "quality", "provider_ids": [], "model_alias": "ai.quality"}
+      ]
+    },
+    {
+      "capability": "vision.understand",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": "vision.fast"},
+        {"tier": "balanced", "provider_ids": [], "model_alias": "vision.balanced"},
+        {"tier": "quality", "provider_ids": [], "model_alias": "vision.quality"}
+      ]
+    },
+    {
+      "capability": "media.image.generate",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": "image.fast"},
+        {"tier": "balanced", "provider_ids": [], "model_alias": "image.balanced"},
+        {"tier": "quality", "provider_ids": [], "model_alias": "image.quality"}
+      ]
+    },
+    {
+      "capability": "media.image.edit",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": "image.edit.fast"},
+        {"tier": "balanced", "provider_ids": [], "model_alias": "image.edit.balanced"},
+        {"tier": "quality", "provider_ids": [], "model_alias": "image.edit.quality"}
+      ]
+    },
+    {
+      "capability": "media.video.generate",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": "video.fast"},
+        {"tier": "balanced", "provider_ids": [], "model_alias": "video.balanced"},
+        {"tier": "quality", "provider_ids": [], "model_alias": "video.quality"}
+      ]
+    },
+    {
+      "capability": "media.music.generate",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": "music.fast"},
+        {"tier": "balanced", "provider_ids": [], "model_alias": "music.balanced"},
+        {"tier": "quality", "provider_ids": [], "model_alias": "music.quality"}
+      ]
+    },
+    {
+      "capability": "speech.tts",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": "tts.fast"},
+        {"tier": "balanced", "provider_ids": [], "model_alias": "tts.balanced"},
+        {"tier": "quality", "provider_ids": [], "model_alias": "tts.quality"}
+      ]
+    },
+    {
+      "capability": "speech.stt",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": "stt.fast"},
+        {"tier": "balanced", "provider_ids": [], "model_alias": "stt.balanced"},
+        {"tier": "quality", "provider_ids": [], "model_alias": "stt.quality"}
+      ]
+    },
+    {
+      "capability": "retrieval.embed",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": "embedding.fast"},
+        {"tier": "balanced", "provider_ids": [], "model_alias": "embedding.balanced"},
+        {"tier": "quality", "provider_ids": [], "model_alias": "embedding.quality"}
+      ]
+    },
+    {
+      "capability": "retrieval.rerank",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": "rerank.fast"},
+        {"tier": "balanced", "provider_ids": [], "model_alias": "rerank.balanced"},
+        {"tier": "quality", "provider_ids": [], "model_alias": "rerank.quality"}
+      ]
+    },
+    {
+      "capability": "web.search",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": ["searxng.local"], "model_alias": null},
+        {"tier": "balanced", "provider_ids": ["searxng.local"], "model_alias": null},
+        {"tier": "quality", "provider_ids": ["searxng.local"], "model_alias": null}
+      ]
+    },
+    {
+      "capability": "web.search.openai_paid",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": "web.fast"},
+        {"tier": "balanced", "provider_ids": [], "model_alias": "web.balanced"},
+        {"tier": "quality", "provider_ids": [], "model_alias": "web.quality"}
+      ]
+    },
+    {
+      "capability": "web.browser.isolated",
+      "default_tier": "balanced",
+      "tiers": [
+        {"tier": "fast", "provider_ids": [], "model_alias": null},
+        {"tier": "balanced", "provider_ids": [], "model_alias": null},
+        {"tier": "quality", "provider_ids": [], "model_alias": null}
+      ]
+    }
+  ],
+  "compatibility_aliases": [
+    {
+      "source": "gpt-5.6-terra",
+      "target": "ai.balanced"
+    },
+    {
+      "source": "gpt-5.6-sol",
+      "target": "ai.quality"
+    },
+    {
+      "source": "gpt-5.6-luna",
+      "target": "ai.fast"
+    },
+    {
+      "source": "ai.standard",
+      "target": "ai.balanced"
+    },
+    {
+      "source": "ai.complex",
+      "target": "ai.quality"
+    },
+    {
+      "source": "ai.tiny",
+      "target": "ai.fast"
+    }
+  ]
+}

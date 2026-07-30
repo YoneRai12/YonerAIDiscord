@@ -1,0 +1,41 @@
+module_id: "media.speech-synthesis"
+module_name: "YonerAI Speech Synthesis"
+module_type: "provider_neutral_media_contract"
+version: "0.1.0"
+
+owner_lane: "private"
+status: "contract_partial"
+source_of_truth: "repo"
+current_truth_level: "code_backed"
+
+purpose: "bounded textとstandard voice aliasをrequest-bound PCM WAV 1件へ変換する"
+
+non_goals:
+  - "既存/voice synthesize、SpeechQueue、VOICEVOX、MusicService、VC、playlist、duckingを変更しない"
+  - "reference audio、voice sample、voice clone、人物voice、speaker IDを受け付けない"
+  - "production API/local provider、artifact store、Discord commandを接続しない"
+
+capabilities_required:
+  - "cap-run-speech-synthesize"
+
+permissions:
+  network_access: "provider_registry_only_when_explicitly_bound"
+  audio_access: "validated_output_artifact_only"
+  database_access: "none"
+  secret_access: "none"
+  shell_access: "none"
+  arbitrary_http: "none"
+
+security:
+  default_enabled: false
+  minimum_rbac: "trusted"
+  risk: "medium"
+  guild_only: true
+  fresh_member_check: true
+  response_recheck: true
+  remote_consent: "api_provider_only"
+
+readiness:
+  production_route_bound: false
+  production_store_bound: false
+  live_verified: false

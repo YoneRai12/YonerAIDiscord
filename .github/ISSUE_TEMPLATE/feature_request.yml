@@ -1,0 +1,21 @@
+name: Feature request
+description: Propose a safe improvement without requesting default-on external actions.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not include credentials, real IDs, private paths, or live operational data. External effects must remain OFF by default."
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / 解決したい課題
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Safe proposal / 安全な提案
+      description: "Describe consent, owner approval, and a fail-closed default."
+    validations:
+      required: true

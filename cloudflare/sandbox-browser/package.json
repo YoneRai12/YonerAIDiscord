@@ -1,0 +1,10 @@
+{
+  "name": "@yonerai/cloudflare-sandbox-browser",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test": "tsc -p tsconfig.json --outDir .test-build && node .test-build/test/worker.test.js"
+  }
+}

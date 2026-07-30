@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this source-available non-commercial release, please cite it."
+title: "YonerAI Discord Suite"
+type: software
+version: "0.1.0-alpha.1"
+repository-code: "https://github.com/YoneRai12/YonerAIDiscord"
+authors:
+  - name: "YonerAI contributors"
+license: "PolyForm-Noncommercial-1.0.0"
+abstract: "Public, source-available non-commercial release; live integrations are not verified."

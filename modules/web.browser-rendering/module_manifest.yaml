@@ -1,0 +1,47 @@
+module_id: "web.browser-rendering"
+module_name: "YonerAI Remote Browser Services"
+module_type: "remote_browser_contracts"
+version: "0.2.0"
+
+owner_lane: "private"
+status: "contract_partial"
+source_of_truth: "repo"
+current_truth_level: "code_backed"
+
+purpose: "明示opt-inされたCloudflare Quick Actions screenshotとBrowser Run固定操作を別readinessで提供する"
+
+non_goals:
+  - "web.browser.isolatedのstrict isolation contract、local OS isolation、process isolationを提供したとは扱わない"
+  - "redirect先やsubresourceのDNS・network containmentを保証したとは扱わない"
+  - "credential設定だけでprovider readinessやlive成功を確認済みとは扱わない"
+  - "Browser Runのapplication-level request filteringをstrict Sandbox containmentまたはnetwork=0と扱わない"
+  - "任意selector、CDP、script、upload、download、shell、PC操作を提供しない"
+
+capabilities_required:
+  - "cap-run-browser-remote-screenshot"
+  - "cap-run-browser-remote-interactive"
+
+permissions:
+  network_access: "explicit_remote_cloudflare_api_and_code_owned_public_target_allowlist"
+  image_access: "bounded_remote_screenshot_output_only"
+  database_access: "audit_append_only"
+  secret_access: "cloudflare_account_id_and_api_token_from_settings"
+  shell_access: "none"
+  arbitrary_http: "none; Browser Runはcode-owned YouTube recipeのHTTPS GET/HEADのみ"
+
+security:
+  default_enabled: false
+  minimum_rbac: "bot_owner"
+  risk: "high"
+  owner_only: true
+  fresh_member_check: true
+  response_recheck: true
+  remote_consent: "explicit_remote_opt_in_required"
+
+readiness:
+  requires_remote_opt_in: true
+  requires_interactive_opt_in: true
+  requires_account_id: true
+  requires_api_token: true
+  requires_python_playwright: true
+  live_verified: false

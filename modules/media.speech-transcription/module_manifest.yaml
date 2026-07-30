@@ -1,0 +1,40 @@
+module_id: "media.speech-transcription"
+module_name: "YonerAI Speech Transcription"
+module_type: "provider_neutral_media_contract"
+version: "0.1.0"
+
+owner_lane: "private"
+status: "contract_partial"
+source_of_truth: "repo"
+current_truth_level: "code_backed"
+
+purpose: "検証済みAUDIO ArtifactRef 1件をbounded transcriptへ変換する"
+
+non_goals:
+  - "音声bytesの取得、保存、download、自動録音、VC監視を行わない"
+  - "既存MusicService、SpeechQueue、VOICEVOX、playlist、duckingへ接続しない"
+  - "production API/local provider、model download、Discord commandを接続しない"
+
+capabilities_required:
+  - "cap-run-speech-transcribe"
+
+permissions:
+  network_access: "provider_registry_only_when_explicitly_bound"
+  audio_access: "validated_artifact_ref_metadata_only"
+  database_access: "none"
+  secret_access: "none"
+  shell_access: "none"
+  arbitrary_http: "none"
+
+security:
+  default_enabled: false
+  minimum_rbac: "trusted"
+  risk: "high"
+  guild_only: true
+  fresh_member_check: true
+  response_recheck: true
+  remote_consent: "api_provider_only"
+
+readiness:
+  production_route_bound: false
+  live_verified: false

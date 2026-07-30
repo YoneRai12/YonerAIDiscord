@@ -1,0 +1,2279 @@
+{
+  "schema": "yonerai.provider-recommendations.v2",
+  "advisory_only": true,
+  "active": false,
+  "checked_at": "2026-07-24",
+  "hardware_profile": {
+    "id": "rtx5090-32gb",
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "vram_mb": 32768
+  },
+  "tier_mapping": {
+    "fast": "light",
+    "balanced": "mid",
+    "quality": "high"
+  },
+  "promotion_policy": {
+    "live_probe_required": true,
+    "license_review_required": true,
+    "owner_approval_required": true,
+    "api_fallback_requires_remote_consent": true,
+    "preview_requires_owner_policy": true,
+    "active_catalog_unchanged": true
+  },
+  "candidates": [
+    {
+      "capability": "ai.text.generate",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-luna",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-luna"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required"
+          ]
+        },
+        "balanced": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-terra",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-terra"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required"
+          ]
+        },
+        "quality": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-sol",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "ai.text.generate",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "qwen-local",
+          "provider_model": "Qwen/Qwen3.5-4B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/Qwen/Qwen3.5-4B",
+            "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "vllm"
+            ],
+            "vram_budget_mb": 12288,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "vllm_linux_or_wsl2",
+            "native_windows_vllm_unsupported"
+          ]
+        },
+        "balanced": {
+          "provider_id": "openai-local",
+          "provider_model": "openai/gpt-oss-20b",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/openai/gpt-oss-20b",
+            "https://github.com/openai/gpt-oss"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "transformers",
+              "vllm",
+              "sglang",
+              "ollama",
+              "lm-studio"
+            ],
+            "vram_budget_mb": 16384,
+            "vram_value_kind": "model_card"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "harmony_format_required",
+            "chain_of_thought_not_user_visible",
+            "official_memory_claim_16gb_or_less"
+          ]
+        },
+        "quality": {
+          "provider_id": "qwen-local",
+          "provider_model": "nvidia/Qwen3.6-27B-NVFP4",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/nvidia/Qwen3.6-27B-NVFP4",
+            "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/",
+            "https://github.com/NVIDIA/Model-Optimizer/blob/main/examples/llm_ptq/README.md"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "vllm"
+            ],
+            "vram_budget_mb": 28672,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "vllm_nightly_required",
+            "modelopt_quantization_required",
+            "qwen3_reasoning_parser_required",
+            "blackwell_gpu_required",
+            "official_validation_gb300_not_rtx5090",
+            "context_length_probe_required",
+            "vllm_linux_or_wsl2",
+            "native_windows_vllm_unsupported"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "vision.understand",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-luna",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-luna"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required"
+          ]
+        },
+        "balanced": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-terra",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-terra"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required"
+          ]
+        },
+        "quality": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-sol",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "vision.understand",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "qwen-local",
+          "provider_model": "Qwen/Qwen3.5-4B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/Qwen/Qwen3.5-4B",
+            "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "vllm"
+            ],
+            "vram_budget_mb": 12288,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "vllm_linux_or_wsl2",
+            "native_windows_vllm_unsupported"
+          ]
+        },
+        "balanced": {
+          "provider_id": "qwen-local",
+          "provider_model": "Qwen/Qwen3.5-9B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/Qwen/Qwen3.5-9B",
+            "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "vllm"
+            ],
+            "vram_budget_mb": 24576,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "vllm_linux_or_wsl2",
+            "native_windows_vllm_unsupported"
+          ]
+        },
+        "quality": {
+          "provider_id": "qwen-local",
+          "provider_model": "nvidia/Qwen3.6-27B-NVFP4",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/nvidia/Qwen3.6-27B-NVFP4",
+            "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/",
+            "https://github.com/NVIDIA/Model-Optimizer/blob/main/examples/llm_ptq/README.md"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "vllm"
+            ],
+            "vram_budget_mb": 28672,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "vllm_nightly_required",
+            "modelopt_quantization_required",
+            "qwen3_reasoning_parser_required",
+            "blackwell_gpu_required",
+            "official_validation_gb300_not_rtx5090",
+            "context_length_probe_required",
+            "vllm_linux_or_wsl2",
+            "native_windows_vllm_unsupported"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "media.image.generate",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "gemini-3.1-flash-lite-image",
+          "maturity": "stable",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/image-generation"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "ga_model",
+            "light_profile",
+            "remote_consent_required"
+          ]
+        },
+        "balanced": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "gemini-3.1-flash-image",
+          "maturity": "stable",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/image-generation"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "stable_model",
+            "mid_profile",
+            "remote_consent_required"
+          ]
+        },
+        "quality": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "gemini-3-pro-image",
+          "maturity": "stable",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/image-generation"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "stable_model",
+            "high_profile",
+            "remote_consent_required"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "media.image.generate",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "flux-local",
+          "provider_model": "black-forest-labs/FLUX.2-klein-4B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://huggingface.co/black-forest-labs/FLUX.2-klein-4B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "diffusers"
+            ],
+            "vram_budget_mb": 16384,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "four_step_inference",
+            "official_vram_claim_approx_13gb",
+            "profile_low",
+            "probe_required",
+            "noncommercial_9b_variant_excluded"
+          ]
+        },
+        "balanced": {
+          "provider_id": "flux-local",
+          "provider_model": "black-forest-labs/FLUX.2-klein-4B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://huggingface.co/black-forest-labs/FLUX.2-klein-4B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "diffusers"
+            ],
+            "vram_budget_mb": 16384,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "four_step_inference",
+            "official_vram_claim_approx_13gb",
+            "profile_standard",
+            "probe_required",
+            "noncommercial_9b_variant_excluded"
+          ]
+        },
+        "quality": {
+          "provider_id": "qwen-image-local",
+          "provider_model": "Qwen/Qwen-Image-2512",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/Qwen/Qwen-Image-2512"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "diffusers"
+            ],
+            "vram_budget_mb": 32768,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "high_profile_only",
+            "bf16_repository_approx_57_7gb",
+            "cpu_offload_required_on_32gb",
+            "github_diffusers_revision_pin_required",
+            "open_weight_fallback_pending_qwen_image_3_release"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "media.image.edit",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "openai-images-api",
+          "provider_model": "gpt-image-2",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-image-2"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-images"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "image_editing",
+            "quality_low",
+            "remote_consent_required",
+            "probe_required"
+          ]
+        },
+        "balanced": {
+          "provider_id": "openai-images-api",
+          "provider_model": "gpt-image-2",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-image-2"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-images"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "image_editing",
+            "quality_medium",
+            "remote_consent_required",
+            "probe_required"
+          ]
+        },
+        "quality": {
+          "provider_id": "openai-images-api",
+          "provider_model": "gpt-image-2",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-image-2"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-images"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "image_editing",
+            "quality_high",
+            "remote_consent_required",
+            "probe_required"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "media.image.edit",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "flux-local",
+          "provider_model": "black-forest-labs/FLUX.2-klein-4B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://huggingface.co/black-forest-labs/FLUX.2-klein-4B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "diffusers"
+            ],
+            "vram_budget_mb": 16384,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "image_editing",
+            "four_step_inference",
+            "profile_low",
+            "probe_required",
+            "noncommercial_9b_variant_excluded"
+          ]
+        },
+        "balanced": {
+          "provider_id": "flux-local",
+          "provider_model": "black-forest-labs/FLUX.2-klein-4B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://huggingface.co/black-forest-labs/FLUX.2-klein-4B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "diffusers"
+            ],
+            "vram_budget_mb": 16384,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "image_editing",
+            "four_step_inference",
+            "profile_standard",
+            "probe_required",
+            "noncommercial_9b_variant_excluded"
+          ]
+        },
+        "quality": {
+          "provider_id": "qwen-image-local",
+          "provider_model": "Qwen/Qwen-Image-Edit-2511",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/Qwen/Qwen-Image-Edit-2511"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "diffusers"
+            ],
+            "vram_budget_mb": 32768,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "image_editing",
+            "probe_required",
+            "high_profile_only",
+            "bf16_repository_approx_57_7gb",
+            "cpu_offload_required_on_32gb",
+            "github_diffusers_revision_pin_required",
+            "source_image_policy_required"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "media.video.generate",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "veo-3.1-lite-generate-preview",
+          "maturity": "preview",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/veo"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "resolution_720p",
+            "duration_4_seconds",
+            "remote_consent_required",
+            "preview_owner_policy_required",
+            "snapshot_fixed_version_unknown",
+            "pricing_terms_region_unverified"
+          ]
+        },
+        "balanced": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "veo-3.1-fast-generate-preview",
+          "maturity": "preview",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/veo"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "resolution_720p",
+            "duration_6_seconds",
+            "remote_consent_required",
+            "preview_owner_policy_required",
+            "snapshot_fixed_version_unknown",
+            "pricing_terms_region_unverified"
+          ]
+        },
+        "quality": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "veo-3.1-generate-preview",
+          "maturity": "preview",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/veo"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "resolution_4k",
+            "duration_8_seconds",
+            "remote_consent_required",
+            "preview_owner_policy_required",
+            "snapshot_fixed_version_unknown",
+            "pricing_terms_region_unverified"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "media.video.generate",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "wan-local",
+          "provider_model": "Wan-AI/Wan2.2-TI2V-5B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/Wan-AI/Wan2.2-TI2V-5B",
+            "https://github.com/Wan-Video/Wan2.2"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "wan-official",
+              "diffusers"
+            ],
+            "vram_budget_mb": 24576,
+            "vram_value_kind": "model_card"
+          },
+          "constraints": [
+            "probe_required",
+            "light_short_clip_profile_not_lightweight_claim",
+            "model_offload_dtype_conversion_t5_cpu",
+            "revision_and_hash_pin_required",
+            "headless_windows_bot_unverified"
+          ]
+        },
+        "balanced": {
+          "provider_id": "wan-local",
+          "provider_model": "Wan-AI/Wan2.2-TI2V-5B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/Wan-AI/Wan2.2-TI2V-5B",
+            "https://github.com/Wan-Video/Wan2.2"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "wan-official",
+              "diffusers"
+            ],
+            "vram_budget_mb": 24576,
+            "vram_value_kind": "model_card"
+          },
+          "constraints": [
+            "probe_required",
+            "mid_short_clip_profile",
+            "model_offload_dtype_conversion_t5_cpu",
+            "revision_and_hash_pin_required",
+            "headless_windows_bot_unverified"
+          ]
+        },
+        "quality": {
+          "provider_id": "ltx-local",
+          "provider_model": "Lightricks/LTX-2.3-fp8",
+          "maturity": "experimental",
+          "license_id": "community-license-review",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/Lightricks/LTX-Desktop",
+            "https://github.com/Lightricks/LTX-2",
+            "https://huggingface.co/Lightricks/LTX-2.3-fp8",
+            "https://huggingface.co/Lightricks/LTX-2/blob/main/LICENSE"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "ltx-video"
+            ],
+            "vram_budget_mb": 28672,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "fp8_quality_profile",
+            "desktop_windows_10_11_cuda_16gb_vram_160gb_disk",
+            "repo_22b",
+            "headless_windows_bot_unverified",
+            "probe_required",
+            "license_review_required",
+            "generated_content_disclosure_required",
+            "enterprise_revenue_license_review_required"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "media.music.generate",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "lyria-3-clip-preview",
+          "maturity": "preview",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/music-generation"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "preview_owner_policy_required",
+            "short_clip_profile",
+            "rights_terms_review_required",
+            "sample_rate_and_container_probe_required"
+          ]
+        },
+        "balanced": {
+          "provider_id": "elevenlabs-api",
+          "provider_model": "music_v2",
+          "maturity": "stable",
+          "license_id": "elevenlabs-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://elevenlabs.io/docs/api-reference/music/compose",
+            "https://elevenlabs.io/docs/overview/capabilities/music"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "elevenlabs-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "paid_plan_and_rights_terms_review_required",
+            "duration_contract_probe_required",
+            "model_id_must_be_explicit_music_v2",
+            "mp3_and_wav_supported_pcm_contract_probe_required",
+            "stage1_wav_adapter_unbound"
+          ]
+        },
+        "quality": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "lyria-3-pro-preview",
+          "maturity": "preview",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/music-generation"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "preview_owner_policy_required",
+            "long_form_profile",
+            "rights_terms_review_required",
+            "sample_rate_and_container_probe_required"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "media.music.generate",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "ace-step-local",
+          "provider_model": "ACE-Step/Ace-Step1.5#acestep-v15-turbo+ACE-Step/acestep-5Hz-lm-0.6B",
+          "maturity": "experimental",
+          "license_id": "mit-upstream-review",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/ace-step/ACE-Step-1.5",
+            "https://github.com/ace-step/ACE-Step-1.5/blob/main/docs/en/GPU_COMPATIBILITY.md",
+            "https://huggingface.co/ACE-Step/Ace-Step1.5",
+            "https://huggingface.co/ACE-Step/acestep-5Hz-lm-0.6B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "ace-step"
+            ],
+            "vram_budget_mb": 8192,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "generator_repo_ACE-Step/Ace-Step1.5",
+            "generator_subfolder_acestep-v15-turbo",
+            "language_model_profile_ACE-Step/acestep-5Hz-lm-0.6B",
+            "windows_rest_portable_claim_probe_required",
+            "probe_required",
+            "official_repo_revision_and_dependencies_pin_required",
+            "huggingface_trust_remote_code_loader_forbidden",
+            "code_model_output_terms_review_required",
+            "vram_disk_advisory_only",
+            "speed_quality_voice_mix_unverified"
+          ]
+        },
+        "balanced": {
+          "provider_id": "ace-step-local",
+          "provider_model": "ACE-Step/acestep-v15-xl-turbo+ACE-Step/Ace-Step1.5#acestep-5Hz-lm-1.7B",
+          "maturity": "experimental",
+          "license_id": "mit-upstream-review",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/ace-step/ACE-Step-1.5",
+            "https://github.com/ace-step/ACE-Step-1.5/blob/main/docs/en/GPU_COMPATIBILITY.md",
+            "https://huggingface.co/ACE-Step/Ace-Step1.5",
+            "https://huggingface.co/ACE-Step/acestep-v15-xl-turbo"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "ace-step"
+            ],
+            "vram_budget_mb": 16384,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "generator_profile_ACE-Step/acestep-v15-xl-turbo",
+            "language_model_repo_ACE-Step/Ace-Step1.5",
+            "language_model_subfolder_acestep-5Hz-lm-1.7B",
+            "windows_rest_portable_claim_probe_required",
+            "probe_required",
+            "official_repo_revision_and_dependencies_pin_required",
+            "huggingface_trust_remote_code_loader_forbidden",
+            "code_model_output_terms_review_required",
+            "vram_disk_advisory_only",
+            "speed_quality_voice_mix_unverified"
+          ]
+        },
+        "quality": {
+          "provider_id": "ace-step-local",
+          "provider_model": "ACE-Step/acestep-v15-xl-sft+ACE-Step/acestep-5Hz-lm-4B",
+          "maturity": "experimental",
+          "license_id": "mit-upstream-review",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/ace-step/ACE-Step-1.5",
+            "https://github.com/ace-step/ACE-Step-1.5/blob/main/docs/en/GPU_COMPATIBILITY.md",
+            "https://huggingface.co/ACE-Step/Ace-Step1.5",
+            "https://huggingface.co/ACE-Step/acestep-v15-xl-sft",
+            "https://huggingface.co/ACE-Step/acestep-5Hz-lm-4B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "ace-step"
+            ],
+            "vram_budget_mb": 24576,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "generator_profile_ACE-Step/acestep-v15-xl-sft",
+            "language_model_profile_ACE-Step/acestep-5Hz-lm-4B",
+            "windows_rest_portable_claim_probe_required",
+            "probe_required",
+            "official_repo_revision_and_dependencies_pin_required",
+            "huggingface_trust_remote_code_loader_forbidden",
+            "code_model_output_terms_review_required",
+            "vram_disk_advisory_only",
+            "speed_quality_voice_mix_unverified"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "web.search.openai_paid",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-luna",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-luna"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "web_search_tool_separate_from_model_id"
+          ]
+        },
+        "balanced": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-terra",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-terra"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "web_search_tool_separate_from_model_id"
+          ]
+        },
+        "quality": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-sol",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "web_search_tool_separate_from_model_id"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "web.search",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "qwen-local",
+          "provider_model": "Qwen/Qwen3.5-4B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/Qwen/Qwen3.5-4B",
+            "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "vllm"
+            ],
+            "vram_budget_mb": 12288,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "vllm_linux_or_wsl2",
+            "native_windows_vllm_unsupported",
+            "searxng_separate_service",
+            "searxng_license_review"
+          ]
+        },
+        "balanced": {
+          "provider_id": "qwen-local",
+          "provider_model": "Qwen/Qwen3.5-9B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/Qwen/Qwen3.5-9B",
+            "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "vllm"
+            ],
+            "vram_budget_mb": 24576,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "vllm_linux_or_wsl2",
+            "native_windows_vllm_unsupported",
+            "searxng_separate_service",
+            "searxng_license_review"
+          ]
+        },
+        "quality": {
+          "provider_id": "qwen-local",
+          "provider_model": "nvidia/Qwen3.6-27B-NVFP4",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/nvidia/Qwen3.6-27B-NVFP4",
+            "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/",
+            "https://github.com/NVIDIA/Model-Optimizer/blob/main/examples/llm_ptq/README.md"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "vllm"
+            ],
+            "vram_budget_mb": 28672,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "vllm_nightly_required",
+            "modelopt_quantization_required",
+            "qwen3_reasoning_parser_required",
+            "blackwell_gpu_required",
+            "official_validation_gb300_not_rtx5090",
+            "context_length_probe_required",
+            "vllm_linux_or_wsl2",
+            "native_windows_vllm_unsupported",
+            "searxng_separate_service",
+            "searxng_license_review"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "web.browser.isolated",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-luna",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-luna"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "planner_only",
+            "isolated_worker_required",
+            "host_pc_shell_filesystem_forbidden"
+          ]
+        },
+        "balanced": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-terra",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-terra"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "planner_only",
+            "isolated_worker_required",
+            "host_pc_shell_filesystem_forbidden"
+          ]
+        },
+        "quality": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-5.6-sol",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-responses"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "planner_only",
+            "isolated_worker_required",
+            "host_pc_shell_filesystem_forbidden"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "web.browser.isolated",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "qwen-local",
+          "provider_model": "Qwen/Qwen3.5-4B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/Qwen/Qwen3.5-4B",
+            "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "vllm"
+            ],
+            "vram_budget_mb": 12288,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "vllm_linux_or_wsl2",
+            "native_windows_vllm_unsupported",
+            "planner_only",
+            "isolated_worker_required",
+            "host_pc_shell_filesystem_forbidden"
+          ]
+        },
+        "balanced": {
+          "provider_id": "qwen-local",
+          "provider_model": "Qwen/Qwen3.5-9B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/Qwen/Qwen3.5-9B",
+            "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "vllm"
+            ],
+            "vram_budget_mb": 24576,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "vllm_linux_or_wsl2",
+            "native_windows_vllm_unsupported",
+            "planner_only",
+            "isolated_worker_required",
+            "host_pc_shell_filesystem_forbidden"
+          ]
+        },
+        "quality": {
+          "provider_id": "qwen-local",
+          "provider_model": "nvidia/Qwen3.6-27B-NVFP4",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://huggingface.co/nvidia/Qwen3.6-27B-NVFP4",
+            "https://docs.vllm.ai/en/latest/getting_started/installation/gpu/",
+            "https://github.com/NVIDIA/Model-Optimizer/blob/main/examples/llm_ptq/README.md"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "vllm"
+            ],
+            "vram_budget_mb": 28672,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "max_concurrency_1",
+            "vllm_nightly_required",
+            "modelopt_quantization_required",
+            "qwen3_reasoning_parser_required",
+            "blackwell_gpu_required",
+            "official_validation_gb300_not_rtx5090",
+            "context_length_probe_required",
+            "vllm_linux_or_wsl2",
+            "native_windows_vllm_unsupported",
+            "planner_only",
+            "isolated_worker_required",
+            "host_pc_shell_filesystem_forbidden"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "speech.tts",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "elevenlabs-api",
+          "provider_model": "eleven_flash_v2_5",
+          "maturity": "stable",
+          "license_id": "elevenlabs-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://elevenlabs.io/docs/overview/models"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "elevenlabs-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required"
+          ]
+        },
+        "balanced": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "gemini-3.1-flash-tts-preview",
+          "maturity": "preview",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-tts-preview",
+            "https://ai.google.dev/gemini-api/docs/speech-generation"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "preview_owner_policy_required",
+            "pcm_mime_rate_container_probe_required",
+            "stage1_pcm_44_1_48khz_contract_mismatch"
+          ]
+        },
+        "quality": {
+          "provider_id": "elevenlabs-api",
+          "provider_model": "eleven_v3",
+          "maturity": "stable",
+          "license_id": "elevenlabs-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://elevenlabs.io/docs/overview/models"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "elevenlabs-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "speech.tts",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "qwen-tts-local",
+          "provider_model": "Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice",
+          "maturity": "experimental",
+          "license_id": "model-card-review",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-TTS",
+            "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "qwen-tts"
+            ],
+            "vram_budget_mb": 4096,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "streaming_mode_outside_model_id",
+            "standard_custom_voice_only",
+            "voice_clone_and_voice_design_profiles_excluded"
+          ]
+        },
+        "balanced": {
+          "provider_id": "qwen-tts-local",
+          "provider_model": "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
+          "maturity": "experimental",
+          "license_id": "model-card-review",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-TTS",
+            "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "qwen-tts"
+            ],
+            "vram_budget_mb": 8192,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "standard_custom_voice_only",
+            "voice_design_profile_Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign_separate_capability",
+            "voice_clone_profile_Qwen/Qwen3-TTS-12Hz-1.7B-Base_requires_subject_consent"
+          ]
+        },
+        "quality": {
+          "provider_id": "qwen-tts-local",
+          "provider_model": "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
+          "maturity": "experimental",
+          "license_id": "model-card-review",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-TTS",
+            "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "qwen-tts"
+            ],
+            "vram_budget_mb": 8192,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "standard_custom_voice_only",
+            "voice_design_profile_Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign_separate_capability",
+            "voice_clone_profile_Qwen/Qwen3-TTS-12Hz-1.7B-Base_requires_identity_binding_and_audit"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "speech.stt",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-4o-mini-transcribe",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-4o-mini-transcribe",
+            "https://developers.openai.com/api/docs/guides/speech-to-text"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-audio"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "file_artifact_profile",
+            "realtime_model_separate_capability"
+          ]
+        },
+        "balanced": {
+          "provider_id": "elevenlabs-api",
+          "provider_model": "scribe_v2",
+          "maturity": "stable",
+          "license_id": "elevenlabs-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://elevenlabs.io/docs/overview/models",
+            "https://elevenlabs.io/docs/api-reference/speech-to-text/convert"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "elevenlabs-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "file_artifact_profile",
+            "scribe_v2_realtime_separate_capability"
+          ]
+        },
+        "quality": {
+          "provider_id": "openai-api",
+          "provider_model": "gpt-4o-transcribe-diarize",
+          "maturity": "stable",
+          "license_id": "openai-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://developers.openai.com/api/docs/models/gpt-4o-transcribe-diarize",
+            "https://developers.openai.com/api/docs/guides/speech-to-text"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "openai-audio"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "file_artifact_profile",
+            "diarization_output_policy_required"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "speech.stt",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "qwen-asr-local",
+          "provider_model": "Qwen/Qwen3-ASR-0.6B-hf",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-ASR",
+            "https://huggingface.co/Qwen/Qwen3-ASR-0.6B-hf"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "transformers"
+            ],
+            "vram_budget_mb": 4096,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "transformers_native_no_remote_code",
+            "transformers_min_version_5_13_0",
+            "dependency_and_model_revision_pin_required",
+            "streaming_non_hf_vllm_profile_separate"
+          ]
+        },
+        "balanced": {
+          "provider_id": "qwen-asr-local",
+          "provider_model": "Qwen/Qwen3-ASR-1.7B-hf",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-ASR",
+            "https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "transformers"
+            ],
+            "vram_budget_mb": 8192,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "transformers_native_no_remote_code",
+            "transformers_min_version_5_13_0",
+            "dependency_and_model_revision_pin_required",
+            "streaming_non_hf_vllm_profile_separate"
+          ]
+        },
+        "quality": {
+          "provider_id": "qwen-asr-local",
+          "provider_model": "Qwen/Qwen3-ASR-1.7B-hf",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-ASR",
+            "https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf"
+          ],
+          "resources": {
+            "preferred_os": [
+              "windows",
+              "linux"
+            ],
+            "engines": [
+              "transformers"
+            ],
+            "vram_budget_mb": 8192,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "quality_profile",
+            "transformers_native_no_remote_code",
+            "transformers_min_version_5_13_0",
+            "dependency_and_model_revision_pin_required",
+            "streaming_non_hf_vllm_profile_separate"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "retrieval.embed",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "gemini-embedding-2",
+          "maturity": "stable",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/models/gemini-embedding-2"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "output_dimension_768",
+            "dimension_change_requires_reindex"
+          ]
+        },
+        "balanced": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "gemini-embedding-2",
+          "maturity": "stable",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/models/gemini-embedding-2"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "output_dimension_1536",
+            "dimension_change_requires_reindex"
+          ]
+        },
+        "quality": {
+          "provider_id": "google-gemini-api",
+          "provider_model": "gemini-embedding-2",
+          "maturity": "stable",
+          "license_id": "google-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://ai.google.dev/gemini-api/docs/models/gemini-embedding-2"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "gemini-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required",
+            "output_dimension_3072",
+            "dimension_change_requires_reindex"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "retrieval.embed",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "qwen-embedding-local",
+          "provider_model": "Qwen/Qwen3-Embedding-0.6B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-Embedding",
+            "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "transformers"
+            ],
+            "vram_budget_mb": 4096,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "dimension_change_requires_reindex"
+          ]
+        },
+        "balanced": {
+          "provider_id": "qwen-embedding-local",
+          "provider_model": "Qwen/Qwen3-Embedding-4B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-Embedding",
+            "https://huggingface.co/Qwen/Qwen3-Embedding-4B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "transformers"
+            ],
+            "vram_budget_mb": 12288,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "dimension_change_requires_reindex"
+          ]
+        },
+        "quality": {
+          "provider_id": "qwen-embedding-local",
+          "provider_model": "Qwen/Qwen3-Embedding-8B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-Embedding",
+            "https://huggingface.co/Qwen/Qwen3-Embedding-8B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "transformers"
+            ],
+            "vram_budget_mb": 20480,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required",
+            "dimension_change_requires_reindex"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "retrieval.rerank",
+      "kind": "api",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "cohere-api",
+          "provider_model": "rerank-v4.0-fast",
+          "maturity": "stable",
+          "license_id": "cohere-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://docs.cohere.com/v2/docs/rerank"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "cohere-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required"
+          ]
+        },
+        "balanced": {
+          "provider_id": "cohere-api",
+          "provider_model": "rerank-v4.0-pro",
+          "maturity": "stable",
+          "license_id": "cohere-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://docs.cohere.com/v2/docs/rerank"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "cohere-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required"
+          ]
+        },
+        "quality": {
+          "provider_id": "cohere-api",
+          "provider_model": "rerank-v4.0-pro",
+          "maturity": "stable",
+          "license_id": "cohere-api-terms",
+          "commercial_use": "review_required",
+          "checked_at": "2026-07-23",
+          "source_urls": [
+            "https://docs.cohere.com/v2/docs/rerank"
+          ],
+          "resources": {
+            "preferred_os": [
+              "remote"
+            ],
+            "engines": [
+              "cohere-api"
+            ],
+            "vram_budget_mb": null,
+            "vram_value_kind": "not_applicable"
+          },
+          "constraints": [
+            "remote_consent_required"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "retrieval.rerank",
+      "kind": "local",
+      "active": false,
+      "probe_required": true,
+      "tiers": {
+        "fast": {
+          "provider_id": "qwen-rerank-local",
+          "provider_model": "Qwen/Qwen3-Reranker-0.6B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-Embedding",
+            "https://huggingface.co/Qwen/Qwen3-Reranker-0.6B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "transformers"
+            ],
+            "vram_budget_mb": 4096,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required"
+          ]
+        },
+        "balanced": {
+          "provider_id": "qwen-rerank-local",
+          "provider_model": "Qwen/Qwen3-Reranker-4B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-Embedding",
+            "https://huggingface.co/Qwen/Qwen3-Reranker-4B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "transformers"
+            ],
+            "vram_budget_mb": 12288,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required"
+          ]
+        },
+        "quality": {
+          "provider_id": "qwen-rerank-local",
+          "provider_model": "Qwen/Qwen3-Reranker-8B",
+          "maturity": "experimental",
+          "license_id": "apache-2.0",
+          "commercial_use": "allowed",
+          "checked_at": "2026-07-24",
+          "source_urls": [
+            "https://github.com/QwenLM/Qwen3-Embedding",
+            "https://huggingface.co/Qwen/Qwen3-Reranker-8B"
+          ],
+          "resources": {
+            "preferred_os": [
+              "wsl2",
+              "linux"
+            ],
+            "engines": [
+              "transformers"
+            ],
+            "vram_budget_mb": 20480,
+            "vram_value_kind": "estimated"
+          },
+          "constraints": [
+            "probe_required"
+          ]
+        }
+      }
+    }
+  ]
+}

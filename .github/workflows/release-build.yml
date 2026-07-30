@@ -1,0 +1,52 @@
+name: Release build
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - name: Check out release source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.release.tag_name }}
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Create clean wheelhouse
+        run: >-
+          python -I -c
+          "import sys; from pathlib import Path;
+          p=Path('.ci-wheelhouse');
+          sys.exit(1) if p.exists() or p.is_symlink() else p.mkdir()"
+      - name: Prepare public wheelhouse
+        run: >-
+          python -m pip download
+          --only-binary=:all:
+          --dest .ci-wheelhouse
+          -r requirements.txt
+          -c constraints.lock
+          "hatchling==1.31.0"
+      - name: Verify release package offline
+        run: >-
+          python ci/verify_public_package.py
+          --source .
+          --wheelhouse .ci-wheelhouse
+          --output dist
+      - name: Attach wheel and hash ledger
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$RELEASE_TAG" dist/*.whl dist/SHA256SUMS.txt

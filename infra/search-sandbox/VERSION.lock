@@ -1,0 +1,22 @@
+{
+  "schema": "yonerai.search-sandbox.version-lock.v1",
+  "searxng": {
+    "upstream_repository": "https://github.com/searxng/searxng",
+    "upstream_tag": "2026.7.26-b060c780d",
+    "image": "docker.io/searxng/searxng",
+    "index_digest": "sha256:d0aaeb14880e6e92bde1518fcc7261e995783367d63d95203383607bef9c6516",
+    "linux_amd64_manifest_digest": "sha256:fa1b0523e5a66c374fc04f4471f7ab54a718f33f864e8409e0db0133041eab3a",
+    "license": "AGPL-3.0-or-later"
+  },
+  "gateway": {
+    "contract": "yonerai.search-gateway.v1",
+    "base_image_index_digest": "sha256:d0aaeb14880e6e92bde1518fcc7261e995783367d63d95203383607bef9c6516",
+    "requirements_lock_sha256": "sha256:2784c91b897c532601e0f4c3985495ff3d3eb1198c9beca7cb3eb4557f9986b4"
+  },
+  "ubuntu": {
+    "release": "24.04.4",
+    "server_iso_filename": "ubuntu-24.04.4-live-server-amd64.iso",
+    "server_iso_sha256": "sha256:e907d92eeec9df64163a7e454cbc8d7755e8ddc7ed42f99dbc80c40f1a138433",
+    "source": "https://releases.ubuntu.com/24.04/"
+  }
+}

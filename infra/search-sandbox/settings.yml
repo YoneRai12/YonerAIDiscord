@@ -1,0 +1,41 @@
+# This file replaces the official image's settings.template.yml.
+# The official entrypoint replaces this exact placeholder with an ephemeral
+# random value in the container's tmpfs-backed /etc/searxng directory.
+use_default_settings:
+  engines:
+    keep_only:
+      - duckduckgo
+      - wikipedia
+
+general:
+  debug: false
+  instance_name: "YonerAI private search sandbox"
+
+search:
+  safe_search: 2
+  autocomplete: ""
+  favicon_resolver: ""
+  max_page: 1
+  formats:
+    - json
+
+server:
+  bind_address: "0.0.0.0"
+  port: 8080
+  secret_key: "ultrasecretkey"
+  limiter: false
+  public_instance: false
+  image_proxy: false
+  method: "POST"
+  default_http_headers:
+    X-Content-Type-Options: nosniff
+    X-Robots-Tag: "noindex, nofollow"
+    Referrer-Policy: no-referrer
+
+outgoing:
+  request_timeout: 3.0
+  max_request_timeout: 5.0
+  useragent_suffix: ""
+  pool_connections: 16
+  pool_maxsize: 8
+  enable_http2: true

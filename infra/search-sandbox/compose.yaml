@@ -1,0 +1,105 @@
+name: yonerai-private-search-sandbox
+
+services:
+  searxng:
+    build:
+      context: .
+      dockerfile: Dockerfile.searxng
+      pull: true
+    image: yonerai/private-searxng:2026.7.26-b060c780d-local.1
+    platform: linux/amd64
+    restart: "no"
+    init: true
+    read_only: true
+    user: "searxng:searxng"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 512m
+    cpus: 1.0
+    stop_grace_period: 10s
+    expose:
+      - "8080"
+    tmpfs:
+      - /etc/searxng:rw,nosuid,nodev,noexec,size=1048576,mode=1777
+      - /var/cache/searxng:rw,nosuid,nodev,noexec,size=33554432,mode=1777
+      - /tmp:rw,nosuid,nodev,noexec,size=16777216,mode=1777
+    networks:
+      - private_gateway
+      - search_egress
+    healthcheck:
+      test:
+        - CMD
+        - /usr/local/searxng/.venv/bin/python
+        - -c
+        - >-
+          import json,urllib.request;
+          response=urllib.request.urlopen('http://127.0.0.1:8080/config',timeout=3);
+          json.load(response);
+          raise SystemExit(0 if response.status == 200 else 1)
+      interval: 10s
+      timeout: 4s
+      retries: 5
+      start_period: 20s
+    logging:
+      driver: local
+      options:
+        max-size: 1m
+        max-file: "1"
+
+  gateway:
+    build:
+      context: ../..
+      dockerfile: infra/search-sandbox/Dockerfile.gateway
+      pull: true
+    image: yonerai/private-search-gateway:yonerai.search-gateway.v1
+    platform: linux/amd64
+    restart: "no"
+    init: true
+    read_only: true
+    user: "searxng:searxng"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    mem_limit: 192m
+    cpus: 0.5
+    stop_grace_period: 10s
+    ports:
+      - "127.0.0.1:8787:8787"
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=8388608,mode=1777
+    networks:
+      - private_gateway
+    depends_on:
+      searxng:
+        condition: service_healthy
+        restart: false
+    healthcheck:
+      test:
+        - CMD
+        - /usr/local/searxng/.venv/bin/python
+        - -c
+        - >-
+          import urllib.request;
+          response=urllib.request.urlopen('http://127.0.0.1:8787/healthz',timeout=3);
+          raise SystemExit(0 if response.status == 200 else 1)
+      interval: 10s
+      timeout: 4s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: local
+      options:
+        max-size: 1m
+        max-file: "1"
+
+networks:
+  private_gateway:
+    driver: bridge
+    internal: true
+  search_egress:
+    driver: bridge

@@ -1,0 +1,315 @@
+{
+  "schema": "yonerai.discord.dependency-licenses.v1",
+  "status": "verified_from_locked_metadata",
+  "python": "3.11",
+  "lock_sources": [
+    "constraints.lock",
+    "requirements.txt",
+    "requirements-dev.txt",
+    "pyproject.toml"
+  ],
+  "dependencies": [
+    {
+      "name": "aiohappyeyeballs",
+      "version": "2.7.1",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "PSF-2.0",
+      "source_url": "https://github.com/aio-libs/aiohappyeyeballs",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "aiohttp",
+      "version": "3.14.1",
+      "scope": "runtime",
+      "direct": true,
+      "license": "Apache-2.0 AND MIT",
+      "source_url": "https://github.com/aio-libs/aiohttp",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "aiosignal",
+      "version": "1.4.0",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/aio-libs/aiosignal",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "attrs",
+      "version": "26.1.0",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "MIT",
+      "source_url": "https://github.com/python-attrs/attrs",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.0",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "MIT-0",
+      "source_url": "https://github.com/python-cffi/cffi",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "colorama",
+      "version": "0.4.6",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "BSD-3-Clause",
+      "source_url": "https://github.com/tartley/colorama",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "discord.py",
+      "version": "2.7.1",
+      "scope": "runtime",
+      "direct": true,
+      "license": "MIT",
+      "source_url": "https://github.com/Rapptz/discord.py",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "davey",
+      "version": "0.1.6",
+      "scope": "runtime",
+      "direct": true,
+      "license": "MIT",
+      "source_url": "https://github.com/Snazzah/davey",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "frozenlist",
+      "version": "1.8.0",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/aio-libs/frozenlist",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "greenlet",
+      "version": "3.5.4",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "MIT",
+      "source_url": "https://github.com/python-greenlet/greenlet",
+      "evidence": "official_package_metadata"
+    },
+    {
+      "name": "hatchling",
+      "version": "1.31.0",
+      "scope": "build",
+      "direct": true,
+      "license": "MIT",
+      "source_url": "https://github.com/pypa/hatch/tree/hatchling-v1.31.0/backend",
+      "evidence": "official_package_metadata"
+    },
+    {
+      "name": "idna",
+      "version": "3.18",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "BSD-3-Clause",
+      "source_url": "https://github.com/kjd/idna",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.0",
+      "scope": "dev_transitive",
+      "direct": false,
+      "license": "MIT",
+      "source_url": "https://github.com/pytest-dev/iniconfig",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "multidict",
+      "version": "6.7.1",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/aio-libs/multidict",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "packaging",
+      "version": "26.2",
+      "scope": "build_and_dev_transitive",
+      "direct": false,
+      "license": "Apache-2.0 OR BSD-2-Clause",
+      "source_url": "https://github.com/pypa/packaging",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "pathspec",
+      "version": "1.1.1",
+      "scope": "build_transitive",
+      "direct": false,
+      "license": "MPL-2.0",
+      "source_url": "https://github.com/cpburnz/python-pathspec",
+      "evidence": "official_package_metadata"
+    },
+    {
+      "name": "Pillow",
+      "version": "12.3.0",
+      "scope": "runtime",
+      "direct": true,
+      "license": "MIT-CMU",
+      "source_url": "https://github.com/python-pillow/Pillow",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "playwright",
+      "version": "1.61.0",
+      "scope": "runtime",
+      "direct": true,
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/microsoft/playwright-python/tree/v1.61.0",
+      "evidence": "official_package_metadata"
+    },
+    {
+      "name": "pluggy",
+      "version": "1.6.0",
+      "scope": "build_and_dev_transitive",
+      "direct": false,
+      "license": "MIT",
+      "source_url": "https://github.com/pytest-dev/pluggy",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "propcache",
+      "version": "0.5.2",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/aio-libs/propcache",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "pyee",
+      "version": "13.0.1",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "MIT",
+      "source_url": "https://github.com/jfhbrook/pyee",
+      "evidence": "official_package_metadata"
+    },
+    {
+      "name": "pycparser",
+      "version": "3.0",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "BSD-3-Clause",
+      "source_url": "https://github.com/eliben/pycparser",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "Pygments",
+      "version": "2.20.0",
+      "scope": "dev_transitive",
+      "direct": false,
+      "license": "BSD-2-Clause",
+      "source_url": "https://github.com/pygments/pygments",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "PyNaCl",
+      "version": "1.6.2",
+      "scope": "runtime",
+      "direct": true,
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/pyca/pynacl",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "pytest",
+      "version": "8.4.2",
+      "scope": "dev",
+      "direct": true,
+      "license": "MIT",
+      "source_url": "https://github.com/pytest-dev/pytest",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "pytest-asyncio",
+      "version": "0.26.0",
+      "scope": "dev",
+      "direct": true,
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/pytest-dev/pytest-asyncio",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.2",
+      "scope": "runtime",
+      "direct": true,
+      "license": "BSD-3-Clause",
+      "source_url": "https://github.com/theskumar/python-dotenv",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "qrcode",
+      "version": "8.2",
+      "scope": "runtime",
+      "direct": true,
+      "license": "BSD-3-Clause AND MIT",
+      "metadata_license": "BSD",
+      "source_url": "https://github.com/lincolnloop/python-qrcode/tree/v8.2",
+      "license_url": "https://github.com/lincolnloop/python-qrcode/blob/v8.2/LICENSE",
+      "notice": "QR Code is a registered trademark of DENSO WAVE.",
+      "evidence": "official_license_and_package_metadata"
+    },
+    {
+      "name": "ruff",
+      "version": "0.15.10",
+      "scope": "dev",
+      "direct": true,
+      "license": "MIT",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "trove-classifiers",
+      "version": "2026.6.1.19",
+      "scope": "build_transitive",
+      "direct": false,
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/pypa/trove-classifiers",
+      "evidence": "official_package_metadata"
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "PSF-2.0",
+      "source_url": "https://github.com/python/typing_extensions",
+      "evidence": "installed_distribution_metadata"
+    },
+    {
+      "name": "yarl",
+      "version": "1.24.5",
+      "scope": "runtime_transitive",
+      "direct": false,
+      "license": "Apache-2.0",
+      "source_url": "https://github.com/aio-libs/yarl",
+      "evidence": "installed_distribution_metadata"
+    }
+  ],
+  "separate_services": [
+    {
+      "name": "SearXNG",
+      "version": "2026.7.26-b060c780d",
+      "scope": "separate_optional_service",
+      "bundled": false,
+      "license": "AGPL-3.0-or-later",
+      "source_url": "https://github.com/searxng/searxng/tree/2026.7.26-b060c780d",
+      "evidence": "infra/search-sandbox/VERSION.lock"
+    }
+  ]
+}

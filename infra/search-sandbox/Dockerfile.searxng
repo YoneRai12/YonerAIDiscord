@@ -1,0 +1,11 @@
+FROM docker.io/searxng/searxng@sha256:d0aaeb14880e6e92bde1518fcc7261e995783367d63d95203383607bef9c6516
+
+LABEL org.opencontainers.image.title="YonerAI private SearXNG sandbox"
+LABEL org.opencontainers.image.version="2026.7.26-b060c780d-local.1"
+LABEL org.opencontainers.image.licenses="AGPL-3.0-or-later"
+
+# The upstream entrypoint copies this template to tmpfs and replaces
+# "ultrasecretkey" with a fresh random value for every container lifetime.
+COPY --chown=searxng:searxng settings.yml /usr/local/searxng/settings.template.yml
+
+USER searxng:searxng

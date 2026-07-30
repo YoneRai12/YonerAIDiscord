@@ -1,0 +1,3178 @@
+{
+  "catalog_revision": "a53b95fb8eeb47f375d1d82c8fa22deef4e24496ccbc0dca12cf679eef257063",
+  "catalog_scope": "static_candidate_metadata",
+  "counts": {
+    "command_capability_ids": 157,
+    "command_paths": 175,
+    "event_capability_ids": 14,
+    "event_paths": 14,
+    "historical_canonical": 656,
+    "model_tool_bindings": 1,
+    "projected_canonical_provenance": 17,
+    "projected_runtime_provenance": 154,
+    "projected_total": 171,
+    "registry_total": 826,
+    "runtime_declared": 170,
+    "surface_unique": 170,
+    "unbound_runtime": 16
+  },
+  "entries": [
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0001",
+      "content_revision": "5041cf7dd732e73568bd11c6802e06e0641e2fa1416f8f2801d4c1e378728d2c",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "collaboration.meeting",
+      "name": "/meeting cancel で中止",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:schedule.cancel"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0002",
+      "content_revision": "bb1012e3e769f21fe1d91e809f310caba074e3f625bd0ecd955881230a510159",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "collaboration.meeting",
+      "name": "/meeting create full meeting workflow",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:schedule.create"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0007",
+      "content_revision": "fb7f96f95c1b98ca7beaeba1ca5fd700356fc825894e6cecb5020ab4bd1071a3",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "collaboration.meeting",
+      "name": "/meeting list で会議一覧",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:schedule.list"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0030",
+      "content_revision": "f6e27747f3d5d4e0a3918d27546b899f02a12cc454d9c4fb10869d023b34de59",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "collaboration.meeting",
+      "name": "DM自然文で出欠を変更",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:schedule.rsvp"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0153",
+      "content_revision": "acfd72af374c77f1a246bdf10f2b5fe50101085c52b190b7d915d0c8cb60c52e",
+      "intent_tags": [
+        "conversation",
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "integration.api-web",
+      "name": "web_search_api safe Web検索",
+      "primary_intent": "conversation",
+      "risk": "medium",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:ai.search",
+        "command:web.fetch",
+        "command:web.find",
+        "command:web.search"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0161",
+      "content_revision": "31c49549c4cc62b8a09f71e2645b65641f5bf5fd00edfe0e098d587ca1868656",
+      "intent_tags": [
+        "code",
+        "conversation",
+        "knowledge",
+        "media",
+        "site"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.ai-runtime",
+      "name": "/ai ask でlocal優先AIへ質問",
+      "primary_intent": "conversation",
+      "risk": "medium",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:ai.ask"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0162",
+      "content_revision": "83144b93e96b7e478cfcb0a565e1cf19e37e4739781e96bc95a0007ce7b41873",
+      "intent_tags": [
+        "conversation",
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.ai-runtime",
+      "name": "/ai status でAI provider・remote可否確認",
+      "primary_intent": "conversation",
+      "risk": "low",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:ai.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0265",
+      "content_revision": "77a93fbe8e90ab40ac07b7bd6ba459939b03e28ad445e9c8456eb135902d3873",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "/ping でGateway遅延を確認",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:system.ping"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0272",
+      "content_revision": "24c571368969bb7ccf67124470d879c36b28e2d08c7851ab2d2824eb3dfc55fe",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "/schedule show で予定表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:schedule.show"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0278",
+      "content_revision": "7f4ee91cf57c9b84851669a9157ccf0ca8e484347b7871a63f13975483c27bed",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "/system doctor で権限・設定診断",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:system.doctor"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0415",
+      "content_revision": "4dd019fa593a4b4ee034536355d67ed887df3542c1c50ed1f1bb2524066ca1eb",
+      "intent_tags": [
+        "media"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.voice",
+      "name": "/voice status でVOICEVOX状態確認",
+      "primary_intent": "media",
+      "risk": "low",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:voice.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0416",
+      "content_revision": "b278cb6dcc865460c24bb21ef3cbd84387e2d0200342f77c9e100ae3dc4b375a",
+      "intent_tags": [
+        "media"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.voice",
+      "name": "/voice synthesize でWAVを添付生成",
+      "primary_intent": "media",
+      "risk": "medium",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:voice.synthesize"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0519",
+      "content_revision": "5bfe3e834850de8ea041246ecacd9690cc760a55d1d0dbd2f01d5e7eeb7c58fd",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "operations.observability",
+      "name": "/system health で稼働状態確認",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:system.health"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0538",
+      "content_revision": "93a09f8a77aa2761b03578a5e1a472166a69939a9385055ae4e0f65c805dec93",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "operations.scheduling-notification",
+      "name": "/schedule remind でDM/channel通知予約",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:schedule.remind"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0588",
+      "content_revision": "3ffbc35562b4d0523d98eb4071e5d65154e9c1d659b9fcd11d63eec100da588a",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "platform.runtime",
+      "name": "/system plugins でplugin状態一覧",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:system.plugins"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0589",
+      "content_revision": "2362ffde29e467ebd27b18f6bcac36bceef796b8ce144b71306301338fe2ae5a",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "platform.runtime",
+      "name": "capabilityを中央registryへ登録する",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:system.capabilities",
+        "command:system.modules"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-can-0613",
+      "content_revision": "9cb3c7d9873fe42c7e264a974a7999a09f6e8650c65e6c8f85c849b689ba3ffb",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "security.access-control",
+      "name": "capabilityごとにclient・権限・riskをpolicy判定する",
+      "primary_intent": "moderation",
+      "risk": "low",
+      "source_provenance": "canonical_registry",
+      "surface_bindings": [
+        "command:system.capability-set",
+        "command:system.module-set",
+        "command:system.permission-set"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ai-mention-chat",
+      "content_revision": "adcbd146a49ecae9fc86e5936b23b38890b6ea6e4d7d8f2af6569804401c410e",
+      "intent_tags": [
+        "code",
+        "conversation",
+        "knowledge",
+        "media",
+        "site"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.ai-runtime",
+      "name": "BOTへの明示メンションをTerra/Solへ安全に接続して返信",
+      "primary_intent": "conversation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:ai_mention_message"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ai-model-auto",
+      "content_revision": "d976e2420bcc40e03facc0b6bd4cdc09588dfb2a0c4652cf8ce4701d293e9dcc",
+      "intent_tags": [
+        "conversation",
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.ai-runtime",
+      "name": "本人の論理モデル設定を自動選択へ戻す",
+      "primary_intent": "conversation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ai.model.auto"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ai-model-list",
+      "content_revision": "34adbc1646b6346a02e76e8f0def52de70ced3aa09855a031d58ff974f78eaf5",
+      "intent_tags": [
+        "conversation",
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.ai-runtime",
+      "name": "本人が利用可能な論理モデル候補を非公開表示",
+      "primary_intent": "conversation",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ai.model.list"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ai-model-set",
+      "content_revision": "785a11043f35fca7612b7bb0ea0342e0b6b0e41d98599c38f30c3a15b1a45e26",
+      "intent_tags": [
+        "conversation",
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.ai-runtime",
+      "name": "本人の論理モデル設定を変更",
+      "primary_intent": "conversation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ai.model.set"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ai-provider-list",
+      "content_revision": "06b3cf7c4352fbff0327c960eb93657a9fe1769112cf6a5d0eb530e9e4db3168",
+      "intent_tags": [
+        "conversation",
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.ai-runtime",
+      "name": "本人が利用可能なprovider候補を非公開表示",
+      "primary_intent": "conversation",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ai.provider.list"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ai-provider-set",
+      "content_revision": "4a1913fb4ed199bbf40ce559ab1ac6317a1839be56606c98c540e9d679c452e6",
+      "intent_tags": [
+        "conversation",
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.ai-runtime",
+      "name": "本人のprovider設定を変更",
+      "primary_intent": "conversation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ai.provider.set"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ai-reset",
+      "content_revision": "03cef6cf67ab614f45b5d8d97f2ad905c4ac49345f0cccff45aa30b913a2b619",
+      "intent_tags": [
+        "conversation",
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.ai-runtime",
+      "name": "本人の現在会話の短期履歴だけをリセット",
+      "primary_intent": "conversation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ai.reset"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ai-route",
+      "content_revision": "2929c0f99fcca35a54c8ec18103cdcb9056f5e334ad2f9c45fc51bbc3c10a041",
+      "intent_tags": [
+        "conversation",
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.ai-runtime",
+      "name": "本人の希望経路と実効経路を理由付きで非公開表示",
+      "primary_intent": "conversation",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ai.route"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-automod-channel",
+      "content_revision": "ef95656b11c40e52310ddc1f1db8574964b1ac8b7230646d01a31105aab355fc",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.automod",
+      "name": "AutoModのredacted report channelを設定",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:automod.channel"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-automod-message-create",
+      "content_revision": "e3c52b85f3cbf996faedc359713c88aa63bae26e9402935b941140c78d0c173b",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.automod",
+      "name": "message createを本文非保存でreport-only検知",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:automod_message_create"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-automod-message-edit",
+      "content_revision": "2d010cf2836e83389cecd74b2ca663d6f9cff98977b607964e6e2e729c5f24e3",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.automod",
+      "name": "message editを本文非保存でreport-only再検査",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:automod_message_edit"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-automod-policy",
+      "content_revision": "d7c7374b6db30b4ae36ad362b80857b9d4cf058c02ae7dbaaae1f6db0a7efd7b",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.automod",
+      "name": "確認文字列付きでreport-only policyをON/OFF",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:automod.policy"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-automod-status",
+      "content_revision": "39f2b0785d9901bb9077de3a920f84b9f28e23fc5a2cf48772bace0c8269898e",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.automod",
+      "name": "report-only AutoModの状態を表示",
+      "primary_intent": "moderation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:automod.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-discovery-help",
+      "content_revision": "acd11ab2eed19560e8e8c1cc84e9125ce836ca6a491c7614fe78cc6313116de6",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "利用できるコマンドを検索・一覧表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:help"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-earthquake-delivery",
+      "content_revision": "eb7edfa4b5813c95e8263a9dc7bcae64b54ad18ee25830476d5e268cc33c74ae",
+      "intent_tags": [
+        "knowledge",
+        "web_research"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.earthquake",
+      "name": "購読済みチャンネルへ重複排除した地震・EEWを自動通知",
+      "primary_intent": "knowledge",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:earthquake_feed_delivery"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-earthquake-latest",
+      "content_revision": "33af878f7d9e86584eafb05d79a86f027f0c25aade293bbf76c4cb2314d41ded",
+      "intent_tags": [
+        "knowledge",
+        "web_research"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "operations.earthquake",
+      "name": "P2PQuake公式APIから最新の地震・EEW情報を表示",
+      "primary_intent": "knowledge",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:earthquake.latest"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-earthquake-status",
+      "content_revision": "7bd0be91f67f2ed5f552709de044b718d4ff8fcffffde5019d05365b2b55007e",
+      "intent_tags": [
+        "knowledge",
+        "web_research"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "operations.earthquake",
+      "name": "このサーバーの地震通知設定とfeed状態を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:earthquake.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-earthquake-subscribe",
+      "content_revision": "13631fecb3d1946996be6a4d55a28b9e21b475a884e129832b16358bb1d23cc8",
+      "intent_tags": [
+        "knowledge",
+        "web_research"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.earthquake",
+      "name": "管理者がチャンネル別の地震・EEW通知を有効化",
+      "primary_intent": "knowledge",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:earthquake.subscribe"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-earthquake-unsubscribe",
+      "content_revision": "483514c532d1bd359faf6660b1d214384648196be8eb2b31e36b0b13991364c2",
+      "intent_tags": [
+        "knowledge",
+        "web_research"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.earthquake",
+      "name": "管理者がこのサーバーの地震・EEW通知を停止",
+      "primary_intent": "knowledge",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:earthquake.unsubscribe"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-evolution-approve",
+      "content_revision": "f590533f6702bbfcfb94cbf52a1ba16dc8e47fa3951bb23a3d1d1c7947801ffa",
+      "intent_tags": [
+        "code",
+        "self_evolution"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.ai-runtime",
+      "name": "自己進化proposalを承認済みにする",
+      "primary_intent": "self_evolution",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:evolution.approve"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-evolution-propose",
+      "content_revision": "1200815b2a525059172a247635349f540f23e115323ab43ce6c8a29aa0d0f779",
+      "intent_tags": [
+        "code",
+        "self_evolution"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.ai-runtime",
+      "name": "Solで改善proposal artifactを作成",
+      "primary_intent": "self_evolution",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:evolution.propose"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-evolution-reject",
+      "content_revision": "1d90ca95952b8a482178d51c5bb4f370321e7aff20f33a0e60ef1d7fe1149d63",
+      "intent_tags": [
+        "code",
+        "self_evolution"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.ai-runtime",
+      "name": "自己進化proposalを却下",
+      "primary_intent": "self_evolution",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:evolution.reject"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-evolution-review",
+      "content_revision": "ef3ab37f2c8bc3a9d832412963727b3ed08b850c5c9a67f02d808d513b2f4a72",
+      "intent_tags": [
+        "code",
+        "self_evolution"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.ai-runtime",
+      "name": "自己進化proposalのreviewを開始",
+      "primary_intent": "self_evolution",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:evolution.review"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-evolution-show",
+      "content_revision": "37afa60201dc55d5648c1bf02bb607de3bba7bd6beee65d08cedc0bbdb8fd838",
+      "intent_tags": [
+        "code",
+        "self_evolution"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.ai-runtime",
+      "name": "自己進化proposal artifactを検証して表示",
+      "primary_intent": "self_evolution",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:evolution.show"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-evolution-status",
+      "content_revision": "99f37f779b4dbf85d0933488cb11714a5854764728ece264297612b8586f4731",
+      "intent_tags": [
+        "code",
+        "self_evolution"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.ai-runtime",
+      "name": "自己進化review基盤の状態を表示",
+      "primary_intent": "self_evolution",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:evolution.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-holiday-next",
+      "content_revision": "99f904a6b63e2b12aed9e36c6ce85a11011e72e46b08b8c7a67b2f1c2abb136e",
+      "intent_tags": [
+        "knowledge",
+        "web_research"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "operations.public-information",
+      "name": "内閣府の公式掲載範囲から次の祝日・休日を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:holiday.next"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-holiday-year",
+      "content_revision": "68e327cf53077b811d2b62e64d08b9fb6d935ece21f72ee481436ce4b25f3187",
+      "intent_tags": [
+        "knowledge",
+        "web_research"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "operations.public-information",
+      "name": "内閣府の公式掲載範囲から指定年の祝日・休日を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:holiday.year"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-image-generate",
+      "content_revision": "865fe2a35d2e70d19a0683fdfe0dfc3c4c345cf4fe3214c621c8b9d4164e8b20",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.image-generation",
+      "name": "明示promptから検証済みPNG画像を生成",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:image.generate"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-info-avatar",
+      "content_revision": "1c743e6879487ea072a824780b4d44b79b0c3d8648a8498d658f3b8270273d2f",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "avatar URLを表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:info.avatar"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-info-channel",
+      "content_revision": "9c3796f55d5b4172a2d306cba0d0280d7a6322c27f487e531b162bf7861d8a18",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "channel情報を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:info.channel"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-info-permissions",
+      "content_revision": "bcd68d1aabdbe761141dce6cb445bda26699fa153d29509767f49f1e480d5897",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "member権限を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:info.permissions"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-info-role",
+      "content_revision": "60c6b6c7f2a02bd29284c331a7f6caa42432f99a8fd10cf0c6ef7fa9570fd914",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "role情報を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:info.role"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-info-server",
+      "content_revision": "ccd47772dd20e5f89ec66727723b99b62bbee31195682a4409c62c0c1d83021f",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "server情報を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:info.server"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-info-user",
+      "content_revision": "b8ea2b7a1623aa6cefb08f95f3b7d298decc43567e44be7a69753f8a697a31e2",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "user情報を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:info.user"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-jobs-cancel",
+      "content_revision": "9ef49ff69117853bb8f36b28cdaba6306c22654302af328ba180a427cc18fd9c",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.execution",
+      "name": "未実行durable jobを監査付きでcancel",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:jobs.cancel"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-jobs-execute",
+      "content_revision": "8483bf54eb7df879885962f369e5760c55d683c69275d12064844ec9d7dde986",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.execution",
+      "name": "allowlist済みexecutorだけをdurable workerで実行",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:worker.jobs-execute"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-jobs-list",
+      "content_revision": "503af6e790299d22c29477474f674c8f6656bc7b34e7b3ab5b181ad66d34aea8",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.execution",
+      "name": "payloadを隠してdurable job一覧を表示",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:jobs.list"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-jobs-retry",
+      "content_revision": "178f9bcfb6fbf72def17a4618ee3bc87d870d106375e7d20adeb580edee50c40",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.execution",
+      "name": "terminal jobを監査付きで再queue",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:jobs.retry"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-jobs-status",
+      "content_revision": "72c999263c16d159a89d76fc2f6ca9ed4fa3c4573a9b8cc6893d491e03f6afa2",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.execution",
+      "name": "durable job workerとqueue状態を表示",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:jobs.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-memory-clear",
+      "content_revision": "34220c5958f3926b827deb12eac116082a38f6eb02e8b26dae18e21651e00e0a",
+      "intent_tags": [
+        "memory"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.personal-memory",
+      "name": "本人の個人AIメモリを確認付きで全削除",
+      "primary_intent": "memory",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:memory.clear"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-memory-disable",
+      "content_revision": "1ddbd9d77ad7cae1d757c4577624c4b3bbd320c8468f2f1b19defa53da79ff03",
+      "intent_tags": [
+        "memory"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.personal-memory",
+      "name": "本人の個人AIメモリ記録と利用を停止",
+      "primary_intent": "memory",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:memory.disable"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-memory-enable",
+      "content_revision": "3c384e686d352e8dffac21a336c8e8dea1b33909e5ecf9f78bae162cecf3dd05",
+      "intent_tags": [
+        "memory"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.personal-memory",
+      "name": "本人の明示同意で個人AIメモリを有効化",
+      "primary_intent": "memory",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:memory.enable"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-memory-export",
+      "content_revision": "112af3d0299b1cae249bad7fe556dbe65b66d842896ff26b0f665493300546ae",
+      "intent_tags": [
+        "memory"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.personal-memory",
+      "name": "本人の個人AIメモリをJSONエクスポート",
+      "primary_intent": "memory",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:memory.export"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-memory-forget",
+      "content_revision": "601c5eb7e58b322dedba659a09ddf3bfae8bba3b1e2fc54e39001120d8279c3d",
+      "intent_tags": [
+        "memory"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.personal-memory",
+      "name": "本人の個人AIメモリをID指定で削除",
+      "primary_intent": "memory",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:memory.forget"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-memory-list",
+      "content_revision": "4082ee421caa1d3aceae17f7d17f958d1f97ca34ba1f4dc5d16c3d27abb2a8a4",
+      "intent_tags": [
+        "memory"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.personal-memory",
+      "name": "本人の個人AIメモリだけを非公開表示",
+      "primary_intent": "memory",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:memory.list"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-memory-preview",
+      "content_revision": "6ce02aba72179f447a6cd46d3c36021da63600901ee0265af6730b8f4f31e9ad",
+      "intent_tags": [
+        "memory"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.personal-memory",
+      "name": "AIへ渡る本人の記憶文脈を非公開表示",
+      "primary_intent": "memory",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:memory.preview"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-memory-privacy",
+      "content_revision": "3eecc376f19cedf69ecd7964c1664cca256c528b32cf2d3679b99f0df8a2dc55",
+      "intent_tags": [
+        "memory"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.personal-memory",
+      "name": "個人AIメモリの保存・外部送信・削除境界を表示",
+      "primary_intent": "memory",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:memory.privacy"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-memory-remember",
+      "content_revision": "e3ca54c60f322e3ea4173c52e3ac0df2b256958022a41ab302b1dea710b25b17",
+      "intent_tags": [
+        "memory"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.personal-memory",
+      "name": "本人用の長期メモを明示保存",
+      "primary_intent": "memory",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:memory.remember"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-memory-search",
+      "content_revision": "1871a49a192100a6152ebddd9ad175157878bb95f8fb861e81390edbf275d8d0",
+      "intent_tags": [
+        "memory"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.personal-memory",
+      "name": "本人の個人AIメモリを関連度で検索",
+      "primary_intent": "memory",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:memory.search"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-memory-status",
+      "content_revision": "85e6ad8143569dd9d9fd61d3af53f648a3d999b494b38a885fead31ebe672999",
+      "intent_tags": [
+        "memory"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.personal-memory",
+      "name": "本人の個人AIメモリ状態を表示",
+      "primary_intent": "memory",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:memory.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-message-link-expand",
+      "content_revision": "f65193a58d8a221c330f73f9c87f0ee55ed125da3f816bfd67ae4c1c107f38d8",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "intelligence.ai-runtime",
+      "name": "同一guildのDiscordメッセージリンクを安全に展開",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:message_link_expand"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-minecraft-status",
+      "content_revision": "e8bb1b5edc62f24f01e8f3b542fada607405f104f1e3ee34b150dc8368914737",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "gaming.minecraft",
+      "name": "設定済みMinecraft Java serverのstatusをread-onlyで取得",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:minecraft.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-mod-ban",
+      "content_revision": "8a31dd14f6da05dc552ceeb072c25dc3c6069b62354d19f6d4031f2b241913a9",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.actions",
+      "name": "memberをban",
+      "primary_intent": "moderation",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:mod.ban"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-mod-case",
+      "content_revision": "cc8b0d0f7dfc891c9692a37e6ad37190e90d9254efe2e2a736b1c9f0022a897b",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "moderator",
+      "module_id": "moderation.actions",
+      "name": "moderation caseを表示",
+      "primary_intent": "moderation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:mod.case"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-mod-kick",
+      "content_revision": "4d88f11662392d50aa1d61e434b1c3b6ff507b15f694b8e2c7fe443e76a3d1db",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.actions",
+      "name": "memberをkick",
+      "primary_intent": "moderation",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:mod.kick"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-mod-purge",
+      "content_revision": "dc1b4d9e9e78fc2b42ebfb74aa6c31b6790f157f85d565bc304867b47e9ddaee",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.actions",
+      "name": "messageを確認付きで一括削除",
+      "primary_intent": "moderation",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:mod.purge"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-mod-purge-links",
+      "content_revision": "33a8ca945de4f0f52dfde037b705360c7b201da5c2ab24d62965a5e958928141",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.actions",
+      "name": "URL投稿を確認付きで削除",
+      "primary_intent": "moderation",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:mod.purge-links"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-mod-purge-user",
+      "content_revision": "ef52911072436e5f49a138b1f74f6d04cb09787dbd91c375329f39b35933d8c7",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.actions",
+      "name": "特定userのmessageを確認付きで削除",
+      "primary_intent": "moderation",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:mod.purge-user"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-mod-timeout",
+      "content_revision": "dc363e485b055c2370e55c40d7caa221418acf5f1e1eb1de9680616bd0afa3a3",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.actions",
+      "name": "memberをtimeout",
+      "primary_intent": "moderation",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:mod.timeout"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-mod-unban",
+      "content_revision": "afc0035d62ab1721deb235b61bb61844b02168157fdf696d9303f3b854d250e6",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "moderation.actions",
+      "name": "banを解除",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:mod.unban"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-mod-untimeout",
+      "content_revision": "a9bea381b1c0a8d02b5c7859ef368dd855e436f997be0dd499347674c9ff4fe8",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "moderator",
+      "module_id": "moderation.actions",
+      "name": "memberのtimeoutを解除",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:mod.untimeout"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-mod-warn",
+      "content_revision": "88e82920eb33b0f7ca1d62cd94feaeba63d686c8d84c3de22571d4610817158e",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "moderator",
+      "module_id": "moderation.actions",
+      "name": "警告をcase ledgerへ記録",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:mod.warn"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-mod-warnings",
+      "content_revision": "9a7ff1619977308854dc04e227652327896ac947a947b25e6aedf42787208573",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "moderator",
+      "module_id": "moderation.actions",
+      "name": "警告履歴を表示",
+      "primary_intent": "moderation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:mod.warnings"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-clear-mine",
+      "content_revision": "50bd74416591ff1b6a82e3354a1c826326c7b4dc6a95301fffa303d91afc8cc4",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "本人が依頼した待機queue曲だけを一括削除",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.clear-mine"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-generate",
+      "content_revision": "32414dbe7e2f5f60080d0461ef8643c293ab197ca5cace1974c20e7bc47f2363",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.music-generation",
+      "name": "権利確認済みpromptから検証済みPCM16 WAVを生成",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:musicgen.generate"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-import",
+      "content_revision": "9ea6ed6cb7811eea8ad5fa54e6d0b77656e0ecbd0561e198301bee91ed614d8e",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "権利確認済みPCM WAV添付をcontent-addressed private libraryへ取り込む",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.import"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-join",
+      "content_revision": "82473f65a2a87415b369b39f00b84645d24cd0e9c34d5137bc5108b430454c0b",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "利用者と同じVCへ音楽playerを接続",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.join"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-leave",
+      "content_revision": "6c86c7b23be6e0e282e2fc1042d5e09cb2f0924ee4403d8acb914ec50f0d8d36",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "権限を持つ利用者が音楽sessionを終了してVCから退出",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.leave"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-loop",
+      "content_revision": "7edab4f4ee793098fa912983b4c42e6573f3fe8e5acc79007ba08136849c1228",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "現在曲の依頼者または管理者がtrack・queue loopを設定",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.loop"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-move",
+      "content_revision": "50064e1877f268b71d3da648125c06e97bde1362043308bcb524d7c9d49bd933",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "本人のqueue曲または管理者が待機queue内の位置を変更",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.move"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-now",
+      "content_revision": "c52a74b1ee011f995720335461c2f7bbc512823e9c14f7dadfb243e19876eb2f",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "現在の再生曲を表示",
+      "primary_intent": "music",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.now"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-pause",
+      "content_revision": "9da707ca51d56d5f7d60cac9169a8dedd8145c027b91a96d4f6e9394194cf8b7",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "音楽busだけを一時停止しTTS busは継続",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.pause"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-play",
+      "content_revision": "4b2350d971bd43d30afd7f3fc4e5af2bd8828edb6b9906e6075fd3edc4b21edf",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "許可済みローカルlibraryから曲名でqueueへ追加・再生",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.play"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-playlist-delete",
+      "content_revision": "fc17b495a48fa22f8777ab5d6a47396e4497c385a2d6a2a7910f7a05cf472329",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "本人所有のplaylistを削除",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.playlist.delete"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-playlist-list",
+      "content_revision": "f14096a3a8978e65b112c9439febefadb1c30060a9666a5c5295c183327129e4",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "本人所有のplaylistだけを表示",
+      "primary_intent": "music",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.playlist.list"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-playlist-load",
+      "content_revision": "14d6ea6e4ac23839bacf96ce7ba4c042ea84f6c7f48e8391783e88a1647b9e0a",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "本人のplaylistを許可済みlibraryで再解決してqueueへ追加",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.playlist.load"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-playlist-save",
+      "content_revision": "420f9c8d83d030f171c3e7820009320248fd0d8bb1bf3ab6099f7d2056570dc6",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "本人の現在曲とqueueを個人playlistへ保存",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.playlist.save"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-queue",
+      "content_revision": "a295520e35d04cbc7f3082a1c14aa181f8033731ae088621599d99abcd33e6e0",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "現在曲と待機queueを表示",
+      "primary_intent": "music",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.queue"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-radio",
+      "content_revision": "02799fd0eace5479f5ca5f1a0927fd44627ba175e9a6b421401d4fae54b0134d",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "許可済みローカルlibraryから手動queue優先で1曲ずつ自動補充",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.radio"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-read-aloud-message",
+      "content_revision": "90e29664cbb6446389e5207ef8fcc4fd905308b7275eb53ff59cdb1e8e8666fb",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "明示routeの短文をloopback VOICEVOXで合成し既存music sessionへducking付きで重畳",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.read-aloud.dictionary-delete",
+        "command:music.read-aloud.dictionary-set",
+        "command:music.read-aloud.disable",
+        "command:music.read-aloud.enable",
+        "command:music.read-aloud.exclude-add",
+        "command:music.read-aloud.exclude-delete",
+        "command:music.read-aloud.focus-cancel",
+        "command:music.read-aloud.focus-start",
+        "command:music.read-aloud.list",
+        "command:music.read-aloud.my-preset",
+        "command:music.read-aloud.policy",
+        "command:music.read-aloud.preset",
+        "command:music.read-aloud.server-preset",
+        "event:music_read_aloud_message"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-remove",
+      "content_revision": "fa225d33d5b06b4a016f557fea2c735a53eb4ab114a7341f1aaae6a619e5c423",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "本人のqueue曲または管理者が指定曲を削除",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.remove"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-resume",
+      "content_revision": "99cb309b0f6687025f4fbffb9cd60f0dcc5722d549b4f2885e3cc514514570bd",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "一時停止中の音楽busを再開",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.resume"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-search",
+      "content_revision": "b1ba920199f7e8507d76a7fac2c00d287ddaed412a12c75f4a53e48c9957f930",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "許可済みローカルlibraryを曲名で検索",
+      "primary_intent": "music",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.search"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-search-youtube",
+      "content_revision": "2294d024802376391de07db4fb3dd89641bed7b42e8d5c8f30e1222723185cdf",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "YouTube公式検索ページURLを生成（音声抽出・再配信なし）",
+      "primary_intent": "music",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.search-youtube"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-seek",
+      "content_revision": "5b83c7b75b886a8e850f087b5f80d6ad99b9f84eb28e91d93925ac74f6c3513b",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "現在曲の依頼者または管理者がlocal音源の再生位置を変更",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.seek"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-shuffle",
+      "content_revision": "753970e356f5d345709e273611f9bb7ff5041c0130c4d050a7831cbcdaaa10d8",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "現在曲の依頼者または管理者が待機queueをshuffle",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.shuffle"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-skip",
+      "content_revision": "6f89cc4b7b17c95bc82407a93d46654109fdc2757953a1752969792cfde68709",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "現在曲の依頼者または管理者が曲をskip",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.skip"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-speak",
+      "content_revision": "0f9bb237a30fa6b74deabcabd52b0d287fe04774ec3b7df5d768d2e151baf16e",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "VOICEVOXをリアルタイム合成し音楽ducking付きでVCへ重畳",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.speak"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-status",
+      "content_revision": "2e744cabe5139c6a5a695a200ec1c57f5fbdd3796ecff0e2ac59323b65f5ea4c",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "音楽・TTS・ローカルlibraryの利用状態を表示",
+      "primary_intent": "music",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-stop",
+      "content_revision": "e25debdd11f0ac340b929bf102dacf28f7c186876105e9a062f8e5a1bd37de82",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "音楽とqueueだけを停止しTTSは継続",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.stop"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-music-volume",
+      "content_revision": "9ea42331af6192df3e3bbe0b30c93280e26460ade883456449c55bdc6b77d67d",
+      "intent_tags": [
+        "media",
+        "music"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "media.music",
+      "name": "現在曲の依頼者または管理者が音楽またはTTS bus音量を設定",
+      "primary_intent": "music",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:music.volume"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-nasa-apod-read",
+      "content_revision": "b6be5624cee4ff474c41d2806e087bfc5c336f2724148907e0ea7016c72a84f5",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "operations.nasa-apod",
+      "name": "NASA Astronomy Picture of the Dayを明示取得して表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:nasa.apod"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-poll-close",
+      "content_revision": "06e371b423498275a50dab6b525d765bc4d1fc586fb7ea3ce2843098351e11e0",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "投票を終了",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:poll.close"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-poll-create",
+      "content_revision": "2f101a4436daa7407b32ab5411612148180efac198bda7d5c692da59e6defecc",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "選択式投票を作成",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:poll.create"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-poll-results",
+      "content_revision": "e2d97d8b156b9a606fe641494715c3d359034c30be9e76c27ec636233c3accd8",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "投票結果を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:poll.results"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-poll-vote",
+      "content_revision": "2f1b26b625d3c2a9b7ed0e0260a2a90988c0586cf923753108105cfc8e54505b",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "persistent buttonから投票",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:component.poll-vote"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-schedule-resolve",
+      "content_revision": "c7beff0aabc189f33100d7150bb448309b810b262042003e943bda4347c6200c",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "operations.scheduling-notification",
+      "name": "uncertain reminderを所有者が監査後に解決",
+      "primary_intent": "unknown",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:schedule.resolve"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-schedule-uncertain",
+      "content_revision": "8f78f9e1c5f09b6598da8452d3ee51400a43816f647dd0bae58d104419dab91b",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "operations.scheduling-notification",
+      "name": "重複防止で保留したreminder配信を表示",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:schedule.uncertain"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-selfrole-add",
+      "content_revision": "4ae608602c28cb31c31283f57c29626af4f00ac5fd32964651ef19bcd744444e",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "moderator",
+      "module_id": "interaction.discord-surface",
+      "name": "self-role候補を追加",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:selfrole.add"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-selfrole-panel",
+      "content_revision": "d25dc7fa089263ce3c5b94ff686a3619acd2a690a820387c671c706b6ecce46e",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "moderator",
+      "module_id": "interaction.discord-surface",
+      "name": "self-role panelを設置",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:selfrole.panel"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-selfrole-remove",
+      "content_revision": "5ba9b78e9edf01eda510b4e6cf260737f5b1f2bc44f5ad7945518039cbc61ce9",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "moderator",
+      "module_id": "interaction.discord-surface",
+      "name": "self-role候補を削除",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:selfrole.remove"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-selfrole-toggle",
+      "content_revision": "fd552f9898c53ba1d5bbc31bcee33ee57e4702ef97642cbb92323fd967ed18cf",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "persistent buttonから安全なroleを付け外し",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:component.selfrole-toggle"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-announce",
+      "content_revision": "f4079ab097dff32b71b2dab58d9da26af11f49e686aeefc5d6552bf8fc537066",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "mentionを制限して告知",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:server.announce"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-config-show",
+      "content_revision": "39dbb6e7289ec285954d27623ec35e30b684e2d0db49b92f23eb229fc3eeb3d4",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "servertools設定を表示",
+      "primary_intent": "moderation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:server.config-show"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-goodbye-set",
+      "content_revision": "d84f5f4454a750129ea2ae74df198d0998a75c780d8214292b4541c1a8d9e2d7",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "goodbye messageを設定",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:server.goodbye-set"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-lock",
+      "content_revision": "741e425e154c9dddeb82988dedf6eedb678acb7f84f351c5a0dab84beb2a2608",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "channelをlock",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:server.lock"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-log-channel",
+      "content_revision": "307819beccd5c1c209ba62e4c76c0b2f002c4301841d0137ae205cce7702e2df",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "server監査log channelを設定",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:server.log-channel"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-member-join",
+      "content_revision": "32ff4c60d34e36ee20fcb358306c5aede104909934f7ce4e1eb45c15a64b77f8",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "security.access-control",
+      "name": "member join時のwelcome通知",
+      "primary_intent": "moderation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:member_join"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-member-remove",
+      "content_revision": "177bc76e14e55afec279baf8a3681c6b26fe336de04a2fdb0a3be7c2e79de7d0",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "security.access-control",
+      "name": "member remove時のgoodbye通知",
+      "primary_intent": "moderation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:member_remove"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-message-delete",
+      "content_revision": "95f9ec0c60789afd0dcb5f74dd2e12b16342851569959250adfba759b14a170b",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "message削除を監査channelへ通知",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:message_delete"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-message-edit",
+      "content_revision": "831ccaf0180b498379c0e9393e4a50a8b4f296e1cfaf6b78968834621928e2cd",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "message編集を監査channelへ通知",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:message_edit"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-nick",
+      "content_revision": "b66a8809d42aca17a53e17424ff36555000476c9905364671c2a3eb54917bdd8",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "moderator",
+      "module_id": "security.access-control",
+      "name": "member nicknameを変更",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:server.nick"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-role-add",
+      "content_revision": "c319132f2fb4425dfec09dbead20cf1f87f32d6cff7c7bc5e657af4127d36292",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "memberへroleを追加",
+      "primary_intent": "moderation",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:server.role-add"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-role-remove",
+      "content_revision": "5bcc872e6184d054a75ae6e41b81d69fe4a374747f1205c41b79651435b7de02",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "memberからroleを削除",
+      "primary_intent": "moderation",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:server.role-remove"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-slowmode",
+      "content_revision": "65148d46185fa6e411f27769bf20b26b96b7a3b4c953ca07146360260ad0f904",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "channel slowmodeを設定",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:server.slowmode"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-unlock",
+      "content_revision": "dec57970b1aea7b0ddf9dd1b50814381325e5936dacf3277a6b5bbef8b96c273",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "channelをunlock",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:server.unlock"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-server-welcome-set",
+      "content_revision": "68f1a3df108a534abf84c4075b28875ec0488ff195c198c7f2eebba9a14e27b0",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "welcome messageを設定",
+      "primary_intent": "moderation",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:server.welcome-set"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-site-archive",
+      "content_revision": "51b17b1f0d0c531c1ada9be01bc21ed795af811861173a300d2a6e9a0b780edd",
+      "intent_tags": [
+        "site"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "publishing.site-host",
+      "name": "生成サイトを配信停止して監査履歴へ保存",
+      "primary_intent": "site",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:site.archive"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-site-auto-publish",
+      "content_revision": "8832ec4ef88c2fb20bf99b0bafc8cd73dea92e6775294b4e21c9c1086cd6f915",
+      "intent_tags": [
+        "site"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "publishing.site-host",
+      "name": "明示的なサイト作成依頼を自動公開へ接続",
+      "primary_intent": "site",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "event:site_auto_publish"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-site-domain-manage",
+      "content_revision": "77d353c8434dc079afaef7f5243779f0037a83d88a73dfa4edc0dea8bc7cb2f7",
+      "intent_tags": [
+        "site"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "publishing.site-host",
+      "name": "サイト配信用ドメインと公開gatewayを管理",
+      "primary_intent": "site",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:site.domain"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-site-list",
+      "content_revision": "f3abd4ef96c665b1ed6ea3be27ec9ae3b6e23ec5c7a30d265672fd27e2601d39",
+      "intent_tags": [
+        "site"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "publishing.site-host",
+      "name": "閲覧可能な生成サイトを一覧表示",
+      "primary_intent": "site",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:site.list"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-site-publish",
+      "content_revision": "03abe8a001d54c2e19217e4a3720175c259469a34263dfc2d6d2646ed9023894",
+      "intent_tags": [
+        "site"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "publishing.site-host",
+      "name": "検証済みHTMLを専用サブドメインへ公開",
+      "primary_intent": "site",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:site.publish"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-site-rollback",
+      "content_revision": "e85bdf3e11257adaa060ee4a7eac81ea1f4e5de247a2336db257f671a36334fc",
+      "intent_tags": [
+        "site"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "publishing.site-host",
+      "name": "生成サイトを検証済みの旧版へ戻す",
+      "primary_intent": "site",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:site.rollback"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-site-show",
+      "content_revision": "562eede4e63b7ed2c85183c8ca3147aeb84b72de7238ee9c28ea9101f6b5cbce",
+      "intent_tags": [
+        "site"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "publishing.site-host",
+      "name": "生成サイトの版と公開状態を表示",
+      "primary_intent": "site",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:site.show"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-site-status",
+      "content_revision": "64586cf4287b629095f294747b02512161e37b94aa6847246342ee5bddc09799",
+      "intent_tags": [
+        "site"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "publishing.site-host",
+      "name": "サイト公開基盤の状態を表示",
+      "primary_intent": "site",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:site.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-site-update",
+      "content_revision": "754d08c0f5baf69e639b90214b24a635809ca6d5519f5f271fe9960372458359",
+      "intent_tags": [
+        "site"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "publishing.site-host",
+      "name": "所有する生成サイトを新しい版へ更新",
+      "primary_intent": "site",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:site.update"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-site-visibility",
+      "content_revision": "510aeda1fbc0ed8b3ce06b7f08248a7578402f457af6dc0d12da0f3958da142c",
+      "intent_tags": [
+        "site"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "publishing.site-host",
+      "name": "生成サイトの公開範囲を変更",
+      "primary_intent": "site",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:site.visibility"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-suggest-create",
+      "content_revision": "b71d233b07de6427451a1b049e11ecff464bf3a2e9cd959139d267327731e5b7",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "提案を登録",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:suggest.create"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-suggest-status",
+      "content_revision": "7c9fe71df2754379182bb9d11efba343cec5a551c28429e1b388348f6570fe4e",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "提案状態を表示・更新",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:suggest.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-system-audit",
+      "content_revision": "69d53851a0ada26613318de6a09aba82c6eda9375033a4ca4dfc03a0aa1c00c7",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.observability",
+      "name": "append-only監査logを表示",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:system.audit"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-system-backup",
+      "content_revision": "d662c6d5431251e60de0741e601ca753c940417a6be36ffbca361c03d86250b6",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "data.storage",
+      "name": "SQLite online backupとquick_checkを実行",
+      "primary_intent": "unknown",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:system.backup"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-system-overrides",
+      "content_revision": "220e4f5191eb32fc07e9f601ec2220c994f018eda2184737ad0eed80fc988c79",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.observability",
+      "name": "guildのmodule/capability/RBAC overrideを表示",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:system.overrides"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-system-runtime",
+      "content_revision": "5c87e27d49221283240f40b6f1c1710850deb1c2036835daf38d3827185c3ff7",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.observability",
+      "name": "実tree/plugin/handler inventoryを表示",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:system.runtime"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ticket-add",
+      "content_revision": "1f4480562aabb5936354e33ab6f5bee1bac7905b58c4b359427bea7188fdced7",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "ticket参加者を追加",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ticket.add"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ticket-close",
+      "content_revision": "9a5dcb7576fd91111ebfca84bf6e3dc8ed3c7cced29e6dae8a75357eb539ee05",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "ticketを閉じる",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ticket.close"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ticket-open",
+      "content_revision": "13dd319cbfc3ce23d75b87b624ccb065b57980d74092ca0dac895ccf41641f6a",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "非公開ticketを作成",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ticket.open"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ticket-remove",
+      "content_revision": "0a42ba8601723f0a28e15253bafdbd54aff3987b0818ea4ae035b3dd9165978d",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "ticket参加者を削除",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ticket.remove"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-ticket-transcript-info",
+      "content_revision": "110f423cd9ffd1fc96e6b0c09d0b1c3a6dd5686d8d861a9aa05a1834aab13ebb",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "interaction.discord-surface",
+      "name": "ticket transcriptのprivacy方針を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:ticket.transcript-info"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-tools-choose",
+      "content_revision": "3d67dc27a96e1e506b3be95b9cbc04965798627f90ffa04f77d592d017410f0a",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "候補から安全に抽選",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:tools.choose"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-tools-color",
+      "content_revision": "47d065191fa28bf9c24d0d1cb6d2991953f1d93aefc46820b4e5c2adbec95342",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "HEX colorを検証",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:tools.color"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-tools-dice",
+      "content_revision": "e5b51006e90403102980f945a48b5918a6151b9a80da667dd9a2ac76c80a2d74",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "dice式を評価",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:tools.dice"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-tools-random",
+      "content_revision": "0382ec704c9521d924fa22246612d25eaf8934965c8ab2c602c0cd90bfca336a",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "範囲内の整数を抽選",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:tools.random"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-tools-sha256",
+      "content_revision": "892872510f13c28249497a0ed0785ac06b11506b675f041582220ad47e1792af",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "入力のSHA-256を計算",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:tools.sha256"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-tools-snowflake",
+      "content_revision": "17c2ac4738f00e4b4a340c9138f49675b89445ab71c9826791c390e16258dd04",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "Discord Snowflake日時を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:tools.snowflake"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-tools-timestamp",
+      "content_revision": "33bfba9c695c7aec28a16f01dfcb791718adb385a2ec325664b21d6c10f161cc",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "utility.general",
+      "name": "Discord timestampへ変換",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:tools.timestamp"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-verify-configure",
+      "content_revision": "6c386eda50cb7d09a6cbfceed23cc4ae007cd5503f4b5d1e99329913bb2171a7",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "security.access-control",
+      "name": "安全なverified roleとguild側switchを設定",
+      "primary_intent": "moderation",
+      "risk": "critical",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:verify.configure"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-verify-start",
+      "content_revision": "c562ee5bd4bfd6aa4406c1f52db0808fa3aab047df92240d519c2960170bce47",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "security.access-control",
+      "name": "本人専用の短時間ワンタイム認証URLを発行",
+      "primary_intent": "moderation",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:verify.start"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-verify-status",
+      "content_revision": "836eb1397ab4424d68df438f80912ec49a8ccbbeccd8c9a5242917f844d984ca",
+      "intent_tags": [
+        "moderation"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "security.access-control",
+      "name": "本人確認の安全設定とguild側状態を表示",
+      "primary_intent": "moderation",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:verify.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-video-generate",
+      "content_revision": "68745dabb13b6503197120a303e8bf19b6acd0929609888b4fb451a5a6749c3a",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.video-generation",
+      "name": "明示promptから検証済みMP4動画を生成",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:video.generate"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-warning",
+      "content_revision": "eeb95f1019daed95c23fa6d223fa7ebbf1476e9981d0cec03f5dc7d40c4dd696",
+      "intent_tags": [
+        "knowledge",
+        "web_research"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "operations.public-information",
+      "name": "気象庁の公式公開データから警報・注意報を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:warning"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-weather",
+      "content_revision": "ebfc121ec9c9f7ce0ab4e40d3aef71efc76ab31d798eb468e1896a7b648e18e6",
+      "intent_tags": [
+        "knowledge",
+        "web_research"
+      ],
+      "minimum_rbac": "everyone",
+      "module_id": "operations.public-information",
+      "name": "気象庁の公式公開データから地域別天気予報を表示",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:weather"
+      ]
+    },
+    {
+      "bindings": [
+        "web_search"
+      ],
+      "capability_id": "cap-run-web-search-openai-paid",
+      "content_revision": "97593b858bb42f26f2669704c2327536401062a582d9e8c49a8e440b4120cb7d",
+      "intent_tags": [
+        "web_research"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "integration.api-web",
+      "name": "Owner明示opt-in専用のOpenAI有料Web検索tool",
+      "primary_intent": "web_research",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": []
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-yonerai-health",
+      "content_revision": "64ea8f0c00a9491532ad2103a84b69f2139091ed9bd6239be3544d397a01fb72",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.observability",
+      "name": "許可済みYonerAI readiness contractだけを照会",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:yonerai.health"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-yonerai-status",
+      "content_revision": "fb005b127dda5336f8a84c79de93d0f540a4c37a1b2424837fd2ac757c621762",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "guild_admin",
+      "module_id": "operations.observability",
+      "name": "YonerAI将来連携のread-only境界状態を表示",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:yonerai.status"
+      ]
+    }
+  ],
+  "schema_version": "yonerai.discord.capability-catalog.v1",
+  "source_revision": "185a232798b624b27fa3ccaefab33deb04ffed1b72e5d6a8232016594e5c1db3",
+  "sources": [
+    {
+      "path": "docs/CAPABILITY_COUNTS.json",
+      "sha256": "37328a7433fad38f2254a0ed83673cf447cd9487a817070c85e7faf3daae9716"
+    },
+    {
+      "path": "scripts/generate_capability_catalog.py",
+      "sha256": "54555061940bc05025b3f03c9557d0d05af00ffac9e1775b75cea471bed54fc6"
+    },
+    {
+      "path": "src/yonerai_discord/__init__.py",
+      "sha256": "d84071a263cf050b63d2eb6990638180835145596b3ca3c794f684c5c9a7515f"
+    },
+    {
+      "path": "src/yonerai_discord/capabilities.py",
+      "sha256": "aabd9857a9f5d6a90f188aa748623238252d39c9cf35baeddd55bfeb5f9258d6"
+    },
+    {
+      "path": "src/yonerai_discord/capability_metadata_contract.py",
+      "sha256": "d81f1e6c4d777f2a9fe990092c59e73016f7d66fcb279d4f11273811d62fb055"
+    },
+    {
+      "path": "src/yonerai_discord/config.py",
+      "sha256": "ca498bd88b8ce5ee803ce349d3e06d5de4ed6a820d5aa246922d2d9d6df45b3e"
+    },
+    {
+      "path": "src/yonerai_discord/secret_detection.py",
+      "sha256": "abbf20a8200819bdaaf0d5816e6c64e91e2a52ff0efd2d573eef926076edc134"
+    },
+    {
+      "path": "src/yonerai_discord/secret_policy.py",
+      "sha256": "c53801247c0f24d1e1705d9ae2692b0dec5a7906b996ec7709abb84177989c7f"
+    },
+    {
+      "path": "src/yonerai_discord/control_plane/__init__.py",
+      "sha256": "97a15e48c13bb55dad8f2bdf6072fbf1bc5bf15e4877094f351727cf36a83dfd"
+    },
+    {
+      "path": "src/yonerai_discord/control_plane/catalog.py",
+      "sha256": "36d64bfdfaa6e5d5831cafafa48c6e921b2a5f7731c9222c9e1ed15d49e3f9c0"
+    },
+    {
+      "path": "src/yonerai_discord/control_plane/models.py",
+      "sha256": "ac0698b78958ef074bee22b47822bb70cefb4fe0285f2591f6d04283a061ae91"
+    },
+    {
+      "path": "src/yonerai_discord/control_plane/rbac.py",
+      "sha256": "7b61723ed95e28038cb9a862b79a5f598200629958f58766f124f3146b2c2b1c"
+    },
+    {
+      "path": "src/yonerai_discord/control_plane/registry.py",
+      "sha256": "a1c7e49332c32c4bd772a9f2e0963d1dfbbc76eda1017460c6349dfbffc7302f"
+    },
+    {
+      "path": "src/yonerai_discord/control_plane/state.py",
+      "sha256": "d4395ac055c3198748de7fd625d05288ae6a21d9d17b40c5bd5bab1821a692cf"
+    },
+    {
+      "path": "src/yonerai_discord/modules/ai/bounded_tools.py",
+      "sha256": "862aca311080dbccf03617bd927338ab461bbb0c5de72084194f0b8aaf146dc0"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifest.py",
+      "sha256": "ba4b3894674fe2a5990cd979603a2f573897083bc37156e59152b1958472532d"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/__init__.py",
+      "sha256": "14fc0d0a2bb48b63373616ab80f663118c36f2743c2d05f6ae4f694310481648"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/admin_ui.py",
+      "sha256": "4a8ea574e8556ae74f4abc258f1a8ad021d67a112bd9066d2bea673ece35c70e"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/ai_memory.py",
+      "sha256": "6c38e51effea0b13291e6284885438bb9d91056382a2203d6c37ac5cad6dcfdf"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/browser_rendering.py",
+      "sha256": "590b5f0df5b9074fbf292dcd28823074630c9aacbf8c2d2eec3da739b5c21d43"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/community.py",
+      "sha256": "60b676e14a6674914e298cb5ca5097e6f5334edbc48f8b93bad0393646c13c5f"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/capability_forge.py",
+      "sha256": "8c3f55c0fac6b99cddedf7e2a3ada30e6130b648d72d7becb45123a89d3154a1"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/discovery.py",
+      "sha256": "d1015fa920eb98768a4f05a76face29cb50e2a4b11b53d3e5607c4f3a43ec3c2"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/earthquake.py",
+      "sha256": "e445c2f26cef2ccc65b45e6bb44479fc279eaa94dbe5c44d6402d8895b32176a"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/image_editing.py",
+      "sha256": "528e1a38e3cae9c7b68aac9467040e5cb68ccc82f1a791d9737373c320326f7f"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/image_generation.py",
+      "sha256": "5953cdb7b93ea6994ee1f445a9dd0d4b03fe9c3f261e0dd352ee379b7f462029"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/media_pipeline.py",
+      "sha256": "450b309339c79c45f3161df3ae503c37aec60c5bac639954a687eb22ef908e97"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/media_inspection.py",
+      "sha256": "2ddb9ff10b41cebe4eb7b2cedabceaceb8da5b8348ae3d78000b46ca52d653bd"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/music_generation.py",
+      "sha256": "cb49fb12c4c6dd39816e7f3333d328660e88424e8a48ca32c1b6e60e2f48e177"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/speech_synthesis.py",
+      "sha256": "1ce114689b78131739d6dd4c29a121d3310e95ceff46cdc6486be0fa74d7c8eb"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/speech_transcription.py",
+      "sha256": "9fb906e1cd226472957dbc90a37096ee93bfd1f2553496f7968fde3c77065af5"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/video_generation.py",
+      "sha256": "8c57926fe459e9d9d5f398446fb25a608bbcd9c874aaca14dc8b53e8f8cd35fd"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/web_search.py",
+      "sha256": "cd6f4723341bf155847bfae3df6a7d7055e3c62d88cb82b7e86fec38431b2cbd"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/jp_information.py",
+      "sha256": "a6baf951d9f5c26ae9d1e6cfa1c83bde6e03d880050f7dbe913bfd625eb068a6"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/moderation_server.py",
+      "sha256": "3650b43bddca1b9c0797db79c00e9ca803eea7656cea41cfbf2f0946e36379ef"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/modules.py",
+      "sha256": "b7d0ff94cc8dc3d2c2dc05295ca3b5f0e8715e7013bd28a3751cefdf627a9cae"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/music_audio.py",
+      "sha256": "7c451e6a2696766e443604d17189b1a957b1efe15a6d0e6766e1928e1192088e"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/nasa_apod.py",
+      "sha256": "ab760e0048b99b5560554186767abb0a80dec0566ee7ac8025d499b517a24046"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/site_publish.py",
+      "sha256": "d2390faa1242b43b9731299978ca461ca4e81dca8623838b7afe82e88ffe8407"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/system_ops.py",
+      "sha256": "7b4adc4d21dc5fca51d74cccdd0fcc4a67b2202cfd07fc43e5646a65b244358e"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/types.py",
+      "sha256": "5c72d9d8024df7d64cfaa5df3d7226848af3e37b683be3f118111dfdad4ccf7b"
+    },
+    {
+      "path": "src/yonerai_discord/runtime_manifests/utility.py",
+      "sha256": "36c66775b08823af275af2b26f3bab206d0dda9f05cbdf3d8cd2c5579f8891e8"
+    }
+  ]
+}

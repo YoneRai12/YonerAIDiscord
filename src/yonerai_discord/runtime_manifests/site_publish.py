@@ -1,0 +1,96 @@
+from __future__ import annotations
+
+from ..control_plane import RbacLevel, RiskLevel
+from .types import RuntimeCapabilityDefinition, _cap
+
+
+CAPABILITIES: tuple[RuntimeCapabilityDefinition, ...] = (
+    _cap(
+        "cap-run-site-status",
+        "publishing.site-host",
+        "サイト公開基盤の状態を表示",
+        command="site status",
+        plugin="site_publish",
+    ),
+    _cap(
+        "cap-run-site-list",
+        "publishing.site-host",
+        "閲覧可能な生成サイトを一覧表示",
+        command="site list",
+        plugin="site_publish",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-site-show",
+        "publishing.site-host",
+        "生成サイトの版と公開状態を表示",
+        command="site show",
+        plugin="site_publish",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-site-publish",
+        "publishing.site-host",
+        "検証済みHTMLを専用サブドメインへ公開",
+        command="site publish",
+        plugin="site_publish",
+        level=RbacLevel.TRUSTED,
+        risk=RiskLevel.HIGH,
+    ),
+    _cap(
+        "cap-run-site-update",
+        "publishing.site-host",
+        "所有する生成サイトを新しい版へ更新",
+        command="site update",
+        plugin="site_publish",
+        level=RbacLevel.TRUSTED,
+        risk=RiskLevel.HIGH,
+    ),
+    _cap(
+        "cap-run-site-rollback",
+        "publishing.site-host",
+        "生成サイトを検証済みの旧版へ戻す",
+        command="site rollback",
+        plugin="site_publish",
+        level=RbacLevel.GUILD_ADMIN,
+        risk=RiskLevel.HIGH,
+    ),
+    _cap(
+        "cap-run-site-visibility",
+        "publishing.site-host",
+        "生成サイトの公開範囲を変更",
+        command="site visibility",
+        plugin="site_publish",
+        level=RbacLevel.GUILD_ADMIN,
+        risk=RiskLevel.HIGH,
+    ),
+    _cap(
+        "cap-run-site-archive",
+        "publishing.site-host",
+        "生成サイトを配信停止して監査履歴へ保存",
+        command="site archive",
+        plugin="site_publish",
+        level=RbacLevel.GUILD_ADMIN,
+        risk=RiskLevel.HIGH,
+    ),
+    _cap(
+        "cap-run-site-auto-publish",
+        "publishing.site-host",
+        "明示的なサイト作成依頼を自動公開へ接続",
+        event="site_auto_publish",
+        plugin="site_publish",
+        level=RbacLevel.TRUSTED,
+        risk=RiskLevel.HIGH,
+        default_enabled=False,
+    ),
+    _cap(
+        "cap-run-site-domain-manage",
+        "publishing.site-host",
+        "サイト配信用ドメインと公開gatewayを管理",
+        command="site domain",
+        plugin="site_publish",
+        level=RbacLevel.BOT_OWNER,
+        risk=RiskLevel.CRITICAL,
+        owner_only=True,
+    ),
+)

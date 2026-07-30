@@ -1,0 +1,25 @@
+name: Bug report
+description: Report a safe, reproducible problem in the public release.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Do not include tokens, credentials, private paths, real IDs, or live logs. Security issues belong in the private reporting channel."
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior / 期待する動作
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Safe minimal reproduction / 安全な最小再現
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Offline or live verification / オフラインまたはlive検証
+      description: "State whether this was verified only offline."

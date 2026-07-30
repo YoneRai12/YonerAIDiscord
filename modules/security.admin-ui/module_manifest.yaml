@@ -1,0 +1,38 @@
+module_id: "security.admin-ui"
+module_name: "YonerAI Read-only Admin Web UI"
+module_type: "security_admin_surface"
+version: "0.1.0"
+
+owner_lane: "private"
+status: "contract_partial"
+source_of_truth: "repo"
+current_truth_level: "code_backed"
+
+purpose: "選択guildのmodule、capability、readiness、redacted auditをloopback GETで表示する"
+
+non_goals:
+  - "OAuth、session、CSRF、mutation routeを実装しない"
+  - "identity verification HTTPを認証面として流用しない"
+  - "proxy header、CORS、arbitrary HTTP、script、formを受理しない"
+
+capabilities_required:
+  - "cap-run-admin-ui-read"
+
+permissions:
+  network_access: "loopback_listener_only"
+  database_access: "selected_guild_redacted_audit_read_only"
+  secret_access: "none"
+  shell_access: "none"
+  arbitrary_http: "none"
+
+security:
+  default_enabled: false
+  minimum_rbac: "guild_admin"
+  risk: "high"
+  fresh_member_check: true
+  response_recheck: true
+
+readiness:
+  requires_injected_config: true
+  requires_injected_authenticator: true
+  live_verified: false

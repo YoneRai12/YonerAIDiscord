@@ -1,0 +1,7 @@
+**
+!src/
+!src/yonerai_discord/
+!src/yonerai_discord/**
+!infra/
+!infra/search-sandbox/
+!infra/search-sandbox/gateway-requirements.lock

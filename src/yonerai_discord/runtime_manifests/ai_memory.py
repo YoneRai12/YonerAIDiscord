@@ -1,0 +1,182 @@
+from __future__ import annotations
+
+from ..control_plane import RiskLevel
+from .types import RuntimeCapabilityDefinition, _cap
+
+
+MEMORY_CONTEXT_RECALL_CAPABILITY_ID = "cap-run-memory-context-recall"
+AI_ATTACHMENT_UNDERSTANDING_CAPABILITY_ID = "cap-run-ai-attachment-understand"
+MESSAGE_LINK_EXPANSION_CAPABILITY_ID = "cap-run-message-link-expand"
+
+
+CAPABILITIES: tuple[RuntimeCapabilityDefinition, ...] = (
+    _cap(
+        "cap-run-ai-mention-chat",
+        "intelligence.ai-runtime",
+        "BOTへの明示メンションをTerra/Solへ安全に接続して返信",
+        event="ai_mention_message",
+        plugin="ai",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        MESSAGE_LINK_EXPANSION_CAPABILITY_ID,
+        "intelligence.ai-runtime",
+        "同一guildのDiscordメッセージリンクを安全に展開",
+        event="message_link_expand",
+        plugin="ai",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        AI_ATTACHMENT_UNDERSTANDING_CAPABILITY_ID,
+        "intelligence.ai-runtime",
+        "許可済み添付をAIのmultimodal入力として理解",
+        plugin="ai",
+        risk=RiskLevel.MEDIUM,
+        default_enabled=False,
+    ),
+    _cap(
+        "cap-run-ai-model-list",
+        "intelligence.ai-runtime",
+        "本人が利用可能な論理モデル候補を非公開表示",
+        command="ai model list",
+        plugin="ai",
+    ),
+    _cap(
+        "cap-run-ai-model-set",
+        "intelligence.ai-runtime",
+        "本人の論理モデル設定を変更",
+        command="ai model set",
+        plugin="ai",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-ai-model-auto",
+        "intelligence.ai-runtime",
+        "本人の論理モデル設定を自動選択へ戻す",
+        command="ai model auto",
+        plugin="ai",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-ai-provider-list",
+        "intelligence.ai-runtime",
+        "本人が利用可能なprovider候補を非公開表示",
+        command="ai provider list",
+        plugin="ai",
+    ),
+    _cap(
+        "cap-run-ai-provider-set",
+        "intelligence.ai-runtime",
+        "本人のprovider設定を変更",
+        command="ai provider set",
+        plugin="ai",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-ai-route",
+        "intelligence.ai-runtime",
+        "本人の希望経路と実効経路を理由付きで非公開表示",
+        command="ai route",
+        plugin="ai",
+    ),
+    _cap(
+        "cap-run-ai-reset",
+        "intelligence.ai-runtime",
+        "本人の現在会話の短期履歴だけをリセット",
+        command="ai reset",
+        plugin="ai",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-memory-status",
+        "intelligence.personal-memory",
+        "本人の個人AIメモリ状態を表示",
+        command="memory status",
+        plugin="personal_memory",
+    ),
+    _cap(
+        "cap-run-memory-enable",
+        "intelligence.personal-memory",
+        "本人の明示同意で個人AIメモリを有効化",
+        command="memory enable",
+        plugin="personal_memory",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-memory-disable",
+        "intelligence.personal-memory",
+        "本人の個人AIメモリ記録と利用を停止",
+        command="memory disable",
+        plugin="personal_memory",
+    ),
+    _cap(
+        "cap-run-memory-remember",
+        "intelligence.personal-memory",
+        "本人用の長期メモを明示保存",
+        command="memory remember",
+        plugin="personal_memory",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-memory-list",
+        "intelligence.personal-memory",
+        "本人の個人AIメモリだけを非公開表示",
+        command="memory list",
+        plugin="personal_memory",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-memory-search",
+        "intelligence.personal-memory",
+        "本人の個人AIメモリを関連度で検索",
+        command="memory search",
+        plugin="personal_memory",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-memory-preview",
+        "intelligence.personal-memory",
+        "AIへ渡る本人の記憶文脈を非公開表示",
+        command="memory preview",
+        plugin="personal_memory",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        MEMORY_CONTEXT_RECALL_CAPABILITY_ID,
+        "intelligence.personal-memory",
+        "本人が明示保存した記憶を許可済みAI文脈へ注入",
+        plugin="personal_memory",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-memory-export",
+        "intelligence.personal-memory",
+        "本人の個人AIメモリをJSONエクスポート",
+        command="memory export",
+        plugin="personal_memory",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-memory-forget",
+        "intelligence.personal-memory",
+        "本人の個人AIメモリをID指定で削除",
+        command="memory forget",
+        plugin="personal_memory",
+        risk=RiskLevel.MEDIUM,
+    ),
+    _cap(
+        "cap-run-memory-clear",
+        "intelligence.personal-memory",
+        "本人の個人AIメモリを確認付きで全削除",
+        command="memory clear",
+        plugin="personal_memory",
+        risk=RiskLevel.CRITICAL,
+    ),
+    _cap(
+        "cap-run-memory-privacy",
+        "intelligence.personal-memory",
+        "個人AIメモリの保存・外部送信・削除境界を表示",
+        command="memory privacy",
+        plugin="personal_memory",
+    ),
+)

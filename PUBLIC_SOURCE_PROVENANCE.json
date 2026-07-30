@@ -1,0 +1,182 @@
+{
+  "license": {
+    "copy_mode": "exact-bytes",
+    "destination": "LICENSE",
+    "retrieved_at": "2026-07-30T22:09:00+09:00",
+    "sha256": "bbbe07774fcc1cee141dd54cf0badbf618ae74db428290c9525e5968e35118f0",
+    "source_url": "https://raw.githubusercontent.com/YoneRai12/YonerAI/main/LICENSE"
+  },
+  "public_export": {
+    "generated_files": [
+      {
+        "path": ".github/CODEOWNERS",
+        "sha256": "3f9f3f13c5840deae9a4635778522753c5931317d1368c3787ec1185d16be78d",
+        "transformation": "public_generated"
+      },
+      {
+        "path": ".github/ISSUE_TEMPLATE/bug_report.yml",
+        "sha256": "a0162a6ade91cfd808ae9a8446d93dca4dc8c98b078a030c0bb114f080d90f69",
+        "transformation": "public_generated"
+      },
+      {
+        "path": ".github/ISSUE_TEMPLATE/config.yml",
+        "sha256": "3a8ad540cbf195327f403ca2ec2ed5d686a20c3c52c1dcd7aed290f29318bfef",
+        "transformation": "public_generated"
+      },
+      {
+        "path": ".github/ISSUE_TEMPLATE/feature_request.yml",
+        "sha256": "6cfc6b2c38eef79040f5d725b2f5097e6cb474dac5e53085e2e7d6a888e4f3f2",
+        "transformation": "public_generated"
+      },
+      {
+        "path": ".github/PULL_REQUEST_TEMPLATE.md",
+        "sha256": "6c83932734b7073b5b1ecfc5d487318801dc899a33ae69796ee1482c81a0a1cc",
+        "transformation": "public_generated"
+      },
+      {
+        "path": ".github/dependabot.yml",
+        "sha256": "c5d9cdc38cae054819e3ebc37071aafab3635a214628f6fa971fb74a87a9e3af",
+        "transformation": "public_generated"
+      },
+      {
+        "path": ".github/workflows/ci.yml",
+        "sha256": "1bf90a5a8725ed4567f7e3ba896709134fa77240b8c4a8d7cf62003cc6b00b0b",
+        "transformation": "public_generated"
+      },
+      {
+        "path": ".github/workflows/codeql.yml",
+        "sha256": "ba2fbea28407cd571ac9b6e03a958028d01c13ecdf22c68ecf3c16b63c690a2f",
+        "transformation": "public_generated"
+      },
+      {
+        "path": ".github/workflows/release-build.yml",
+        "sha256": "9c9680412958b456d7e753368200eef3ef89c60ef5ad4a4d7b856c710f8aa28a",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "ARCHITECTURE.md",
+        "sha256": "6af2af1ab6a1eeac3a590f275eb79bf007272ee579c46448ca5ebb5b7a9b2b76",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "CHANGELOG.md",
+        "sha256": "59f23921f4145a89829a2b276aaebbfea704490a03b4c29ae8574ecc6bc697f0",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "CITATION.cff",
+        "sha256": "b42403f090b3f2a434d0c53949372442ed71117e4a14b3e517087870b3e22ca7",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "CODE_OF_CONDUCT.md",
+        "sha256": "78b4fb05b2fb169403287ac6b0d6fc90fd930e8f7008b195d38aa02006dd21e1",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "sha256": "6f55df2caa2c3372770fa79353f91b92156c3115a8453d19d72308626a6e889a",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "DEPENDENCY_LICENSES.json",
+        "sha256": "b290b2c4ca7df7b554501310a03905d26b47cea762e7196d3ef1c4d973f5a815",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "GOVERNANCE.md",
+        "sha256": "dbd38244d6cce389482c20bdff830277601856fa106bbea3f1fe677117cad354",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "bbbe07774fcc1cee141dd54cf0badbf618ae74db428290c9525e5968e35118f0",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "PUBLIC_BOUNDARY.md",
+        "sha256": "bf9e01f5b86eb7a2c7f643270d3738d8f960bbdf136c98a2eaca0ed57879eef3",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "PUBLIC_CURRENT_STATUS.md",
+        "sha256": "3fc1d84d75df1be4f68d45fb49d7849ae1b4f30419bddd06351876300eb3d7cc",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "PUBLIC_FEATURE_MATRIX.json",
+        "sha256": "aaa698a3e0b95a3f4eff3479cb5a96c1245c530f876efec8f5b82e7846acb70e",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "README.md",
+        "sha256": "f21f2ce0ee7d28fc975479637328477a67a98efc067bd2bd886793781515b6b2",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "ROADMAP.md",
+        "sha256": "0026cc28408e9f5a8ba20425f7001eb63cb0d5724243a87a63a1d8b8dcbd4ee0",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "SECURITY.md",
+        "sha256": "d05918c5064938051265df84b96e91789d788c6da70832902a179056528b2bb9",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "SUPPORT.md",
+        "sha256": "e17e761e531e7173f011e78e9e014552483f787b48cf33515353968068615966",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "THIRD_PARTY_NOTICES.md",
+        "sha256": "45c67f3cdd6511a7f628ea6afe228682d6a9c1d7a4353477adfb8c679b14638c",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "TRADEMARKS.md",
+        "sha256": "d91ac6b117951b6d5bd26d7434818fd00b9bbe4ad0e829f36719480a5526bbe7",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "ci/verify_public_package.py",
+        "sha256": "ab3989e7c19a549b5990d58e943f71ad5c24dfc7bc1c8cca3fbcd8e5e471d82d",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "docs/PROVIDER_AND_MODEL_ARCHITECTURE.md",
+        "sha256": "739567f22e7ec3d001fde4a188083d2d728dbac2b849e9a21e344fa59d97e206",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "docs/generated/capability-catalog/README.md",
+        "sha256": "3d76dfeef63bf8d243aee0c49d4ec8e48da76bf72371c233e1d4ec06ae6a93f8",
+        "transformation": "public_catalog_projection"
+      },
+      {
+        "path": "docs/generated/capability-catalog/catalog.json",
+        "sha256": "1c6fcd00a4c4bf3c9eac14652cc317937bb2f205bd5dfec72c154f9660db14cb",
+        "transformation": "public_catalog_projection"
+      },
+      {
+        "path": "pyproject.toml",
+        "sha256": "2c5a2009953e099679c0a4b3a807371b530c90733451b9a0ac85fc2ec89eaa90",
+        "transformation": "public_identity"
+      },
+      {
+        "path": "src/yonerai_discord/__init__.py",
+        "sha256": "d84071a263cf050b63d2eb6990638180835145596b3ca3c794f684c5c9a7515f",
+        "transformation": "public_version"
+      },
+      {
+        "path": "src/yonerai_discord/modules/site_publish/__init__.py",
+        "sha256": "c1f0b89d1d07e3708d888960a9e8b7914db6a5849be260d7dc46cf37f2b03fa7",
+        "transformation": "public_generated"
+      }
+    ],
+    "policy_sha256": "0e0f89bb760773f2ce46fd8bb1e86d625daa8f24726bb5adb72f2d5675843464",
+    "receipt": "PUBLIC_EXPORT_MANIFEST.json",
+    "source_commit": "0d96c84cc96bbae9727dd7ce57a4aba7304f6b13"
+  },
+  "schema_version": 1
+}

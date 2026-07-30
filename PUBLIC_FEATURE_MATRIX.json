@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "public_status": "offline-only",
+  "live_verification": "not performed",
+  "features": [
+    {
+      "name": "Local preview and doctors",
+      "implementation": "implemented_offline",
+      "default": "read_only",
+      "live_verified": false
+    },
+    {
+      "name": "Search Fabric",
+      "implementation": "implemented_offline",
+      "configuration": "unconfigured",
+      "default": "off",
+      "live_verified": false
+    },
+    {
+      "name": "Audio and VOICEVOX core",
+      "implementation": "implemented_offline",
+      "default": "off",
+      "live_verified": false
+    },
+    {
+      "name": "Discord",
+      "implementation": "implemented_offline",
+      "runtime_status": "live_unverified",
+      "default": "off",
+      "live_verified": false
+    },
+    {
+      "name": "YonerAI Core v0.1 harness",
+      "implementation": "implemented_offline",
+      "connection": "real_unconnected",
+      "default": "off",
+      "live_verified": false
+    },
+    {
+      "name": "Site publish",
+      "availability": "unavailable_in_public_alpha",
+      "default": "off",
+      "live_verified": false
+    },
+    {
+      "name": "External providers and dangerous operations",
+      "configuration": "unconfigured",
+      "default": "off",
+      "live_verified": false
+    }
+  ]
+}

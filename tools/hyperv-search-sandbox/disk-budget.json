@@ -1,0 +1,21 @@
+{
+  "schema": "yonerai.search-sandbox.hyperv-disk-budget.v1",
+  "profiles": {
+    "standard": {
+      "available": true,
+      "required_free_bytes": 38654705664,
+      "vhd_bytes": 34359738368,
+      "buckets": [
+        {"id": "dynamic_vhd_maximum", "required_bytes": 34359738368, "reason": "Generation 2 sandbox VHDX maximum allocation."},
+        {"id": "verified_autoinstall_iso", "required_bytes": 2147483648, "reason": "Verified installation media remains available until guest installation completes."},
+        {"id": "rootless_container_layers", "required_bytes": 1073741824, "reason": "Pinned SearXNG and gateway image layers plus rootless container storage."},
+        {"id": "bounded_update_and_logs", "required_bytes": 536870912, "reason": "Bounded package update, service log, and temporary workspace headroom."},
+        {"id": "rollback_headroom", "required_bytes": 536870912, "reason": "Reserved rollback and failed-install recovery headroom."}
+      ]
+    },
+    "compact": {
+      "available": false,
+      "unavailable_reason": "Compact profile is deliberately unavailable until its ISO, VHD growth, image-layer, update, and rollback disk budget is measured."
+    }
+  }
+}

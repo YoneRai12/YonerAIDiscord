@@ -1,0 +1,62 @@
+module_id: "media.url-inspection"
+module_name: "YonerAI Public YouTube URL Inspection"
+module_type: "media_url_inspection"
+version: "0.3.0"
+
+owner_lane: "private"
+status: "local_impl"
+source_of_truth: "repo"
+current_truth_level: "code_backed"
+
+purpose: "明示された公開YouTube動画URLを、専用Hyper-V VMまたは明示的に有効化したremote providerで根拠付き解析する"
+
+non_goals:
+  - "YouTubeへログインしない"
+  - "Cookie、OAuth token、ブラウザsessionを取得または転送しない"
+  - "動画本体、音声、字幕、thumbnailを永続保存または再配信しない"
+  - "任意Web URL、任意ファイルURL、playlist、channel URLを受け付けない"
+  - "Hyper-V VMへ任意command、任意path、host filesystem共有、GPU deviceを渡さない"
+  - "字幕が利用できない動画でthumbnail OCRだけから内容全体を理解済みとは扱わない"
+  - "失敗時に別provider、別model、Web検索へ自動fallbackしない"
+
+capabilities_required:
+  - "cap-run-media-url-inspection"
+
+permissions:
+  network_access: "Hyper-V worker can reach only loopback Squid; Squid allowlists required YouTube domains on public TCP 443 and nftables denies private/special IPs; or fixed Google Generative Language endpoint"
+  media_access: "canonical public YouTube watch URL only; Hyper-V temporary subtitle/thumbnail evidence"
+  database_access: "none"
+  secret_access: "fixed runtime SSH identity for Hyper-V; Gemini key only for explicit remote mode"
+  shell_access: "fixed Windows OpenSSH argv to forced-command account only; no user-controlled argv or remote command"
+  arbitrary_http: "denied"
+
+security:
+  default_enabled: false
+  minimum_rbac: "bot_owner"
+  risk: "high"
+  owner_only: true
+  fresh_member_check: true
+  response_recheck: true
+  remote_consent: "required only for explicit external provider; Hyper-V VM is local"
+  url_policy: "https youtube watch/shorts/youtu.be video URL only; userinfo, port, fragment rejected"
+  retry_policy: "no automatic provider retry"
+  quota_policy: "remote: persistent atomic UTC daily reservation before POST with default 0; Hyper-V: one request at a time"
+  sandbox_policy: "dedicated Generation 2 VM and VHDX, no host share, non-root forced-command worker, pinned SSH host key, fixed framed protocol, Squid domain policy and nft private/special egress rejection"
+  cleanup_policy: "terminal success is accepted only with cleanup_confirmed=true"
+  sensitive_logging: "api key, full instruction, extracted evidence, provider body, worker stderr prohibited"
+
+limits:
+  remote_provider_timeout_seconds: 60
+  hyperv_timeout_seconds: 60
+  hyperv_vm_memory: "16G"
+  hyperv_vm_vcpu: 2
+  hyperv_vm_disk_max: "20G dynamic"
+  max_output_characters: 8000
+  max_provider_calls_per_request: 1
+  default_daily_provider_calls: 0
+
+readiness:
+  requires_remote_opt_in: "remote provider only"
+  requires_api_key: "remote provider only"
+  requires_hyperv_probe: "Hyper-V mode only"
+  live_verified: false

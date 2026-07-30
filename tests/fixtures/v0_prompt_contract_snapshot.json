@@ -1,0 +1,21 @@
+{
+  "section_order": [
+    "safety_invariants",
+    "character_kernel",
+    "discord_surface_policy",
+    "authorized_untrusted_memory",
+    "bounded_conversation_history",
+    "current_user_input_and_attachment_refs",
+    "allowed_typed_tools"
+  ],
+  "memory_delimiters": [
+    "<untrusted-memory-data>",
+    "</untrusted-memory-data>"
+  ],
+  "forbidden_hidden_sources": [
+    "AGENTS.md",
+    "CURRENT_TRUTH.md",
+    "provider/model catalog",
+    "chain-of-thought"
+  ]
+}

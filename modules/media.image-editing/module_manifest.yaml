@@ -1,0 +1,40 @@
+module_id: "media.image-editing"
+module_name: "YonerAI Image Editing"
+module_type: "provider_neutral_media_contract"
+version: "0.2.0"
+
+owner_lane: "private"
+status: "mention_entry_code_backed"
+source_of_truth: "repo"
+current_truth_level: "code_backed"
+
+purpose: "@mention の編集指示と検証済み PNG 1枚から、別IDの canonical PNG 1枚を作る"
+
+non_goals:
+  - "bot生成画像への返信元を編集元として扱わない"
+  - "任意URL、file、path、browser、PC、shell入力を受け付けない"
+  - "slash commandを追加しない"
+
+capabilities_required:
+  - "cap-run-image-edit"
+
+permissions:
+  network_access: "provider_registry_only_when_explicitly_bound"
+  image_access: "validated_artifact_ref_and_private_store_only"
+  database_access: "none"
+  secret_access: "none"
+  shell_access: "none"
+  arbitrary_http: "none"
+
+security:
+  default_enabled: false
+  minimum_rbac: "trusted"
+  risk: "high"
+  guild_only: true
+  fresh_member_check: true
+  response_recheck: true
+  remote_consent: "api_provider_only"
+
+readiness:
+  production_route_bound: false
+  live_verified: false

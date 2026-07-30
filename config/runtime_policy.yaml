@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "privacy": {
+    "data_minimization": "authorized-inputs-only",
+    "secret_handling": "never-expose-or-transmit",
+    "local_default": true
+  },
+  "consent": {
+    "remote_processing": "explicit-per-request",
+    "durable_memory_write": "explicit-user-action",
+    "revocation": "immediate"
+  },
+  "scope": {
+    "visibility": "explicit",
+    "residency": "explicit",
+    "retention": "explicit"
+  },
+  "cloud_escape": {
+    "default": "deny",
+    "requirements": ["explicit-consent", "authorized-scope", "approved-destination"],
+    "failure_mode": "fail-closed"
+  },
+  "tool_policy": {
+    "default": "deny",
+    "allowlist_only": true,
+    "authorization": "fresh-at-invocation",
+    "commit_time_authorization": true
+  }
+}
