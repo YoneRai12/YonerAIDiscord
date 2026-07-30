@@ -27,6 +27,7 @@ from yonerai_discord.modules.ai.bounded_tools import (
     CapabilityRisk,
     MAX_CAPABILITY_CANDIDATES,
     MAX_TOOL_ARGUMENT_BYTES,
+    MAX_TOOLSET_TTL_SECONDS,
     MinimumRBAC,
     StaticCapabilityMetadata,
     StaticCapabilitySnapshot,
@@ -463,6 +464,22 @@ def test_execution_seal_binds_scope_route_revisions_ttl_and_capability() -> None
         ).code
         is ToolAuthorizationCode.TOOL_CAPABILITY_DENIED
     )
+
+
+def test_max_ttl_uses_deadline_comparison_without_float_subtraction_error() -> None:
+    issued_at = 510.22384583720117
+    assert (issued_at + MAX_TOOLSET_TTL_SECONDS) - issued_at > MAX_TOOLSET_TTL_SECONDS
+
+    toolset = _toolset(issued_at=issued_at)
+    authorization = ToolExecutionAuthorization.seal(
+        toolset,
+        provider_id="provider.openai.responses",
+        model_alias="ai.quality",
+        issued_at=issued_at,
+    )
+
+    assert toolset.expires_at == issued_at + MAX_TOOLSET_TTL_SECONDS
+    assert authorization.expires_at == toolset.expires_at
 
 
 def test_candidate_and_json_resource_limits_fail_closed() -> None:

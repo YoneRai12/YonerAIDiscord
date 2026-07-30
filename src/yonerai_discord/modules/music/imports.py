@@ -397,6 +397,7 @@ def _delete_pinned_posix_file(
     directory_identity: tuple[int, ...],
     file_identity: tuple[int, ...],
 ) -> bool:
+    entry_name = path.name
     flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
     try:
         directory_fd = os.open(path.parent, flags)
@@ -406,14 +407,14 @@ def _delete_pinned_posix_file(
         directory_stat = os.fstat(directory_fd)
         if (directory_stat.st_dev, directory_stat.st_ino) != directory_identity:
             return False
-        file_fd = os.open(_AUDIO_NAME, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0), dir_fd=directory_fd)
+        file_fd = os.open(entry_name, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0), dir_fd=directory_fd)
         try:
             file_stat = os.fstat(file_fd)
             if not stat.S_ISREG(file_stat.st_mode) or (file_stat.st_dev, file_stat.st_ino) != file_identity:
                 return False
         finally:
             os.close(file_fd)
-        os.unlink(_AUDIO_NAME, dir_fd=directory_fd)
+        os.unlink(entry_name, dir_fd=directory_fd)
         return True
     except OSError:
         return False

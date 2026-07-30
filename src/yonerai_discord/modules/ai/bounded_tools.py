@@ -393,7 +393,7 @@ class BoundedToolSet:
         issued_at = _finite_time(self.issued_at, label="issued_at")
         expires_at = _finite_time(self.expires_at, label="expires_at")
         assert issued_at is not None and expires_at is not None
-        if expires_at <= issued_at or expires_at - issued_at > MAX_TOOLSET_TTL_SECONDS:
+        if expires_at <= issued_at or expires_at > issued_at + MAX_TOOLSET_TTL_SECONDS:
             raise ValueError("toolset TTL must be greater than zero and at most 30 seconds")
         object.__setattr__(self, "issued_at", issued_at)
         object.__setattr__(self, "expires_at", expires_at)
@@ -504,7 +504,7 @@ class ToolExecutionAuthorization:
         issued_at = _finite_time(self.issued_at, label="issued_at")
         expires_at = _finite_time(self.expires_at, label="expires_at")
         assert issued_at is not None and expires_at is not None
-        if expires_at <= issued_at or expires_at - issued_at > MAX_TOOLSET_TTL_SECONDS:
+        if expires_at <= issued_at or expires_at > issued_at + MAX_TOOLSET_TTL_SECONDS:
             raise ValueError("authorization TTL must be greater than zero and at most 30 seconds")
         object.__setattr__(self, "issued_at", issued_at)
         object.__setattr__(self, "expires_at", expires_at)

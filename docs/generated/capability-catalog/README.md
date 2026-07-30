@@ -8,7 +8,7 @@
 - schema: `yonerai.discord.capability-catalog.v1`
 - scope: `static_candidate_metadata`
 - catalog revision: `a53b95fb8eeb47f375d1d82c8fa22deef4e24496ccbc0dca12cf679eef257063`
-- source revision: `185a232798b624b27fa3ccaefab33deb04ffed1b72e5d6a8232016594e5c1db3`
+- source revision: `9ec1d6b242c82258a268abfd3071921b33c87bb3f3b81b1f20b1636d34f38d5e`
 
 ## Counts
 
