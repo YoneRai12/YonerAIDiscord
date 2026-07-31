@@ -7,7 +7,7 @@ import os
 import sys
 import uuid
 from collections import Counter
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from types import ModuleType
 from typing import Any, Mapping, Sequence
@@ -72,6 +72,7 @@ SOURCE_PATHS = (
 )
 
 from yonerai_discord.capabilities import (  # noqa: E402
+    ACTION_CAPABILITIES,
     COMMAND_CAPABILITIES,
     CATALOG_CONNECTED_CAPABILITY_IDS,
     EVENT_CAPABILITIES,
@@ -101,8 +102,11 @@ COUNT_ROWS = (
     ("command_paths", "command path"),
     ("event_capability_ids", "event capability ID"),
     ("event_paths", "event path"),
+    ("action_capability_ids", "planner action capability ID"),
+    ("action_paths", "planner action path"),
     ("model_tool_bindings", "model-tool binding"),
-    ("unbound_runtime", "surface/model-tool未接続runtime"),
+    ("direct_surface_unbound_runtime", "command/event/model-tool未接続runtime"),
+    ("unbound_runtime", "既知binding未接続runtime"),
 )
 
 
@@ -116,6 +120,8 @@ class Projection:
     sources: tuple[dict[str, str], ...]
     source_revision: str
     counts: Mapping[str, int]
+    direct_surface_unbound_runtime_ids: tuple[str, ...] = field(default_factory=tuple)
+    unbound_runtime_ids: tuple[str, ...] = field(default_factory=tuple)
 
 
 def _sha256(data: bytes) -> str:
@@ -194,8 +200,11 @@ def load_projection() -> Projection:
     entries = tuple(snapshot.entries)
     provenance = Counter(item.source_provenance.value for item in entries)
     surface_ids = set(COMMAND_CAPABILITIES.values()) | set(EVENT_CAPABILITIES.values())
-    projected_binding_ids = surface_ids | set(MODEL_TOOL_CAPABILITY_BINDINGS.values())
+    direct_binding_ids = surface_ids | set(MODEL_TOOL_CAPABILITY_BINDINGS.values())
+    projected_binding_ids = direct_binding_ids | set(ACTION_CAPABILITIES.values())
     runtime_ids = {item.capability_id for item in RUNTIME_CAPABILITIES}
+    direct_surface_unbound_runtime_ids = tuple(sorted(runtime_ids - direct_binding_ids))
+    unbound_runtime_ids = tuple(sorted(runtime_ids - projected_binding_ids))
     sources = _read_sources()
     counts = {
         "historical_canonical": historical_count,
@@ -209,14 +218,19 @@ def load_projection() -> Projection:
         "command_paths": len(COMMAND_CAPABILITIES),
         "event_capability_ids": len(set(EVENT_CAPABILITIES.values())),
         "event_paths": len(EVENT_CAPABILITIES),
+        "action_capability_ids": len(set(ACTION_CAPABILITIES.values())),
+        "action_paths": len(ACTION_CAPABILITIES),
         "model_tool_bindings": len(MODEL_TOOL_CAPABILITY_BINDINGS),
-        "unbound_runtime": len(runtime_ids - projected_binding_ids),
+        "direct_surface_unbound_runtime": len(direct_surface_unbound_runtime_ids),
+        "unbound_runtime": len(unbound_runtime_ids),
     }
     return Projection(
         snapshot=snapshot,
         sources=sources,
         source_revision=_sha256(_canonical_json_bytes(sources)),
         counts=counts,
+        direct_surface_unbound_runtime_ids=direct_surface_unbound_runtime_ids,
+        unbound_runtime_ids=unbound_runtime_ids,
     )
 
 
@@ -241,6 +255,10 @@ def build_catalog_document(projection: Projection) -> dict[str, Any]:
         "source_revision": projection.source_revision,
         "sources": list(projection.sources),
         "counts": dict(projection.counts),
+        "runtime_binding_gaps": {
+            "direct_surface_unbound_ids": list(projection.direct_surface_unbound_runtime_ids),
+            "unbound_ids": list(projection.unbound_runtime_ids),
+        },
         "entries": entries,
     }
 
@@ -288,6 +306,22 @@ def render_markdown(document: Mapping[str, Any]) -> bytes:
         lines.append(f"| {_markdown_cell(label)} | {counts[key]} |")
     lines.extend(
         [
+            "",
+            "## Runtime binding gaps",
+            "",
+            "`direct_surface_unbound_ids` はcommand/event/model-toolへ直接接続していないruntime宣言です。",
+            "planner action接続を含む全known bindingの残余は `unbound_ids` です。",
+            "",
+            "### Direct surface unbound IDs",
+            "",
+            *(
+                f"- `{capability_id}`"
+                for capability_id in document["runtime_binding_gaps"]["direct_surface_unbound_ids"]
+            ),
+            "",
+            "### All-known-binding unbound IDs",
+            "",
+            *(f"- `{capability_id}`" for capability_id in document["runtime_binding_gaps"]["unbound_ids"]),
             "",
             "## Entries",
             "",

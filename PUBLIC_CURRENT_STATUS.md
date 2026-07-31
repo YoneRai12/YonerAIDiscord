@@ -1,7 +1,21 @@
-# Public Current Status / 公開現在状態
+# Public Current Status
 
-日本語: このテンプレートは現在のlive状態を表明しません。公開エクスポート時点で、実Discord、認証情報、外部依存先、運用環境は live未検証として扱います。明示的かつ再現可能な公開証拠がない限り、設定済み・稼働中・本番対応とは記載しません。
+この文書はpublic export時点の静的実装状態です。live runtimeの状態を主張しません。
 
-English: This template does not assert a current live state. At public-export time, real Discord, credentials, external dependencies, and operating environments are treated as not live-verified. Do not claim configured, running, or production-ready status without explicit, reproducible public evidence.
+## Static implementation truth
 
-Safe default: externally impactful and dangerous capabilities are OFF.
+- runtime-declared capabilities: 170
+- command paths: 175
+- event paths: 14
+- typed planner action paths: 9
+- legacy unbound count: 16
+- action-only within legacy unbound: 9
+- true surface-unbound: 7
+- public live-verification claims: 0
+
+## Public alpha boundaries
+
+- Real Discord, credentials, external providers, SearchSandbox, VM, and YonerAI Core are live未検証 (live-unverified).
+- Dangerous or externally impactful capabilities require explicit configuration and fresh authorization.
+- Generated rows marked `integrated_offline` are not configured or production-ready claims.
+- unavailable public modules: publishing.site-host

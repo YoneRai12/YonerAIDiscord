@@ -44,9 +44,22 @@ jobs:
           --source .
           --wheelhouse .ci-wheelhouse
           --output dist
-      - name: Attach wheel and hash ledger
+      - name: Attach or verify wheel and hash ledger
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: gh release upload "$RELEASE_TAG" dist/*.whl dist/SHA256SUMS.txt
+        run: |
+          mkdir .existing-release-assets
+          for asset in dist/*.whl dist/SHA256SUMS.txt; do
+            name="$(basename "$asset")"
+            if gh release download "$RELEASE_TAG" --pattern "$name" --dir .existing-release-assets; then
+              if ! cmp -s "$asset" ".existing-release-assets/$name"; then
+                echo "::error title=Release asset mismatch::Existing release asset does not match the verified build: $name"
+                exit 1
+              fi
+              echo "Verified existing release asset: $name"
+            else
+              gh release upload "$RELEASE_TAG" "$asset"
+            fi
+          done
