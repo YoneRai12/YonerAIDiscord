@@ -3189,7 +3189,7 @@
     ]
   },
   "schema_version": "yonerai.discord.capability-catalog.v1",
-  "source_revision": "5e9756fed3d240649ed89cf5a0d7e94a205c5fd746e44434bcd38c64e6b8f38d",
+  "source_revision": "a5d294357b4165f4aa418d278cfc963c0ea6f2fb94639aea8c65217a00b0ca96",
   "sources": [
     {
       "path": "docs/CAPABILITY_COUNTS.json",
@@ -3201,7 +3201,7 @@
     },
     {
       "path": "src/yonerai_discord/__init__.py",
-      "sha256": "d84071a263cf050b63d2eb6990638180835145596b3ca3c794f684c5c9a7515f"
+      "sha256": "0bc9a92b231c8539b1d6edd2a6316e3f07e1caa7665abac85d65e0b341aebef7"
     },
     {
       "path": "src/yonerai_discord/capabilities.py",
