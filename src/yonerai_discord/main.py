@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import argparse
 import asyncio
 import logging
 import signal
+from collections.abc import Sequence
 
 from dotenv import load_dotenv
 
@@ -13,6 +15,14 @@ from .runtime_lock import RuntimeInstanceLock, RuntimeLockError
 
 
 logger = logging.getLogger(__name__)
+
+
+def _parser() -> argparse.ArgumentParser:
+    return argparse.ArgumentParser(description="YonerAI Discord BOT を起動します。")
+
+
+def parse_cli_args(argv: Sequence[str] | None = None) -> None:
+    _parser().parse_args(argv)
 
 
 async def run(settings: Settings) -> None:
@@ -37,7 +47,8 @@ async def run(settings: Settings) -> None:
         await bot.close()
 
 
-def main() -> None:
+def main(argv: Sequence[str] | None = None) -> None:
+    parse_cli_args(argv)
     load_dotenv()
     try:
         settings = Settings.from_env()

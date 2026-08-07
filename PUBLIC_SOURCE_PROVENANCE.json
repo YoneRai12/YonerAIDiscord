@@ -165,7 +165,7 @@
       },
       {
         "path": "ci/verify_public_package.py",
-        "sha256": "ab3989e7c19a549b5990d58e943f71ad5c24dfc7bc1c8cca3fbcd8e5e471d82d",
+        "sha256": "fe33167df35d9e652359844ef8b912c2fc6fefaf15454ef6804fa7d23eb3a3af",
         "transformation": "public_generated"
       },
       {
@@ -221,7 +221,7 @@
     ],
     "policy_sha256": "f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0",
     "receipt": "PUBLIC_EXPORT_MANIFEST.json",
-    "source_commit": "c50b7ebfb8dc25afcffa17e947c83e44018288a4"
+    "source_commit": "c8cf41f6c2af157472df74ee225f3f118f615cd7"
   },
   "schema_version": 1
 }

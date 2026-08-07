@@ -39,7 +39,7 @@ _EXPECTED_ENTRY_POINTS = frozenset(
         "yonerai-discord-web-doctor",
     }
 )
-_HELP_ENTRY_POINTS = tuple(sorted(_EXPECTED_ENTRY_POINTS - {"yonerai-discord"}))
+_HELP_ENTRY_POINTS = tuple(sorted(_EXPECTED_ENTRY_POINTS))
 _TIMEOUT_SECONDS = 180.0
 
 

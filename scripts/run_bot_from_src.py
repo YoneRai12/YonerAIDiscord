@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import sys
+from collections.abc import Sequence
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -15,6 +16,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from yonerai_discord.main import main as run_bot  # noqa: E402
+from yonerai_discord.main import parse_cli_args  # noqa: E402
 
 
 def _load_explicit_env() -> None:
@@ -27,9 +29,10 @@ def _load_explicit_env() -> None:
     load_dotenv(dotenv_path=env_file, override=False)
 
 
-def main() -> None:
+def main(argv: Sequence[str] | None = None) -> None:
+    parse_cli_args(argv)
     _load_explicit_env()
-    run_bot()
+    run_bot(())
 
 
 if __name__ == "__main__":
