@@ -3,9 +3,9 @@
     "official_private": 71,
     "private_internal": 178,
     "public_generated": 40,
-    "public_shared": 667
+    "public_shared": 669
   },
-  "export_tracked_file_count": 709,
+  "export_tracked_file_count": 711,
   "files": [
     {
       "classification": "public_shared",
@@ -235,7 +235,7 @@
     {
       "classification": "generated_public_audit",
       "path": "PUBLIC_EXCLUSION_MATRIX.json",
-      "sha256": "abf2431a5ce4c97c966cd8d4dd498f5590bd0bc9dfe809d138c5b22261501315",
+      "sha256": "fec4ffe3440b62dc1d5e573b88f9e82757778ea4ed53f5f6821d99a019321e69",
       "size": 142929,
       "source_blob_sha256": null,
       "source_path": null,
@@ -244,7 +244,7 @@
     {
       "classification": "generated_public_audit",
       "path": "PUBLIC_EXPORT_COVERAGE.md",
-      "sha256": "372e673c7f1fc3314f3f761de513ae5252e00f7af66c8e045f57993e495458a3",
+      "sha256": "08bab89bf4715ee509d114412c01db619d768f548e6a761c2bac81592524ae3c",
       "size": 1900,
       "source_blob_sha256": null,
       "source_path": null,
@@ -280,7 +280,7 @@
     {
       "classification": "public_generated",
       "path": "PUBLIC_SOURCE_PROVENANCE.json",
-      "sha256": "2fa81a4f3572852d08cce7180bcbaf5715f2d86f8000668d5ba69e19c6aaf9c2",
+      "sha256": "776dc01cf41bba0274f2bcb8166ecba5093f9e2fed1d4530d9e6e79c1a1531a8",
       "size": 8659,
       "source_blob_sha256": "3b944ceaa74a0ec08953eb9e5971c8e1224b785fa552cc11636e43c673941fb8",
       "source_path": "public_release/templates/PUBLIC_SOURCE_PROVENANCE.json",
@@ -816,6 +816,15 @@
       "source_blob_sha256": "118f1c674f98606457d698a02e63d9840dc759cc33ebd079f0ef82d6232fa18f",
       "source_path": "src/yonerai_discord/__init__.py",
       "transformation": "public_version"
+    },
+    {
+      "classification": "public_shared",
+      "path": "src/yonerai_discord/agent_audit_projection.py",
+      "sha256": "38ce9918c12d2483de0308c1b7b58fe9cc5ba605842f3632dae4c14ea58587ca",
+      "size": 12643,
+      "source_blob_sha256": "38ce9918c12d2483de0308c1b7b58fe9cc5ba605842f3632dae4c14ea58587ca",
+      "source_path": "src/yonerai_discord/agent_audit_projection.py",
+      "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
@@ -4446,6 +4455,15 @@
     },
     {
       "classification": "public_shared",
+      "path": "tests/test_agent_audit_projection.py",
+      "sha256": "d50b0588662ddfc71f339c05cbbecc04ca47b2d5f3d5a97c278911f82fc93f01",
+      "size": 10939,
+      "source_blob_sha256": "d50b0588662ddfc71f339c05cbbecc04ca47b2d5f3d5a97c278911f82fc93f01",
+      "source_path": "tests/test_agent_audit_projection.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
       "path": "tests/test_ai_action_router.py",
       "sha256": "82779457587af348029bf10c8c55d5a71f9b2868e70e4cd6b8d3fd5c6f61ecda",
       "size": 170656,
@@ -6383,12 +6401,12 @@
   "generated_audit_file_count": 2,
   "generated_receipt_file_count": 1,
   "history_included": false,
-  "materialized_file_count": 706,
+  "materialized_file_count": 708,
   "non_materialized_control_file_count": 1,
-  "policy_sha256": "6b36973c02550176dcba3965c4fe975632cee14facd3c49d9b1255ace59af590",
-  "public_classified_source_count": 707,
-  "public_file_count": 706,
+  "policy_sha256": "f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0",
+  "public_classified_source_count": 709,
+  "public_file_count": 708,
   "schema_version": 1,
-  "source_commit": "a9423f407de8769bed4d71e3d06524515ea936d7",
-  "tracked_file_count": 956
+  "source_commit": "c50b7ebfb8dc25afcffa17e947c83e44018288a4",
+  "tracked_file_count": 958
 }

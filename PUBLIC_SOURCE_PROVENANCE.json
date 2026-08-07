@@ -219,9 +219,9 @@
         "transformation": "public_generated"
       }
     ],
-    "policy_sha256": "6b36973c02550176dcba3965c4fe975632cee14facd3c49d9b1255ace59af590",
+    "policy_sha256": "f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0",
     "receipt": "PUBLIC_EXPORT_MANIFEST.json",
-    "source_commit": "a9423f407de8769bed4d71e3d06524515ea936d7"
+    "source_commit": "c50b7ebfb8dc25afcffa17e947c83e44018288a4"
   },
   "schema_version": 1
 }

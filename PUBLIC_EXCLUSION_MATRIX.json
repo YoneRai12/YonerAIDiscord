@@ -5,20 +5,20 @@
       "official_private": 71,
       "private_internal": 178,
       "public_generated": 40,
-      "public_shared": 667
+      "public_shared": 669
     },
     "excluded_executable_file_count": 128,
     "excluded_source_file_count": 249,
-    "export_tracked_file_count": 709,
+    "export_tracked_file_count": 711,
     "generated_audit_file_count": 2,
     "generated_receipt_file_count": 1,
-    "materialized_file_count": 706,
+    "materialized_file_count": 708,
     "non_materialized_control_file_count": 1,
-    "policy_sha256": "6b36973c02550176dcba3965c4fe975632cee14facd3c49d9b1255ace59af590",
-    "public_classified_source_count": 707,
-    "public_file_count": 706,
-    "source_commit": "a9423f407de8769bed4d71e3d06524515ea936d7",
-    "tracked_file_count": 956
+    "policy_sha256": "f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0",
+    "public_classified_source_count": 709,
+    "public_file_count": 708,
+    "source_commit": "c50b7ebfb8dc25afcffa17e947c83e44018288a4",
+    "tracked_file_count": 958
   },
   "excluded": [
     {
@@ -2773,7 +2773,7 @@
       "path": "public_release/templates/manifest.json"
     }
   ],
-  "policy_sha256": "6b36973c02550176dcba3965c4fe975632cee14facd3c49d9b1255ace59af590",
+  "policy_sha256": "f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0",
   "raw_content_included": false,
   "reason_code_allowlist": [
     "historical_research",
@@ -2790,5 +2790,5 @@
     "unsafe_binary_or_generated_media"
   ],
   "schema": "yonerai.public-exclusion-matrix.v1",
-  "source_commit": "a9423f407de8769bed4d71e3d06524515ea936d7"
+  "source_commit": "c50b7ebfb8dc25afcffa17e947c83e44018288a4"
 }

@@ -1,7 +1,7 @@
 # Public Export Coverage
 
-- source commit: `a9423f407de8769bed4d71e3d06524515ea936d7`
-- classification policy SHA-256: `6b36973c02550176dcba3965c4fe975632cee14facd3c49d9b1255ace59af590`
+- source commit: `c50b7ebfb8dc25afcffa17e947c83e44018288a4`
+- classification policy SHA-256: `f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0`
 - raw source content included in this report: `false`
 - unknown exclusions: `0` (generation fails closed on `unknown_blocked`)
 
@@ -9,15 +9,15 @@
 
 | Measure | Count |
 |---|---:|
-| Tracked source files | 956 |
-| Public-classified source files | 707 |
-| Materialized public files | 706 |
+| Tracked source files | 958 |
+| Public-classified source files | 709 |
+| Materialized public files | 708 |
 | Non-materialized control files | 1 |
 | Excluded source files | 249 |
 | Excluded files with executable behavior | 128 |
 | Generated export receipt files | 1 |
 | Generated export audit files | 2 |
-| Export tracked files | 709 |
+| Export tracked files | 711 |
 
 The control manifest is classified as a public source control but is not copied into the export.
 `PUBLIC_EXPORT_MANIFEST.json` is generated after materialization and has no tracked source row.
@@ -35,7 +35,7 @@ export_tracked_file_count = materialized_file_count + generated_audit_file_count
 | `official_private` | 71 |
 | `private_internal` | 178 |
 | `public_generated` | 40 |
-| `public_shared` | 667 |
+| `public_shared` | 669 |
 
 ## Exclusion reasons
 
