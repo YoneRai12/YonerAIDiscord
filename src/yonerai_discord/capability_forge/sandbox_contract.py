@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import ipaddress
 import json
 import re
 from collections.abc import Mapping
@@ -41,6 +42,15 @@ _HOST_PATH = re.compile(
     r"|\b(?:glob|import|open|exec|eval|compile|__import__|os|pathlib|shutil|socket|requests|urllib|subprocess|powershell|cmd\.exe)\b)"
 )
 _PRIVATE_KEY_MARKER = re.compile(r"(?i)-----BEGIN(?: [A-Z0-9]+)* PRIVATE KEY-----")
+_NETWORK_LOCATOR = re.compile(
+    r"(?i)(?:\b(?:https?|ftp|ws|wss)://"
+    r"|\b(?:localhost|ip6-localhost|ip6-loopback)\b"
+    r"|(?<!\d)(?:\d{1,3}\.){3}\d{1,3}(?!\d))"
+)
+_IP_LITERAL = re.compile(
+    r"(?<![0-9A-Fa-f:])(?:[0-9A-Fa-f]{0,4}:){2,}[0-9A-Fa-f]{0,4}(?![0-9A-Fa-f:])"
+    r"|(?<!\d)(?:\d{1,3}\.){3}\d{1,3}(?!\d)"
+)
 _HOST_CONTROL_KEY_FRAGMENTS = frozenset(
     {
         "args",
@@ -434,8 +444,20 @@ def _safe_text(value: object, maximum_bytes: int) -> None:
         or _SECRET.search(value)
         or _HOST_PATH.search(value)
         or _PRIVATE_KEY_MARKER.search(value)
+        or _NETWORK_LOCATOR.search(value)
+        or _contains_ip_literal(value)
     ):
         raise SandboxContractError("text is outside sandbox contract")
+
+
+def _contains_ip_literal(value: str) -> bool:
+    for candidate in _IP_LITERAL.finditer(value):
+        try:
+            ipaddress.ip_address(candidate.group(0))
+        except ValueError:
+            continue
+        return True
+    return False
 
 
 def _freeze_json(value: object, maximum_bytes: int) -> object:

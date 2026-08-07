@@ -13,6 +13,7 @@ from yonerai_discord.capability_metadata_contract import (
     capability_metadata_content_revision,
 )
 from yonerai_discord.capabilities import (
+    ACTION_CAPABILITIES,
     COMMAND_CAPABILITIES,
     CATALOG_CONNECTED_CAPABILITY_IDS,
     EVENT_CAPABILITIES,
@@ -379,13 +380,14 @@ def test_production_projection_indexes_only_implemented_connected_surfaces() -> 
     register_runtime_capabilities(registry)
     expected_ids = set(COMMAND_CAPABILITIES.values())
     expected_ids.update(EVENT_CAPABILITIES.values())
+    expected_ids.update(ACTION_CAPABILITIES.values())
     expected_ids.update(MODEL_TOOL_CAPABILITY_BINDINGS.values())
     expected_ids = {capability_id for capability_id in expected_ids if registry.capability(capability_id).implemented}
 
     snapshot = build_static_capability_snapshot(registry)
 
     assert {item.capability_id for item in snapshot.entries} == expected_ids
-    assert len(snapshot.entries) == len(expected_ids) == 171
+    assert len(snapshot.entries) == len(expected_ids) == 180
     assert "cap-can-0003" not in expected_ids
     assert StaticCapabilitySnapshot(tuple(reversed(snapshot.entries))).content_revision == snapshot.content_revision
     for intent in ("conversation", "code", "site", "music", "memory", "web_research"):
@@ -405,6 +407,9 @@ def test_production_projection_indexes_only_implemented_connected_surfaces() -> 
     web_candidates = snapshot.retrieve("web_research")
     assert web_candidates[0].capability_id == OPENAI_PAID_WEB_SEARCH_CAPABILITY_ID
     assert web_candidates[0].bindings == ("web_search",)
+    for action_path, capability_id in ACTION_CAPABILITIES.items():
+        entry = next(item for item in snapshot.entries if item.capability_id == capability_id)
+        assert f"action:{'.'.join(action_path.split())}" in entry.surface_bindings
     assert all(item.surface_bindings or item.bindings for item in snapshot.entries)
 
 

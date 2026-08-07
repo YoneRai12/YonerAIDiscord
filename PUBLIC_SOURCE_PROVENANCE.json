@@ -40,7 +40,7 @@
       },
       {
         "path": ".github/workflows/ci.yml",
-        "sha256": "1bf90a5a8725ed4567f7e3ba896709134fa77240b8c4a8d7cf62003cc6b00b0b",
+        "sha256": "72f85ce6b348618ea7d267079b7a3bde9690f10fd891f3ae9183e1ad6a71a0b0",
         "transformation": "public_generated"
       },
       {
@@ -50,22 +50,22 @@
       },
       {
         "path": ".github/workflows/release-build.yml",
-        "sha256": "9c9680412958b456d7e753368200eef3ef89c60ef5ad4a4d7b856c710f8aa28a",
+        "sha256": "8629121d1e968eebc36430b0b89d79a2358d1d9be846b12bb2ba3ecb416c9760",
         "transformation": "public_generated"
       },
       {
         "path": "ARCHITECTURE.md",
-        "sha256": "6af2af1ab6a1eeac3a590f275eb79bf007272ee579c46448ca5ebb5b7a9b2b76",
+        "sha256": "b2fc11d41648e18d0f76fda18f19c5810951c80769520cccd5dad26a9af9d082",
         "transformation": "public_generated"
       },
       {
         "path": "CHANGELOG.md",
-        "sha256": "59f23921f4145a89829a2b276aaebbfea704490a03b4c29ae8574ecc6bc697f0",
+        "sha256": "1934539c93105e9f57b9ade4c1158c31428abded3098649825a66de325c99027",
         "transformation": "public_generated"
       },
       {
         "path": "CITATION.cff",
-        "sha256": "b42403f090b3f2a434d0c53949372442ed71117e4a14b3e517087870b3e22ca7",
+        "sha256": "51dc3a331149b82e2b98340445a8b1326e0729f1125eefc53a950143edb34639",
         "transformation": "public_generated"
       },
       {
@@ -99,8 +99,23 @@
         "transformation": "public_generated"
       },
       {
+        "path": "PUBLIC_CAPABILITY_MATRIX.json",
+        "sha256": "8bd70a82d95e3576406289ae5baf6b8a080dcbd6d2a0fa1fc65166a68a7235b1",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "PUBLIC_CAPABILITY_SUMMARY.md",
+        "sha256": "bde838d45327ff3fb61b6f0316b386ad68eca872da266dc5b12d447e543ee66d",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "PUBLIC_COMMAND_INDEX.md",
+        "sha256": "e985213cb1ce74d9fdf19ead8a6cbdba87420588d0353333b06af92e689d0a47",
+        "transformation": "public_generated"
+      },
+      {
         "path": "PUBLIC_CURRENT_STATUS.md",
-        "sha256": "3fc1d84d75df1be4f68d45fb49d7849ae1b4f30419bddd06351876300eb3d7cc",
+        "sha256": "804bfb8e51dc06de5f560e04571295d16818da9d1bd756d5de15f9772d1faa0a",
         "transformation": "public_generated"
       },
       {
@@ -109,8 +124,18 @@
         "transformation": "public_generated"
       },
       {
+        "path": "PUBLIC_MODULE_MATRIX.json",
+        "sha256": "ca0388c0ebd946e6952a636fc7d29cc71776ec35e0c5125db6947889335f95d3",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "PUBLIC_SELF_HOST_PROFILES.json",
+        "sha256": "de1d83c3de052e59efc5635df6aa221d77cb52a726ca1d02ef8ee86919ced6bb",
+        "transformation": "public_generated"
+      },
+      {
         "path": "README.md",
-        "sha256": "f21f2ce0ee7d28fc975479637328477a67a98efc067bd2bd886793781515b6b2",
+        "sha256": "5c3fd4bea4a0dba5561542b7426e73678d484b05bfe361727a483bea31e11950",
         "transformation": "public_generated"
       },
       {
@@ -144,28 +169,48 @@
         "transformation": "public_generated"
       },
       {
+        "path": "docs/MEDIA_SANDBOX.md",
+        "sha256": "7a15f0dbd89a91c900f610724dc09b58f3432dfff60399552f45ee709d2668d3",
+        "transformation": "public_generated"
+      },
+      {
         "path": "docs/PROVIDER_AND_MODEL_ARCHITECTURE.md",
         "sha256": "739567f22e7ec3d001fde4a188083d2d728dbac2b849e9a21e344fa59d97e206",
         "transformation": "public_generated"
       },
       {
+        "path": "docs/SEARCH_SANDBOX.md",
+        "sha256": "2dd2782c5c6b8decbecdba3cba6aaa610c2ec74c7c30cf4c1c605dacab75920e",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "docs/SELF_HOST_PROFILES.md",
+        "sha256": "fc0a52bbdfee97710353de919a665af3861de48791a26fb438d6bc33a7673363",
+        "transformation": "public_generated"
+      },
+      {
+        "path": "docs/VM_AND_SANDBOX.md",
+        "sha256": "9553727ac2e372862c41bb8940fc0859f63ba6ae58674fa5b138d954e55ff3d8",
+        "transformation": "public_generated"
+      },
+      {
         "path": "docs/generated/capability-catalog/README.md",
-        "sha256": "a864ec5cce44ad58d184878a95c75884c8f8449e939bd7553b4e48f759c0f8e1",
+        "sha256": "3fd958416922b6ecbf854f6c76e2388240adb71b9369881e6961e54b46a2b83c",
         "transformation": "public_catalog_projection"
       },
       {
         "path": "docs/generated/capability-catalog/catalog.json",
-        "sha256": "0a6433ac86cb31d2edf98a6e97699a40a99cf5fdc18742e92134bc10f24a7762",
+        "sha256": "40e4ed463a33af415e1082b2d89dfd2c7072fc0b8fdc15ed244a2c6eee76e2b5",
         "transformation": "public_catalog_projection"
       },
       {
         "path": "pyproject.toml",
-        "sha256": "2c5a2009953e099679c0a4b3a807371b530c90733451b9a0ac85fc2ec89eaa90",
+        "sha256": "fb968076c083320d02659671d4030fe49b7c3399cca11e6ca9dea83db3e75b29",
         "transformation": "public_identity"
       },
       {
         "path": "src/yonerai_discord/__init__.py",
-        "sha256": "d84071a263cf050b63d2eb6990638180835145596b3ca3c794f684c5c9a7515f",
+        "sha256": "0bc9a92b231c8539b1d6edd2a6316e3f07e1caa7665abac85d65e0b341aebef7",
         "transformation": "public_version"
       },
       {
@@ -174,9 +219,9 @@
         "transformation": "public_generated"
       }
     ],
-    "policy_sha256": "0e0f89bb760773f2ce46fd8bb1e86d625daa8f24726bb5adb72f2d5675843464",
+    "policy_sha256": "6b36973c02550176dcba3965c4fe975632cee14facd3c49d9b1255ace59af590",
     "receipt": "PUBLIC_EXPORT_MANIFEST.json",
-    "source_commit": "a8ace0bb763ab5aabcc9fc6dac92e0153711fc59"
+    "source_commit": "a9423f407de8769bed4d71e3d06524515ea936d7"
   },
   "schema_version": 1
 }

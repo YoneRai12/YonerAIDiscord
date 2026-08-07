@@ -24,6 +24,38 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+      - name: Verify prerelease tag matches package version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          python -I - <<'PY'
+          import os
+          import re
+          import sys
+          import tomllib
+          from pathlib import Path
+
+          failure = "release_tag_or_package_version_mismatch"
+          if os.environ.get("RELEASE_PRERELEASE") != "true":
+              raise SystemExit(failure)
+          match = re.fullmatch(
+              r"v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)-(alpha|beta|rc)\.(0|[1-9][0-9]*)",
+              os.environ.get("RELEASE_TAG", ""),
+          )
+          try:
+              document = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+          except (OSError, UnicodeError, tomllib.TOMLDecodeError):
+              raise SystemExit(failure) from None
+          project = document.get("project")
+          version = project.get("version") if isinstance(project, dict) else None
+          if match is None or not isinstance(version, str):
+              raise SystemExit(failure)
+          major, minor, patch, phase, number = match.groups()
+          expected = f"{major}.{minor}.{patch}{ {'alpha': 'a', 'beta': 'b', 'rc': 'rc'}[phase] }{number}"
+          if version != expected:
+              raise SystemExit(failure)
+          PY
       - name: Create clean wheelhouse
         run: >-
           python -I -c
@@ -44,9 +76,22 @@ jobs:
           --source .
           --wheelhouse .ci-wheelhouse
           --output dist
-      - name: Attach wheel and hash ledger
+      - name: Attach or verify wheel and hash ledger
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: gh release upload "$RELEASE_TAG" dist/*.whl dist/SHA256SUMS.txt
+        run: |
+          mkdir .existing-release-assets
+          for asset in dist/*.whl dist/SHA256SUMS.txt; do
+            name="$(basename "$asset")"
+            if gh release download "$RELEASE_TAG" --pattern "$name" --dir .existing-release-assets; then
+              if ! cmp -s "$asset" ".existing-release-assets/$name"; then
+                echo "::error title=Release asset mismatch::Existing release asset does not match the verified build: $name"
+                exit 1
+              fi
+              echo "Verified existing release asset: $name"
+            else
+              gh release upload "$RELEASE_TAG" "$asset"
+            fi
+          done

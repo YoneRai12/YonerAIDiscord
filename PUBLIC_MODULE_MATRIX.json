@@ -1,0 +1,519 @@
+{
+  "module_count": 30,
+  "modules": [
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 1,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "data.storage",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 1,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "gaming.minecraft",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 0,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "integration.api-web",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "hyperv_search",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 16,
+      "command_paths": 13,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 2,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "intelligence.ai-runtime",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 0,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "intelligence.capability-forge",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 12,
+      "command_paths": 11,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [
+        "intelligence.memory"
+      ],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "intelligence.personal-memory",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 16,
+      "command_paths": 14,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 2,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "interaction.discord-surface",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 0,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "media.audio-core",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 1,
+      "capability_count": 1,
+      "command_paths": 0,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "media.image-editing",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 1,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "media.image-generation",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 27,
+      "command_paths": 39,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 1,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "media.music",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 1,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "media.music-generation",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 5,
+      "capability_count": 5,
+      "command_paths": 0,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "media.pipeline",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 0,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "media.speech-synthesis",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 0,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "media.speech-transcription",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 1,
+      "capability_count": 1,
+      "command_paths": 0,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "media.url-inspection",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "hyperv_media"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 1,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "media.video-generation",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 11,
+      "command_paths": 11,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "moderation.actions",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 5,
+      "command_paths": 3,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 2,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "moderation.automod",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 5,
+      "command_paths": 4,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [
+        "operations.scheduling-notification"
+      ],
+      "event_paths": 1,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "operations.earthquake",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 5,
+      "command_paths": 4,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 1,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "operations.execution",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 1,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "operations.nasa-apod",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 5,
+      "command_paths": 5,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "operations.observability",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 4,
+      "command_paths": 4,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "operations.public-information",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 2,
+      "command_paths": 2,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "operations.scheduling-notification",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 10,
+      "command_paths": 9,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 1,
+      "implementation_state": "unavailable_public",
+      "live_verification_state": "unavailable_public",
+      "module_id": "publishing.site-host",
+      "public_availability": "unavailable_public",
+      "public_readiness_claim": false,
+      "supported_profiles": []
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 18,
+      "command_paths": 14,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 4,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "security.access-control",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 1,
+      "command_paths": 0,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "security.admin-ui",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 0,
+      "capability_count": 13,
+      "command_paths": 13,
+      "default_state": "enabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "utility.general",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    },
+    {
+      "action_paths": 2,
+      "capability_count": 2,
+      "command_paths": 0,
+      "default_state": "disabled_by_manifest",
+      "dependencies": [],
+      "event_paths": 0,
+      "implementation_state": "integrated_offline",
+      "live_verification_state": "integrated_offline",
+      "module_id": "web.browser-rendering",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "supported_profiles": [
+        "hybrid_local_core",
+        "no_vm_local_safe"
+      ]
+    }
+  ],
+  "schema_version": "yonerai.discord.public-module-truth.v1",
+  "source_capability_revision": "992ece5649cd8be42feb7d1e336d08b82387f9177bb2e321d7fa58d9fbebbdbd"
+}

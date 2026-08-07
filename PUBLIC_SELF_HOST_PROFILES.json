@@ -1,0 +1,399 @@
+{
+  "schema": "yonerai.discord.public-self-host-profiles.v1",
+  "current_truth": {
+    "live_verified": false,
+    "profile_activation_performed": false,
+    "actual_vm_contacted": false,
+    "real_core_connected": false
+  },
+  "safety_defaults": {
+    "automatic_mutation": false,
+    "dangerous_capabilities_enabled": false,
+    "sample_cidr_authoritative": false,
+    "paid_fallback": false,
+    "implicit_local_fallback_for_nonlocal_profile": false
+  },
+  "profiles": [
+    {
+      "id": "no_vm_local_safe",
+      "description": "Tokenless local preview and offline doctors without a VM or external provider.",
+      "topology": "local_only",
+      "default_enabled": false,
+      "live_verified": false,
+      "resource": {
+        "vm_required": false,
+        "memory_mib": null,
+        "vcpu": null,
+        "dynamic_vhd_max_bytes": null,
+        "required_free_bytes": null,
+        "allocation": "none",
+        "evidence": []
+      },
+      "network": {
+        "mode": "none",
+        "public_inbound": false,
+        "egress": "none",
+        "addressing": "none",
+        "sample_cidr_authoritative": false,
+        "automatic_dns_trust": false
+      },
+      "mounts": {
+        "host_mount": false,
+        "persistent_guest_volume": false,
+        "clipboard": false,
+        "gpu_passthrough": false
+      },
+      "secrets": {
+        "guest_secret_injection": false,
+        "discord_token_in_guest": false,
+        "provider_key_in_guest": false,
+        "tracked_secret_reference": false
+      },
+      "capabilities": [],
+      "readiness": {
+        "state": "implemented_offline",
+        "live_verified": false,
+        "required_checks": [
+          "package_import",
+          "tokenless_preview",
+          "doctor_contracts"
+        ],
+        "failure_mode": "unavailable"
+      },
+      "doctor": {
+        "read_only": true,
+        "automatic_mutation": false,
+        "commands": [
+          "yonerai-discord-renderer-doctor",
+          "yonerai-discord-audio-doctor",
+          "yonerai-discord-sandbox-doctor",
+          "yonerai-discord-web-doctor"
+        ],
+        "live_claim": false
+      },
+      "rollback": {
+        "automatic": false,
+        "steps": [
+          "disable_profile",
+          "stop_owned_ephemeral_sessions"
+        ],
+        "destructive_cleanup_requires_owner": true
+      }
+    },
+    {
+      "id": "hyperv_search",
+      "description": "Dedicated private Hyper-V boundary for the Search Gateway and SearXNG.",
+      "topology": "local_private_search",
+      "default_enabled": false,
+      "live_verified": false,
+      "resource": {
+        "vm_required": true,
+        "memory_mib": 4096,
+        "vcpu": 2,
+        "dynamic_vhd_max_bytes": 34359738368,
+        "required_free_bytes": 38654705664,
+        "allocation": "owner_approved_after_read_only_preflight",
+        "evidence": [
+          "tools/hyperv-search-sandbox/disk-budget.json",
+          "infra/search-sandbox/VERSION.lock"
+        ]
+      },
+      "network": {
+        "mode": "dedicated_private_hyperv",
+        "public_inbound": false,
+        "egress": "code_owned_search_engine_allowlist_only",
+        "addressing": "operator_selected_private_and_preflight_verified",
+        "sample_cidr_authoritative": false,
+        "automatic_dns_trust": false
+      },
+      "mounts": {
+        "host_mount": false,
+        "persistent_guest_volume": false,
+        "clipboard": false,
+        "gpu_passthrough": false
+      },
+      "secrets": {
+        "guest_secret_injection": false,
+        "discord_token_in_guest": false,
+        "provider_key_in_guest": false,
+        "tracked_secret_reference": false
+      },
+      "capabilities": [
+        {
+          "surface": "web search",
+          "capability_id": "cap-can-0153",
+          "default_enabled": false,
+          "fresh_readiness_required": true
+        },
+        {
+          "surface": "web fetch",
+          "capability_id": "cap-can-0153",
+          "default_enabled": false,
+          "fresh_readiness_required": true
+        },
+        {
+          "surface": "web find",
+          "capability_id": "cap-can-0153",
+          "default_enabled": false,
+          "fresh_readiness_required": true
+        }
+      ],
+      "readiness": {
+        "state": "implemented_unconfigured",
+        "live_verified": false,
+        "required_checks": [
+          "host_preflight",
+          "backend_identity",
+          "private_network",
+          "resource_limits",
+          "gateway_health",
+          "bounded_query",
+          "cleanup"
+        ],
+        "failure_mode": "unavailable"
+      },
+      "doctor": {
+        "read_only": true,
+        "automatic_mutation": false,
+        "commands": [
+          "yonerai-discord-web-doctor"
+        ],
+        "live_claim": false
+      },
+      "rollback": {
+        "automatic": false,
+        "steps": [
+          "disable_search_capability",
+          "stop_owned_forward",
+          "stop_owned_containers"
+        ],
+        "destructive_cleanup_requires_owner": true
+      }
+    },
+    {
+      "id": "hyperv_media",
+      "description": "Dedicated private Hyper-V boundary for typed public-media inspection.",
+      "topology": "local_private_media",
+      "default_enabled": false,
+      "live_verified": false,
+      "resource": {
+        "vm_required": true,
+        "memory_mib": 16384,
+        "vcpu": 2,
+        "dynamic_vhd_max_bytes": 21474836480,
+        "required_free_bytes": null,
+        "allocation": "owner_approved_after_read_only_preflight",
+        "evidence": [
+          "docs/MEDIA_SANDBOX.md",
+          "src/yonerai_discord/modules/media_inspection/hyperv_contract.py"
+        ]
+      },
+      "network": {
+        "mode": "dedicated_private_hyperv",
+        "public_inbound": false,
+        "egress": "code_owned_public_media_allowlist_only",
+        "addressing": "operator_selected_private_and_preflight_verified",
+        "sample_cidr_authoritative": false,
+        "automatic_dns_trust": false
+      },
+      "mounts": {
+        "host_mount": false,
+        "persistent_guest_volume": false,
+        "clipboard": false,
+        "gpu_passthrough": false
+      },
+      "secrets": {
+        "guest_secret_injection": false,
+        "discord_token_in_guest": false,
+        "provider_key_in_guest": false,
+        "tracked_secret_reference": false
+      },
+      "capabilities": [
+        {
+          "surface": "media.url-inspect",
+          "capability_id": "cap-run-media-url-inspection",
+          "default_enabled": false,
+          "fresh_readiness_required": true
+        }
+      ],
+      "readiness": {
+        "state": "implemented_unconfigured",
+        "live_verified": false,
+        "required_checks": [
+          "host_preflight",
+          "backend_identity",
+          "effective_network_policy",
+          "resource_limits",
+          "forced_command",
+          "cleanup"
+        ],
+        "failure_mode": "unavailable"
+      },
+      "doctor": {
+        "read_only": true,
+        "automatic_mutation": false,
+        "commands": [
+          "yonerai-discord-sandbox-doctor"
+        ],
+        "live_claim": false
+      },
+      "rollback": {
+        "automatic": false,
+        "steps": [
+          "disable_media_capability",
+          "stop_owned_request_processes"
+        ],
+        "destructive_cleanup_requires_owner": true
+      }
+    },
+    {
+      "id": "hyperv_execution_sandbox",
+      "description": "YonerAI-wide disposable Hyper-V execution boundary for bounded pure jobs; Discord is one consumer.",
+      "topology": "yonerai_shared_offline_execution",
+      "default_enabled": false,
+      "live_verified": false,
+      "resource": {
+        "vm_required": true,
+        "memory_mib": 512,
+        "vcpu": 1,
+        "dynamic_vhd_max_bytes": null,
+        "required_free_bytes": null,
+        "allocation": "blocked_until_trusted_data_channel_and_owner_preflight",
+        "evidence": [
+          "src/yonerai_discord/capability_forge/hyperv_disposable.py",
+          "docs/VM_AND_SANDBOX.md"
+        ]
+      },
+      "network": {
+        "mode": "none",
+        "public_inbound": false,
+        "egress": "none",
+        "addressing": "none",
+        "sample_cidr_authoritative": false,
+        "automatic_dns_trust": false
+      },
+      "mounts": {
+        "host_mount": false,
+        "persistent_guest_volume": false,
+        "clipboard": false,
+        "gpu_passthrough": false
+      },
+      "secrets": {
+        "guest_secret_injection": false,
+        "discord_token_in_guest": false,
+        "provider_key_in_guest": false,
+        "tracked_secret_reference": false
+      },
+      "capabilities": [],
+      "readiness": {
+        "state": "implemented_unconfigured",
+        "live_verified": false,
+        "runtime_connected": false,
+        "execution_allowed": false,
+        "blocker": "trusted_data_channel_unimplemented",
+        "required_checks": [
+          "trusted_data_channel",
+          "fixed_broker_identity",
+          "base_image_digest",
+          "network_adapter_exact_zero",
+          "cleanup_destroy_confirmation",
+          "runtime_composition"
+        ],
+        "failure_mode": "unavailable_trusted_data_channel_unimplemented"
+      },
+      "doctor": {
+        "read_only": true,
+        "automatic_mutation": false,
+        "commands": [
+          "yonerai-discord-sandbox-doctor"
+        ],
+        "live_claim": false
+      },
+      "rollback": {
+        "automatic": false,
+        "steps": [
+          "keep_profile_disabled",
+          "stop_only_owned_ephemeral_sessions"
+        ],
+        "destructive_cleanup_requires_owner": true
+      }
+    },
+    {
+      "id": "hybrid_local_core",
+      "description": "Local private capabilities with future YonerAI Core reasoning through the versioned gateway.",
+      "topology": "hybrid_local_capability_plus_core_reasoning",
+      "default_enabled": false,
+      "live_verified": false,
+      "resource": {
+        "vm_required": false,
+        "memory_mib": null,
+        "vcpu": null,
+        "dynamic_vhd_max_bytes": null,
+        "required_free_bytes": null,
+        "allocation": "delegated_to_explicit_local_sandbox_profile",
+        "evidence": [
+          "src/yonerai_discord/execution_gateway/core_contract.py",
+          "src/yonerai_discord/execution_gateway/core_http_transport.py"
+        ]
+      },
+      "network": {
+        "mode": "explicit_core_transport_plus_selected_private_sandbox",
+        "public_inbound": false,
+        "egress": "fixed_core_origin_and_selected_sandbox_allowlists_only",
+        "addressing": "operator_configured_without_public_topology_claim",
+        "sample_cidr_authoritative": false,
+        "automatic_dns_trust": false
+      },
+      "mounts": {
+        "host_mount": false,
+        "persistent_guest_volume": false,
+        "clipboard": false,
+        "gpu_passthrough": false
+      },
+      "secrets": {
+        "guest_secret_injection": false,
+        "discord_token_in_guest": false,
+        "provider_key_in_guest": false,
+        "tracked_secret_reference": false
+      },
+      "capabilities": [
+        {
+          "surface": "yonerai status",
+          "capability_id": "cap-run-yonerai-status",
+          "default_enabled": false,
+          "fresh_readiness_required": true
+        }
+      ],
+      "readiness": {
+        "state": "implemented_unconfigured",
+        "live_verified": false,
+        "required_checks": [
+          "strict_v0_1_contract",
+          "fixed_core_origin",
+          "identity_binding",
+          "result_continuation",
+          "selected_local_sandbox_readiness"
+        ],
+        "failure_mode": "unavailable_without_local_fallback"
+      },
+      "doctor": {
+        "read_only": true,
+        "automatic_mutation": false,
+        "commands": [
+          "yonerai-discord-sandbox-doctor",
+          "yonerai-discord-web-doctor"
+        ],
+        "live_claim": false
+      },
+      "rollback": {
+        "automatic": false,
+        "steps": [
+          "disable_hybrid_profile",
+          "cancel_owned_runs",
+          "stop_owned_ephemeral_sessions"
+        ],
+        "destructive_cleanup_requires_owner": true
+      }
+    }
+  ]
+}

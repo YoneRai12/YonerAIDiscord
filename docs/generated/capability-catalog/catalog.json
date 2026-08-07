@@ -1,20 +1,23 @@
 {
-  "catalog_revision": "a53b95fb8eeb47f375d1d82c8fa22deef4e24496ccbc0dca12cf679eef257063",
+  "catalog_revision": "fd014a185ad7b46fbd6e8fd0cdd0958a3142c81f2a708958f2ce6e38cc0d3192",
   "catalog_scope": "static_candidate_metadata",
   "counts": {
+    "action_capability_ids": 9,
+    "action_paths": 9,
     "command_capability_ids": 157,
     "command_paths": 175,
+    "direct_surface_unbound_runtime": 16,
     "event_capability_ids": 14,
     "event_paths": 14,
     "historical_canonical": 656,
     "model_tool_bindings": 1,
     "projected_canonical_provenance": 17,
-    "projected_runtime_provenance": 154,
-    "projected_total": 171,
+    "projected_runtime_provenance": 163,
+    "projected_total": 180,
     "registry_total": 826,
     "runtime_declared": 170,
     "surface_unique": 170,
-    "unbound_runtime": 16
+    "unbound_runtime": 7
   },
   "entries": [
     {
@@ -552,6 +555,40 @@
     },
     {
       "bindings": [],
+      "capability_id": "cap-run-browser-remote-interactive",
+      "content_revision": "765dbaa85dda0dcb4a36a5e171765711609cdebddff161eae478b9e56a0a9021",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "web.browser-rendering",
+      "name": "明示opt-inしたCloudflare Browser Runの固定YouTube操作経路",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:browser.interact"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-browser-remote-screenshot",
+      "content_revision": "b18b969da1a027a432da31ea26e5a1cd9c116e7ad243e798ca822550ceab550b",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "web.browser-rendering",
+      "name": "明示opt-inしたCloudflare Browser Rendering remote screenshot経路",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:browser.screenshot"
+      ]
+    },
+    {
+      "bindings": [],
       "capability_id": "cap-run-discovery-help",
       "content_revision": "acd11ab2eed19560e8e8c1cc84e9125ce836ca6a491c7614fe78cc6313116de6",
       "intent_tags": [
@@ -803,6 +840,23 @@
     },
     {
       "bindings": [],
+      "capability_id": "cap-run-image-edit",
+      "content_revision": "aa45cf553970e21a09b0b2838dd5c75fdb1b27089236e0d87303b37aeea30acc",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.image-editing",
+      "name": "検証済みPNGを別IDのcanonical PNGへ編集",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:image.edit"
+      ]
+    },
+    {
+      "bindings": [],
       "capability_id": "cap-run-image-generate",
       "content_revision": "865fe2a35d2e70d19a0683fdfe0dfc3c4c345cf4fe3214c621c8b9d4164e8b20",
       "intent_tags": [
@@ -1003,6 +1057,108 @@
       "source_provenance": "runtime_manifest",
       "surface_bindings": [
         "command:jobs.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-compose-grid",
+      "content_revision": "2df9ddaff4cb330d537b0187d9a351acf7302553cf197498199506df26a7e2f2",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.pipeline",
+      "name": "同一scopeの1〜8画像artifactをローカルgridへ合成",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.compose-grid"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-discord-asset-inspect",
+      "content_revision": "4f7a38a5acd2011b8df0a4cfcd6748de4010c23c86e003ceaf9e6fdbc5bfbdfe",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.pipeline",
+      "name": "明示されたDiscord絵文字またはスタンプを読み取り専用で検査",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.discord-asset-inspect"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-place-on-canvas",
+      "content_revision": "b1a1b6bf299936d6e73acdcb12d732771cb61e67d1a0300fab43a4ca40d12ba0",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.pipeline",
+      "name": "同一scopeの画像artifactをローカルcanvasへ配置",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.place-on-canvas"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-qr-encode",
+      "content_revision": "c96b5f9aa910eee2653044c2b0bfc1a13df4f5d7b1451bef4e68d67cbb4b8f14",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.pipeline",
+      "name": "制限付きテキストからローカルQR画像artifactを生成",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.qr-encode"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-quote-card",
+      "content_revision": "1d93c76d540620fad2eb7d64a3723a37c5d50a1d6808431e6ba9c7573d31c9d8",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.pipeline",
+      "name": "本文と実行者情報からローカル引用カードartifactを生成",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.quote-card"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-url-inspection",
+      "content_revision": "344c9b4f5a010c00ba41fee857be7fd89f383614917d7ded588656573266aaaa",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "media.url-inspection",
+      "name": "明示された公開YouTube URLを隔離Hyper-V VMまたは明示remote providerで解析",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.url-inspect"
       ]
     },
     {
@@ -3003,8 +3159,37 @@
       ]
     }
   ],
+  "runtime_binding_gaps": {
+    "direct_surface_unbound_ids": [
+      "cap-run-admin-ui-read",
+      "cap-run-ai-attachment-understand",
+      "cap-run-audio-ducking-core",
+      "cap-run-browser-remote-interactive",
+      "cap-run-browser-remote-screenshot",
+      "cap-run-capability-forge-owner-notification",
+      "cap-run-image-edit",
+      "cap-run-media-compose-grid",
+      "cap-run-media-discord-asset-inspect",
+      "cap-run-media-place-on-canvas",
+      "cap-run-media-qr-encode",
+      "cap-run-media-quote-card",
+      "cap-run-media-url-inspection",
+      "cap-run-memory-context-recall",
+      "cap-run-speech-synthesize",
+      "cap-run-speech-transcribe"
+    ],
+    "unbound_ids": [
+      "cap-run-admin-ui-read",
+      "cap-run-ai-attachment-understand",
+      "cap-run-audio-ducking-core",
+      "cap-run-capability-forge-owner-notification",
+      "cap-run-memory-context-recall",
+      "cap-run-speech-synthesize",
+      "cap-run-speech-transcribe"
+    ]
+  },
   "schema_version": "yonerai.discord.capability-catalog.v1",
-  "source_revision": "9ec1d6b242c82258a268abfd3071921b33c87bb3f3b81b1f20b1636d34f38d5e",
+  "source_revision": "a5d294357b4165f4aa418d278cfc963c0ea6f2fb94639aea8c65217a00b0ca96",
   "sources": [
     {
       "path": "docs/CAPABILITY_COUNTS.json",
@@ -3012,11 +3197,11 @@
     },
     {
       "path": "scripts/generate_capability_catalog.py",
-      "sha256": "54555061940bc05025b3f03c9557d0d05af00ffac9e1775b75cea471bed54fc6"
+      "sha256": "c273cc9d65fa9c16236a3640290b381b6fd3e5bbead86d127be0f8056083ca42"
     },
     {
       "path": "src/yonerai_discord/__init__.py",
-      "sha256": "d84071a263cf050b63d2eb6990638180835145596b3ca3c794f684c5c9a7515f"
+      "sha256": "0bc9a92b231c8539b1d6edd2a6316e3f07e1caa7665abac85d65e0b341aebef7"
     },
     {
       "path": "src/yonerai_discord/capabilities.py",
@@ -3064,7 +3249,7 @@
     },
     {
       "path": "src/yonerai_discord/modules/ai/bounded_tools.py",
-      "sha256": "a0b6105ae082ebc735729fb58e30b42ebc5a955f1efbf8613c9b2adc9714caf7"
+      "sha256": "596ed6a5502a05ce5e202e750ecf95aad93d92da55d6346f20e802b94be54890"
     },
     {
       "path": "src/yonerai_discord/runtime_manifest.py",
