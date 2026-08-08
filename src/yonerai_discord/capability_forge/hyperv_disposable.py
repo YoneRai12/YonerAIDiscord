@@ -388,7 +388,8 @@ class HyperVDisposableSandboxPort(ExternalSandboxPort):
             raise HyperVDisposableBackendError() from None
         if receipt.binding == binding and isinstance(receipt.cleanup, HyperVCleanupReceipt):
             self._cleanup = receipt.cleanup
-        if not _valid_job_receipt(binding, request, receipt):
+        output_valid, normalized_output = _validated_job_output(binding, request, receipt)
+        if not output_valid:
             raise HyperVDisposableBackendError()
         return SandboxResult(
             scope=request.scope,
@@ -397,7 +398,7 @@ class HyperVDisposableSandboxPort(ExternalSandboxPort):
             policy_digest=request.policy_digest,
             request_digest=request.request_digest,
             session_nonce=request.session_nonce,
-            output=receipt.output,
+            output=normalized_output,
             artifacts=(),
         )
 
@@ -503,11 +504,11 @@ def _require_offline_policy(policy: SandboxPolicy) -> None:
         raise HyperVDisposableBackendError()
 
 
-def _valid_job_receipt(
+def _validated_job_output(
     binding: HyperVDisposableBinding,
     request: SandboxRequest,
     receipt: object,
-) -> bool:
+) -> tuple[bool, object]:
     if (
         type(receipt) is not HyperVBrokerJobReceipt
         or receipt.binding != binding
@@ -516,7 +517,7 @@ def _valid_job_receipt(
         or receipt.artifacts != ()
         or not _valid_cleanup(binding, receipt.cleanup)
     ):
-        return False
+        return False, None
     try:
         encoded = json.dumps(
             receipt.output,
@@ -525,17 +526,20 @@ def _valid_job_receipt(
             separators=(",", ":"),
             sort_keys=True,
         ).encode("ascii")
+        normalized_output = json.loads(encoded)
     except (TypeError, ValueError, OverflowError, RecursionError):
-        return False
+        return False, None
     if len(encoded) > request.policy.max_output_bytes:
-        return False
+        return False, None
     if hashlib.sha256(encoded).hexdigest() != receipt.output_sha256:
-        return False
-    if receipt.output_count != _output_count(receipt.output):
-        return False
-    if _contains_source_echo(receipt.output, request.candidate.source):
-        return False
-    return not _contains_forbidden_public_text(receipt.output)
+        return False, None
+    if receipt.output_count != _output_count(normalized_output):
+        return False, None
+    if _contains_source_echo(normalized_output, request.candidate.source):
+        return False, None
+    if _contains_forbidden_public_text(normalized_output):
+        return False, None
+    return True, normalized_output
 
 
 def _valid_cleanup(binding: HyperVDisposableBinding, receipt: object) -> bool:
@@ -554,13 +558,14 @@ def _valid_cleanup(binding: HyperVDisposableBinding, receipt: object) -> bool:
 
 
 def _contains_forbidden_public_text(value: object) -> bool:
-    leaves = _bounded_public_text_leaves(value)
-    if leaves is None:
+    streams = _bounded_public_text_streams(value)
+    if streams is None:
         return True
-    joined = "".join(leaves)
+    ordered_leaves, mapping_keys, mapping_values = streams
+    joined = ("".join(ordered_leaves), "".join(mapping_keys), "".join(mapping_values))
     return any(
         _LOCATOR.search(item) or _contains_ipv4_literal(item) or _contains_ipv6_literal(item) or _SECRET.search(item)
-        for item in (*leaves, joined)
+        for item in (*ordered_leaves, *joined)
     )
 
 
@@ -587,34 +592,51 @@ def _contains_ipv6_literal(value: str) -> bool:
 
 
 def _contains_source_echo(value: object, source: str) -> bool:
-    leaves = _bounded_public_text_leaves(value)
-    if leaves is None:
+    streams = _bounded_public_text_streams(value)
+    if streams is None:
         return True
-    return any(source in item for item in leaves) or source in "".join(leaves)
+    ordered_leaves, mapping_keys, mapping_values = streams
+    return any(source in item for item in ordered_leaves) or any(
+        source in "".join(stream) for stream in (ordered_leaves, mapping_keys, mapping_values)
+    )
 
 
-def _bounded_public_text_leaves(value: object) -> tuple[str, ...] | None:
+def _bounded_public_text_streams(value: object) -> tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...]] | None:
     leaves: list[str] = []
+    mapping_keys: list[str] = []
+    mapping_values: list[str] = []
     encoded_bytes = [0]
     try:
-        _collect_public_text_leaves(value, leaves, encoded_bytes=encoded_bytes, depth=0)
+        _collect_public_text_leaves(
+            value,
+            leaves,
+            mapping_keys=mapping_keys,
+            mapping_values=mapping_values,
+            encoded_bytes=encoded_bytes,
+            depth=0,
+            mapping_key=False,
+        )
     except (RecursionError, UnicodeEncodeError, ValueError):
         return None
-    return tuple(leaves)
+    return tuple(leaves), tuple(mapping_keys), tuple(mapping_values)
 
 
 def _collect_public_text_leaves(
     value: object,
     leaves: list[str],
     *,
+    mapping_keys: list[str],
+    mapping_values: list[str],
     encoded_bytes: list[int],
     depth: int,
+    mapping_key: bool,
 ) -> None:
     if depth > _MAX_PUBLIC_TEXT_DEPTH:
         raise ValueError("public output nesting is too deep")
     if isinstance(value, str):
         encoded_bytes[0] += len(value.encode("utf-8", "strict"))
         leaves.append(value)
+        (mapping_keys if mapping_key else mapping_values).append(value)
         if encoded_bytes[0] > MAX_OUTPUT_BYTES or len(leaves) > _MAX_PUBLIC_TEXT_LEAVES:
             raise ValueError("public output text is outside its bound")
         return
@@ -622,14 +644,38 @@ def _collect_public_text_leaves(
         if len(value) > 64:
             raise ValueError("public output mapping is too large")
         for key, item in value.items():
-            _collect_public_text_leaves(key, leaves, encoded_bytes=encoded_bytes, depth=depth + 1)
-            _collect_public_text_leaves(item, leaves, encoded_bytes=encoded_bytes, depth=depth + 1)
+            _collect_public_text_leaves(
+                key,
+                leaves,
+                mapping_keys=mapping_keys,
+                mapping_values=mapping_values,
+                encoded_bytes=encoded_bytes,
+                depth=depth + 1,
+                mapping_key=True,
+            )
+            _collect_public_text_leaves(
+                item,
+                leaves,
+                mapping_keys=mapping_keys,
+                mapping_values=mapping_values,
+                encoded_bytes=encoded_bytes,
+                depth=depth + 1,
+                mapping_key=False,
+            )
         return
     if isinstance(value, (tuple, list)):
         if len(value) > 64:
             raise ValueError("public output sequence is too large")
         for item in value:
-            _collect_public_text_leaves(item, leaves, encoded_bytes=encoded_bytes, depth=depth + 1)
+            _collect_public_text_leaves(
+                item,
+                leaves,
+                mapping_keys=mapping_keys,
+                mapping_values=mapping_values,
+                encoded_bytes=encoded_bytes,
+                depth=depth + 1,
+                mapping_key=mapping_key,
+            )
 
 
 def _output_count(value: object) -> int:

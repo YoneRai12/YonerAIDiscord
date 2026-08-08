@@ -225,8 +225,15 @@ class MemoryGroup(app_commands.Group):
                     result = CommandResult(False, "memory_clear_partial", {})
                 else:
                     result = self._clear_legacy_memory(actor, result)
+                    if result.code == "memory_cleared":
+                        final_actor = await _fresh_memory_mutation_actor(interaction, path)
+                        if final_actor != actor or not _memory_command_allowed(interaction, path):
+                            result = CommandResult(True, "memory_clear_completed_hidden", {})
             if not _memory_command_allowed(interaction, path):
-                if command is MemoryCommand.CLEAR and result.code == "memory_cleared":
+                if command is MemoryCommand.CLEAR and result.code in {
+                    "memory_cleared",
+                    "memory_clear_completed_hidden",
+                }:
                     result = CommandResult(True, "memory_clear_completed_hidden", {})
                 elif command is not MemoryCommand.CLEAR or result.code != "memory_clear_partial":
                     result = CommandResult(False, "authorization_changed", {})

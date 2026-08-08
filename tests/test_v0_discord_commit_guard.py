@@ -295,6 +295,60 @@ async def test_memory_clear_final_revoke_after_both_deletes_reports_content_free
 
 
 @pytest.mark.asyncio
+async def test_memory_clear_final_fresh_revoke_after_legacy_delete_hides_count() -> None:
+    state = {"legacy_deleted": False}
+
+    class FinalFreshRevokingGuard(_AllowingGuard):
+        def __init__(self) -> None:
+            self.evaluate_calls = 0
+
+        async def evaluate_fresh_member(self, *_args: object, **_kwargs: object) -> object:
+            self.evaluate_calls += 1
+            return SimpleNamespace(allowed=self.evaluate_calls < 3, actor_level="everyone")
+
+    class TrackingGuild(_AvailableGuild):
+        def __init__(self, member: object) -> None:
+            super().__init__(member)
+            self.fetch_calls = 0
+            self.fetched_user_ids: list[int] = []
+
+        async def fetch_member(self, user_id: int) -> object:
+            self.fetch_calls += 1
+            self.fetched_user_ids.append(user_id)
+            return await super().fetch_member(user_id)
+
+    class V0Memory:
+        def clear(self, _actor: object) -> int:
+            return 4
+
+    class LegacyService:
+        def clear(self, _guild_id: int, _user_id: int) -> int:
+            state["legacy_deleted"] = True
+            return 3
+
+    guard = FinalFreshRevokingGuard()
+    interaction = _allowed_interaction(guard=guard)
+    guild = TrackingGuild(interaction.user)
+    interaction.guild = guild
+    group = MemoryGroup(LegacyService(), v0_commands=V0CommandService(memory=V0Memory()))  # type: ignore[arg-type]
+
+    await group._run_v0(  # type: ignore[arg-type]
+        interaction,
+        MemoryCommand.CLEAR,
+        "CLEAR_MY_MEMORY",
+        path="memory clear",
+    )
+
+    content = interaction.response.messages[0][0]
+    assert state["legacy_deleted"] is True
+    assert guild.fetch_calls == 3
+    assert guild.fetched_user_ids == [20, 20, 20]
+    assert guard.evaluate_calls == 3
+    assert "個人メモリの削除処理は完了しました。" in content
+    assert "7" not in content
+
+
+@pytest.mark.asyncio
 async def test_memory_clear_removes_both_stores_without_cross_scope_deletion(tmp_path: Path) -> None:
     database_path = tmp_path / "memory-clear.sqlite3"
     repository = SqlitePersonalMemoryRepository(database_path)
@@ -338,6 +392,7 @@ async def test_memory_clear_removes_both_stores_without_cross_scope_deletion(tmp
         assert len(v0_repository.list(other_user_scope)) == 1
         assert len(v0_repository.list(other_guild_scope)) == 1
         assert interaction.response.messages[0][1]["ephemeral"] is True
+        assert "2件削除しました" in interaction.response.messages[0][0]
     finally:
         state.close()
         repository.close()

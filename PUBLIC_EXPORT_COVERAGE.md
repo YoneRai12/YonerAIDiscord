@@ -1,6 +1,6 @@
 # Public Export Coverage
 
-- source commit: `03be23c068c555da6fa1934c58f5f79c39700a45`
+- source commit: `042fb7c392d60ce4c6f768b1eeccde5ab600490c`
 - classification policy SHA-256: `f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0`
 - raw source content included in this report: `false`
 - unknown exclusions: `0` (generation fails closed on `unknown_blocked`)
