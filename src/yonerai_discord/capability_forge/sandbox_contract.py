@@ -26,6 +26,9 @@ MAX_CPU_TIME_MS = 30_000
 MAX_MEMORY_MIB = 512
 MAX_PROCESSES = 0
 MAX_FILES = 8
+_MAX_STATIC_TEXT_FRAGMENTS = 512
+_MAX_STATIC_TEXT_NODES = 2_048
+_MAX_STATIC_TEXT_DEPTH = 64
 
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_-]{0,63}\Z")
 _NONCE = re.compile(r"[a-f0-9]{32}\Z")
@@ -443,13 +446,8 @@ def _safe_text(value: object, maximum_bytes: int, *, python_source: bool = False
         raise SandboxContractError("text is not UTF-8") from exc
     if len(encoded) > maximum_bytes:
         raise SandboxContractError("text is outside sandbox contract")
-    ip_literal_found = _contains_python_data_ip_literal(value) if python_source else _contains_ip_literal(value)
-    if (
-        _SECRET.search(value)
-        or _HOST_PATH.search(value)
-        or _PRIVATE_KEY_MARKER.search(value)
-        or _NETWORK_LOCATOR.search(value)
-        or ip_literal_found
+    if _contains_forbidden_text(value, include_ip=not python_source) or (
+        python_source and _contains_python_static_forbidden_text(value)
     ):
         raise SandboxContractError("text is outside sandbox contract")
 
@@ -464,21 +462,51 @@ def _contains_ip_literal(value: str) -> bool:
     return False
 
 
-def _contains_python_data_ip_literal(value: str) -> bool:
-    """Reject IP data while leaving valid Python slice operators alone."""
+def _contains_forbidden_text(value: str, *, include_ip: bool = True) -> bool:
+    return bool(
+        _SECRET.search(value)
+        or _HOST_PATH.search(value)
+        or _PRIVATE_KEY_MARKER.search(value)
+        or _NETWORK_LOCATOR.search(value)
+        or (include_ip and _contains_ip_literal(value))
+    )
+
+
+def _contains_python_static_forbidden_text(value: str) -> bool:
+    """Reject statically reconstructable data while leaving slice operators alone."""
 
     try:
         tree = ast.parse(value, mode="exec")
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.Constant) or not isinstance(node.value, (bytes, str)):
-                continue
-            literal = node.value.decode("ascii", "ignore") if isinstance(node.value, bytes) else node.value
-            if _contains_ip_literal(literal):
-                return True
+        fragments: list[str] = []
+        _collect_static_text_fragments(tree, fragments, depth=0, nodes=[0])
+        if any(_contains_forbidden_text(fragment) for fragment in fragments):
+            return True
+        if fragments and _contains_forbidden_text("".join(fragments)):
+            return True
         tokens = tokenize.generate_tokens(io.StringIO(value).readline)
-        return any(token.type == tokenize.COMMENT and _contains_ip_literal(token.string) for token in tokens)
+        return any(token.type == tokenize.COMMENT and _contains_forbidden_text(token.string) for token in tokens)
     except (IndentationError, RecursionError, SyntaxError, tokenize.TokenError, ValueError):
         return True
+
+
+def _collect_static_text_fragments(
+    node: ast.AST,
+    fragments: list[str],
+    *,
+    depth: int,
+    nodes: list[int],
+) -> None:
+    if depth > _MAX_STATIC_TEXT_DEPTH or nodes[0] >= _MAX_STATIC_TEXT_NODES:
+        raise ValueError("Python source is too complex")
+    nodes[0] += 1
+    if isinstance(node, ast.Constant) and isinstance(node.value, (bytes, str)):
+        literal = node.value.decode("ascii", "ignore") if isinstance(node.value, bytes) else node.value
+        fragments.append(literal)
+        if len(fragments) > _MAX_STATIC_TEXT_FRAGMENTS or sum(len(item) for item in fragments) > MAX_SOURCE_BYTES:
+            raise ValueError("Python static text is too large")
+        return
+    for child in ast.iter_child_nodes(node):
+        _collect_static_text_fragments(child, fragments, depth=depth + 1, nodes=nodes)
 
 
 def _freeze_json(value: object, maximum_bytes: int) -> object:

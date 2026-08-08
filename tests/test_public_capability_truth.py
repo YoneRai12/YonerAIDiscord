@@ -107,6 +107,20 @@ def test_site_publish_is_unavailable_public_and_no_row_claims_live_readiness() -
     assert all(row["live_verification_state"] != "live_verified" for row in capability_document["capabilities"])
 
 
+def test_networkless_profile_is_not_advertised_for_runtime_modules() -> None:
+    capability_document = generator.build_capability_document()
+    module_document = generator.build_module_document(capability_document)
+    modules = {row["module_id"]: row for row in module_document["modules"]}
+
+    assert all("no_vm_local_safe" not in row["supported_profiles"] for row in capability_document["capabilities"])
+    assert all("no_vm_local_safe" not in row["supported_profiles"] for row in module_document["modules"])
+    assert modules["integration.api-web"]["supported_profiles"] == [
+        "hybrid_local_core",
+        "hyperv_search",
+    ]
+    assert modules["web.browser-rendering"]["supported_profiles"] == ["hybrid_local_core"]
+
+
 def test_all_five_artifacts_are_deterministic_strict_utf8_lf_and_content_complete() -> None:
     first = generator.expected_artifacts()
     second = generator.expected_artifacts()

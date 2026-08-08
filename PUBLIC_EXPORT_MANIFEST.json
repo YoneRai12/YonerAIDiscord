@@ -199,9 +199,9 @@
     {
       "classification": "public_generated",
       "path": "PUBLIC_CAPABILITY_MATRIX.json",
-      "sha256": "8bd70a82d95e3576406289ae5baf6b8a080dcbd6d2a0fa1fc65166a68a7235b1",
-      "size": 216301,
-      "source_blob_sha256": "8bd70a82d95e3576406289ae5baf6b8a080dcbd6d2a0fa1fc65166a68a7235b1",
+      "sha256": "41f8c3afd613840f07d9cc2793fe91e1372969d037bf629571d7aae5e4df2fb5",
+      "size": 211849,
+      "source_blob_sha256": "41f8c3afd613840f07d9cc2793fe91e1372969d037bf629571d7aae5e4df2fb5",
       "source_path": "public_release/templates/PUBLIC_CAPABILITY_MATRIX.json",
       "transformation": "public_generated"
     },
@@ -235,7 +235,7 @@
     {
       "classification": "generated_public_audit",
       "path": "PUBLIC_EXCLUSION_MATRIX.json",
-      "sha256": "62b7131d776dc491a5981a0ffddd3aff96a3668f922f2f43c758b354971dde3b",
+      "sha256": "1f4d7328f7174c2e708e876085312501343a6dcfd1f415101b6189ccf4293fdd",
       "size": 142929,
       "source_blob_sha256": null,
       "source_path": null,
@@ -244,7 +244,7 @@
     {
       "classification": "generated_public_audit",
       "path": "PUBLIC_EXPORT_COVERAGE.md",
-      "sha256": "46b7f37a9915607a3721682736d7548b34b2cffb72a84019a91f1dc4c2bcddde",
+      "sha256": "0c2163d779e55edecc1cb2d9375a75bfa501acca77c750f5201cd2f629e39bf5",
       "size": 1900,
       "source_blob_sha256": null,
       "source_path": null,
@@ -262,9 +262,9 @@
     {
       "classification": "public_generated",
       "path": "PUBLIC_MODULE_MATRIX.json",
-      "sha256": "ca0388c0ebd946e6952a636fc7d29cc71776ec35e0c5125db6947889335f95d3",
-      "size": 15999,
-      "source_blob_sha256": "ca0388c0ebd946e6952a636fc7d29cc71776ec35e0c5125db6947889335f95d3",
+      "sha256": "3ab06b81065831b5bdadbb4b86d64f77325bfa19c38bd6f4775dfa74de5e1565",
+      "size": 15215,
+      "source_blob_sha256": "3ab06b81065831b5bdadbb4b86d64f77325bfa19c38bd6f4775dfa74de5e1565",
       "source_path": "public_release/templates/PUBLIC_MODULE_MATRIX.json",
       "transformation": "public_generated"
     },
@@ -280,7 +280,7 @@
     {
       "classification": "public_generated",
       "path": "PUBLIC_SOURCE_PROVENANCE.json",
-      "sha256": "c77dfd3a0ebf2f558f1fc3ea123c056c9e0579241dd2cbc09acfe9817e614616",
+      "sha256": "2860e6b828216eab1745a2526e81e57976399c29bdd078921c84ffecec062b8e",
       "size": 8659,
       "source_blob_sha256": "3b944ceaa74a0ec08953eb9e5971c8e1224b785fa552cc11636e43c673941fb8",
       "source_path": "public_release/templates/PUBLIC_SOURCE_PROVENANCE.json",
@@ -739,9 +739,9 @@
     {
       "classification": "public_shared",
       "path": "scripts/generate_public_capability_truth.py",
-      "sha256": "09b0e07a30bbb3a01a2bfe76fa9670d196c82314dd735373e9689354b9ba2e50",
-      "size": 25374,
-      "source_blob_sha256": "09b0e07a30bbb3a01a2bfe76fa9670d196c82314dd735373e9689354b9ba2e50",
+      "sha256": "9166f32bc5eaa48d36b7e1d2f8cbf631b890554d5e3f8a1641f2b5af47c7f9f0",
+      "size": 25404,
+      "source_blob_sha256": "9166f32bc5eaa48d36b7e1d2f8cbf631b890554d5e3f8a1641f2b5af47c7f9f0",
       "source_path": "scripts/generate_public_capability_truth.py",
       "transformation": "verbatim"
     },
@@ -1054,9 +1054,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/capability_forge/hyperv_disposable.py",
-      "sha256": "45fecf1eaf3e501459a67dcb0f7b236f911454c83b6f9eec2a32bb9ad7166aff",
-      "size": 26382,
-      "source_blob_sha256": "45fecf1eaf3e501459a67dcb0f7b236f911454c83b6f9eec2a32bb9ad7166aff",
+      "sha256": "6da1231361ad1da563c1dfa8bd1b0d1d96fcb276cb2652b5f5ca96287c8e604f",
+      "size": 27620,
+      "source_blob_sha256": "6da1231361ad1da563c1dfa8bd1b0d1d96fcb276cb2652b5f5ca96287c8e604f",
       "source_path": "src/yonerai_discord/capability_forge/hyperv_disposable.py",
       "transformation": "verbatim"
     },
@@ -1099,9 +1099,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/capability_forge/sandbox_contract.py",
-      "sha256": "1009c5de9b939f3aa2b9dfa8a89ca18e71ac518161b59a1ae9dcfb884aaa699a",
-      "size": 19768,
-      "source_blob_sha256": "1009c5de9b939f3aa2b9dfa8a89ca18e71ac518161b59a1ae9dcfb884aaa699a",
+      "sha256": "f564eed0351006e24f535196c3d17277cf3613dc8a2c527a8eb77d29265db3bb",
+      "size": 20840,
+      "source_blob_sha256": "f564eed0351006e24f535196c3d17277cf3613dc8a2c527a8eb77d29265db3bb",
       "source_path": "src/yonerai_discord/capability_forge/sandbox_contract.py",
       "transformation": "verbatim"
     },
@@ -3133,9 +3133,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/personal_memory/adapter.py",
-      "sha256": "6ebdc100a70ebd46e875db1d3521fa54405b1a721fe7237471141d84cc3b2210",
-      "size": 14581,
-      "source_blob_sha256": "6ebdc100a70ebd46e875db1d3521fa54405b1a721fe7237471141d84cc3b2210",
+      "sha256": "b62cc945fad5146834a4aba40d139a73db52c62bf81443a7608877632967caae",
+      "size": 16956,
+      "source_blob_sha256": "b62cc945fad5146834a4aba40d139a73db52c62bf81443a7608877632967caae",
       "source_path": "src/yonerai_discord/modules/personal_memory/adapter.py",
       "transformation": "verbatim"
     },
@@ -5806,9 +5806,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_public_capability_truth.py",
-      "sha256": "cf29e9e048686a2d868f3d98c6b1c85a0cdd124fb37a88ea84de9b5cf8ed1ab6",
-      "size": 7850,
-      "source_blob_sha256": "cf29e9e048686a2d868f3d98c6b1c85a0cdd124fb37a88ea84de9b5cf8ed1ab6",
+      "sha256": "e551e94256dbe3e1b98bf44d1e03917e7d73118fcbb0893e3d5c356b0dc7b927",
+      "size": 8587,
+      "source_blob_sha256": "e551e94256dbe3e1b98bf44d1e03917e7d73118fcbb0893e3d5c356b0dc7b927",
       "source_path": "tests/test_public_capability_truth.py",
       "transformation": "verbatim"
     },
@@ -6148,9 +6148,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_v0_discord_commit_guard.py",
-      "sha256": "828d0d79771d41b914544c5d85c0591d2b339eb3969a3a8af3ccf5ad2a90e34d",
-      "size": 3446,
-      "source_blob_sha256": "828d0d79771d41b914544c5d85c0591d2b339eb3969a3a8af3ccf5ad2a90e34d",
+      "sha256": "a3343384414f8f8c73541c00b325a35072a5c83426a7a689a97e22fb8e5b3ad6",
+      "size": 12684,
+      "source_blob_sha256": "a3343384414f8f8c73541c00b325a35072a5c83426a7a689a97e22fb8e5b3ad6",
       "source_path": "tests/test_v0_discord_commit_guard.py",
       "transformation": "verbatim"
     },
@@ -6407,6 +6407,6 @@
   "public_classified_source_count": 709,
   "public_file_count": 708,
   "schema_version": 1,
-  "source_commit": "b03e5988f03e0dbe72815ae0f05b33322c46ddba",
+  "source_commit": "03be23c068c555da6fa1934c58f5f79c39700a45",
   "tracked_file_count": 958
 }

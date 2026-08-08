@@ -32,6 +32,11 @@ from .service import (
 
 ENABLE_CONFIRMATION = "I_CONSENT"
 CLEAR_CONFIRMATION = "CLEAR_MY_MEMORY"
+_CLEAR_PARTIAL_MESSAGE = (
+    "個人メモリの全保存先で削除完了を確認できませんでした。一部だけ削除された可能性があります。"
+    "もう一度 `/memory clear` を実行してください。"
+)
+_CLEAR_COMPLETED_HIDDEN_MESSAGE = "個人メモリの削除処理は完了しました。現在の権限では削除件数を表示できません。"
 
 
 class MemoryGroup(app_commands.Group):
@@ -204,11 +209,51 @@ class MemoryGroup(app_commands.Group):
                 return
             result = self.v0_commands.execute_memory(
                 MemoryCommandInput(actor, command, value),
-                commit_check=((lambda checked_actor, _operation: checked_actor == actor) if mutation else None),
+                commit_check=(
+                    (
+                        lambda checked_actor, _operation: (
+                            checked_actor == actor and _memory_command_allowed(interaction, path)
+                        )
+                    )
+                    if mutation
+                    else None
+                ),
             )
+            if command is MemoryCommand.CLEAR and result.ok:
+                refreshed_actor = await _fresh_memory_mutation_actor(interaction, path)
+                if refreshed_actor != actor or not _memory_command_allowed(interaction, path):
+                    result = CommandResult(False, "memory_clear_partial", {})
+                else:
+                    result = self._clear_legacy_memory(actor, result)
             if not _memory_command_allowed(interaction, path):
-                result = CommandResult(False, "authorization_changed", {})
-        await _reply(interaction, render_command_result(result))
+                if command is MemoryCommand.CLEAR and result.code == "memory_cleared":
+                    result = CommandResult(True, "memory_clear_completed_hidden", {})
+                elif command is not MemoryCommand.CLEAR or result.code != "memory_clear_partial":
+                    result = CommandResult(False, "authorization_changed", {})
+        await _reply(interaction, _render_memory_result(result))
+
+    def _clear_legacy_memory(self, actor: CommandActor, v0_result: CommandResult) -> CommandResult:
+        guild_id = actor.scope.guild_id
+        if guild_id is None:
+            return v0_result
+        v0_deleted = v0_result.data.get("deleted")
+        if type(v0_deleted) is not int or v0_deleted < 0:
+            return CommandResult(False, "memory_clear_partial", {})
+        try:
+            legacy_deleted = self.service.clear(guild_id, actor.user_id)
+        except Exception:
+            return CommandResult(False, "memory_clear_partial", {})
+        if type(legacy_deleted) is not int or legacy_deleted < 0:
+            return CommandResult(False, "memory_clear_partial", {})
+        return CommandResult(True, "memory_cleared", {"deleted": v0_deleted + legacy_deleted})
+
+
+def _render_memory_result(result: CommandResult) -> str:
+    if result.code == "memory_clear_partial":
+        return _CLEAR_PARTIAL_MESSAGE
+    if result.code == "memory_clear_completed_hidden":
+        return _CLEAR_COMPLETED_HIDDEN_MESSAGE
+    return render_command_result(result)
 
 
 def _v0_actor(interaction: discord.Interaction) -> CommandActor | None:

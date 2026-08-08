@@ -20,6 +20,7 @@ from typing import Protocol
 
 from .sandbox_contract import (
     ExternalSandboxPort,
+    MAX_OUTPUT_BYTES,
     SandboxCandidate,
     SandboxHandshake,
     SandboxPolicy,
@@ -47,8 +48,10 @@ _LOCATOR = re.compile(
 _IPV4 = re.compile(r"(?<![0-9])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?![0-9])")
 _IPV6 = re.compile(r"(?i)(?<![0-9a-f])(?:[0-9a-f]{0,4}:){2,}[0-9a-f]{0,4}(?![0-9a-f])")
 _SECRET = re.compile(
-    r"(?i)(?:\b(?:basic|bearer)\s+\S+|\b(?:api[_-]?key|authorization|cookie|password|secret|token)\s*[:=])"
+    r"(?i)(?:(?:basic|bearer)\s+\S+|(?:api[_-]?key|authorization|cookie|password|secret|token)\s*[:=])"
 )
+_MAX_PUBLIC_TEXT_LEAVES = 256
+_MAX_PUBLIC_TEXT_DEPTH = 32
 
 
 class HyperVDisposableBackendError(RuntimeError):
@@ -522,7 +525,9 @@ def _valid_job_receipt(
             separators=(",", ":"),
             sort_keys=True,
         ).encode("ascii")
-    except (TypeError, ValueError, OverflowError):
+    except (TypeError, ValueError, OverflowError, RecursionError):
+        return False
+    if len(encoded) > request.policy.max_output_bytes:
         return False
     if hashlib.sha256(encoded).hexdigest() != receipt.output_sha256:
         return False
@@ -549,20 +554,14 @@ def _valid_cleanup(binding: HyperVDisposableBinding, receipt: object) -> bool:
 
 
 def _contains_forbidden_public_text(value: object) -> bool:
-    if isinstance(value, str):
-        return bool(
-            _LOCATOR.search(value)
-            or _contains_ipv4_literal(value)
-            or _contains_ipv6_literal(value)
-            or _SECRET.search(value)
-        )
-    if isinstance(value, Mapping):
-        return any(
-            _contains_forbidden_public_text(key) or _contains_forbidden_public_text(item) for key, item in value.items()
-        )
-    if isinstance(value, (tuple, list)):
-        return any(_contains_forbidden_public_text(item) for item in value)
-    return False
+    leaves = _bounded_public_text_leaves(value)
+    if leaves is None:
+        return True
+    joined = "".join(leaves)
+    return any(
+        _LOCATOR.search(item) or _contains_ipv4_literal(item) or _contains_ipv6_literal(item) or _SECRET.search(item)
+        for item in (*leaves, joined)
+    )
 
 
 def _contains_ipv4_literal(value: str) -> bool:
@@ -588,15 +587,49 @@ def _contains_ipv6_literal(value: str) -> bool:
 
 
 def _contains_source_echo(value: object, source: str) -> bool:
+    leaves = _bounded_public_text_leaves(value)
+    if leaves is None:
+        return True
+    return any(source in item for item in leaves) or source in "".join(leaves)
+
+
+def _bounded_public_text_leaves(value: object) -> tuple[str, ...] | None:
+    leaves: list[str] = []
+    encoded_bytes = [0]
+    try:
+        _collect_public_text_leaves(value, leaves, encoded_bytes=encoded_bytes, depth=0)
+    except (RecursionError, UnicodeEncodeError, ValueError):
+        return None
+    return tuple(leaves)
+
+
+def _collect_public_text_leaves(
+    value: object,
+    leaves: list[str],
+    *,
+    encoded_bytes: list[int],
+    depth: int,
+) -> None:
+    if depth > _MAX_PUBLIC_TEXT_DEPTH:
+        raise ValueError("public output nesting is too deep")
     if isinstance(value, str):
-        return source in value
+        encoded_bytes[0] += len(value.encode("utf-8", "strict"))
+        leaves.append(value)
+        if encoded_bytes[0] > MAX_OUTPUT_BYTES or len(leaves) > _MAX_PUBLIC_TEXT_LEAVES:
+            raise ValueError("public output text is outside its bound")
+        return
     if isinstance(value, Mapping):
-        return any(
-            _contains_source_echo(key, source) or _contains_source_echo(item, source) for key, item in value.items()
-        )
+        if len(value) > 64:
+            raise ValueError("public output mapping is too large")
+        for key, item in value.items():
+            _collect_public_text_leaves(key, leaves, encoded_bytes=encoded_bytes, depth=depth + 1)
+            _collect_public_text_leaves(item, leaves, encoded_bytes=encoded_bytes, depth=depth + 1)
+        return
     if isinstance(value, (tuple, list)):
-        return any(_contains_source_echo(item, source) for item in value)
-    return False
+        if len(value) > 64:
+            raise ValueError("public output sequence is too large")
+        for item in value:
+            _collect_public_text_leaves(item, leaves, encoded_bytes=encoded_bytes, depth=depth + 1)
 
 
 def _output_count(value: object) -> int:

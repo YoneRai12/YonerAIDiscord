@@ -14,8 +14,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -31,8 +30,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -49,8 +47,7 @@
       "public_readiness_claim": false,
       "supported_profiles": [
         "hybrid_local_core",
-        "hyperv_search",
-        "no_vm_local_safe"
+        "hyperv_search"
       ]
     },
     {
@@ -66,8 +63,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -83,8 +79,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -102,8 +97,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -119,8 +113,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -136,8 +129,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -153,8 +145,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -170,8 +161,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -187,8 +177,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -204,8 +193,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -221,8 +209,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -238,8 +225,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -255,8 +241,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -289,8 +274,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -306,8 +290,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -323,8 +306,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -342,8 +324,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -359,8 +340,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -376,8 +356,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -393,8 +372,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -410,8 +388,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -427,8 +404,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -458,8 +434,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -475,8 +450,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -492,8 +466,7 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     },
     {
@@ -509,11 +482,10 @@
       "public_availability": "integrated_offline",
       "public_readiness_claim": false,
       "supported_profiles": [
-        "hybrid_local_core",
-        "no_vm_local_safe"
+        "hybrid_local_core"
       ]
     }
   ],
   "schema_version": "yonerai.discord.public-module-truth.v1",
-  "source_capability_revision": "992ece5649cd8be42feb7d1e336d08b82387f9177bb2e321d7fa58d9fbebbdbd"
+  "source_capability_revision": "509d39c9a06caaa29e295a64eff5ee24c0a1c377ee32604d4426d8035e3f79d3"
 }

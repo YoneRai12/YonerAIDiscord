@@ -50,6 +50,12 @@ PUBLIC_PROFILES = (
     "hyperv_execution_sandbox",
     "hybrid_local_core",
 )
+_DEFAULT_RUNTIME_PROFILES = ("hybrid_local_core",)
+_MODULE_PROFILE_OVERRIDES: Mapping[str, tuple[str, ...]] = {
+    SITE_MODULE_ID: (),
+    "integration.api-web": ("hyperv_search", "hybrid_local_core"),
+    "media.url-inspection": ("hyperv_media", "hybrid_local_core"),
+}
 STATE_VOCABULARY = frozenset(
     {
         "live_verified",
@@ -126,13 +132,7 @@ def _display_name_en(
 
 
 def _profiles(module_id: str) -> tuple[str, ...]:
-    if module_id == SITE_MODULE_ID:
-        return ()
-    if module_id == "media.url-inspection":
-        return ("hyperv_media", "hybrid_local_core")
-    if module_id == "integration.api-web":
-        return ("no_vm_local_safe", "hyperv_search", "hybrid_local_core")
-    return ("no_vm_local_safe", "hybrid_local_core")
+    return _MODULE_PROFILE_OVERRIDES.get(module_id, _DEFAULT_RUNTIME_PROFILES)
 
 
 def _group(module_id: str, capability_id: str) -> str:

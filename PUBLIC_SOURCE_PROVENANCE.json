@@ -100,7 +100,7 @@
       },
       {
         "path": "PUBLIC_CAPABILITY_MATRIX.json",
-        "sha256": "8bd70a82d95e3576406289ae5baf6b8a080dcbd6d2a0fa1fc65166a68a7235b1",
+        "sha256": "41f8c3afd613840f07d9cc2793fe91e1372969d037bf629571d7aae5e4df2fb5",
         "transformation": "public_generated"
       },
       {
@@ -125,7 +125,7 @@
       },
       {
         "path": "PUBLIC_MODULE_MATRIX.json",
-        "sha256": "ca0388c0ebd946e6952a636fc7d29cc71776ec35e0c5125db6947889335f95d3",
+        "sha256": "3ab06b81065831b5bdadbb4b86d64f77325bfa19c38bd6f4775dfa74de5e1565",
         "transformation": "public_generated"
       },
       {
@@ -221,7 +221,7 @@
     ],
     "policy_sha256": "f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0",
     "receipt": "PUBLIC_EXPORT_MANIFEST.json",
-    "source_commit": "b03e5988f03e0dbe72815ae0f05b33322c46ddba"
+    "source_commit": "03be23c068c555da6fa1934c58f5f79c39700a45"
   },
   "schema_version": 1
 }
