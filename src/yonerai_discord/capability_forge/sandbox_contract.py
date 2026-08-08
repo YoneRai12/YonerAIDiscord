@@ -47,8 +47,7 @@ _HOST_PATH = re.compile(
 _PRIVATE_KEY_MARKER = re.compile(r"(?i)-----BEGIN(?: [A-Z0-9]+)* PRIVATE KEY-----")
 _NETWORK_LOCATOR = re.compile(
     r"(?i)(?:\b(?:https?|ftp|ws|wss)://"
-    r"|\b(?:localhost|ip6-localhost|ip6-loopback)\b"
-    r"|(?<!\d)(?:\d{1,3}\.){3}\d{1,3}(?!\d))"
+    r"|\b(?:localhost|ip6-localhost|ip6-loopback)\b)"
 )
 _IP_LITERAL = re.compile(
     r"(?<![0-9A-Fa-f:])(?:[0-9A-Fa-f]{0,4}:){2,}[0-9A-Fa-f]{0,4}(?![0-9A-Fa-f:])"
