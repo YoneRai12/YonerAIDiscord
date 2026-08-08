@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import ast
 import hashlib
+import io
 import ipaddress
 import json
 import re
+import tokenize
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import StrEnum
@@ -219,7 +222,7 @@ class SandboxCandidate:
     def __post_init__(self) -> None:
         if self.entrypoint is not SandboxEntrypoint.PYTHON_PURE:
             raise SandboxContractError("entrypoint is not allowed")
-        _safe_text(self.source, MAX_SOURCE_BYTES)
+        _safe_text(self.source, MAX_SOURCE_BYTES, python_source=True)
         frozen = _freeze_json(self.input_data, MAX_JSON_BYTES)
         object.__setattr__(self, "input_data", frozen)
 
@@ -427,7 +430,7 @@ def _optional_id(value: object) -> None:
         _positive_id(value)
 
 
-def _safe_text(value: object, maximum_bytes: int) -> None:
+def _safe_text(value: object, maximum_bytes: int, *, python_source: bool = False) -> None:
     if (
         not isinstance(value, str)
         or not value
@@ -439,13 +442,15 @@ def _safe_text(value: object, maximum_bytes: int) -> None:
         encoded = value.encode("utf-8", "strict")
     except UnicodeEncodeError as exc:
         raise SandboxContractError("text is not UTF-8") from exc
+    if len(encoded) > maximum_bytes:
+        raise SandboxContractError("text is outside sandbox contract")
+    ip_literal_found = _contains_python_data_ip_literal(value) if python_source else _contains_ip_literal(value)
     if (
-        len(encoded) > maximum_bytes
-        or _SECRET.search(value)
+        _SECRET.search(value)
         or _HOST_PATH.search(value)
         or _PRIVATE_KEY_MARKER.search(value)
         or _NETWORK_LOCATOR.search(value)
-        or _contains_ip_literal(value)
+        or ip_literal_found
     ):
         raise SandboxContractError("text is outside sandbox contract")
 
@@ -458,6 +463,23 @@ def _contains_ip_literal(value: str) -> bool:
             continue
         return True
     return False
+
+
+def _contains_python_data_ip_literal(value: str) -> bool:
+    """Reject IP data while leaving valid Python slice operators alone."""
+
+    try:
+        tree = ast.parse(value, mode="exec")
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Constant) or not isinstance(node.value, (bytes, str)):
+                continue
+            literal = node.value.decode("ascii", "ignore") if isinstance(node.value, bytes) else node.value
+            if _contains_ip_literal(literal):
+                return True
+        tokens = tokenize.generate_tokens(io.StringIO(value).readline)
+        return any(token.type == tokenize.COMMENT and _contains_ip_literal(token.string) for token in tokens)
+    except (IndentationError, RecursionError, SyntaxError, tokenize.TokenError, ValueError):
+        return True
 
 
 def _freeze_json(value: object, maximum_bytes: int) -> object:
