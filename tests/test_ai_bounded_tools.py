@@ -432,6 +432,38 @@ def test_production_projection_excludes_connected_but_unimplemented_specs() -> N
     assert "cap-can-0161" not in {item.capability_id for item in snapshot.entries}
 
 
+@pytest.mark.parametrize("action_path, capability_id", sorted(ACTION_CAPABILITIES.items()))
+def test_action_surface_media_capability_is_retrievable_only_when_authorized(
+    action_path: str,
+    capability_id: str,
+) -> None:
+    registry = load_capability_catalog(
+        Path(__file__).parents[1] / "docs" / "CAPABILITY_COUNTS.json",
+        connected_capability_ids=CATALOG_CONNECTED_CAPABILITY_IDS,
+    )
+    register_runtime_modules(registry)
+    register_runtime_capabilities(registry)
+    snapshot = build_static_capability_snapshot(registry)
+
+    candidates = snapshot.retrieve_authorized(
+        "media",
+        query=action_path,
+        eligible_capability_ids=(capability_id,),
+    )
+
+    assert [item.capability_id for item in candidates] == [capability_id]
+    assert candidates[0].primary_intent is BoundedIntent.MEDIA
+    assert candidates[0].bindings == ()
+    assert (
+        snapshot.retrieve_authorized(
+            "web_research",
+            query=action_path,
+            eligible_capability_ids=(capability_id,),
+        )
+        == ()
+    )
+
+
 def test_execution_seal_binds_scope_route_revisions_ttl_and_capability() -> None:
     toolset = _toolset()
     authorization = ToolExecutionAuthorization.seal(

@@ -849,6 +849,9 @@ def _capability_intents(
     elif "voice" in roots or module in {"media.voice", "media.audio-core"}:
         primary = BoundedIntent.MEDIA
         tags.add(BoundedIntent.MEDIA)
+    elif roots.intersection({"browser", "image", "media"}):
+        primary = BoundedIntent.MEDIA
+        tags.add(BoundedIntent.MEDIA)
     elif "memory" in roots or module.startswith("intelligence.personal-memory"):
         primary = BoundedIntent.MEMORY
         tags.add(BoundedIntent.MEMORY)

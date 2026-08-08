@@ -527,7 +527,7 @@ def _valid_job_receipt(
         return False
     if receipt.output_count != _output_count(receipt.output):
         return False
-    if request.candidate.source.encode("unicode_escape") in encoded:
+    if _contains_source_echo(receipt.output, request.candidate.source):
         return False
     return not _contains_forbidden_public_text(receipt.output)
 
@@ -556,6 +556,18 @@ def _contains_forbidden_public_text(value: object) -> bool:
         )
     if isinstance(value, (tuple, list)):
         return any(_contains_forbidden_public_text(item) for item in value)
+    return False
+
+
+def _contains_source_echo(value: object, source: str) -> bool:
+    if isinstance(value, str):
+        return source in value
+    if isinstance(value, Mapping):
+        return any(
+            _contains_source_echo(key, source) or _contains_source_echo(item, source) for key, item in value.items()
+        )
+    if isinstance(value, (tuple, list)):
+        return any(_contains_source_echo(item, source) for item in value)
     return False
 
 

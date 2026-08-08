@@ -235,7 +235,7 @@
     {
       "classification": "generated_public_audit",
       "path": "PUBLIC_EXCLUSION_MATRIX.json",
-      "sha256": "c1bbc0c3448b96e8d7b1678ea03f43947eb98c3bd31c93157a3ded9529445498",
+      "sha256": "71aebecfb07e56341a3e19b689d669e9bab9909773e500fd65ae45e33e070e2d",
       "size": 142929,
       "source_blob_sha256": null,
       "source_path": null,
@@ -244,7 +244,7 @@
     {
       "classification": "generated_public_audit",
       "path": "PUBLIC_EXPORT_COVERAGE.md",
-      "sha256": "5e2a71456b0bce19ee822586b9a9ae1f6993c3e5695eca4ea7bb5dff4b4a5198",
+      "sha256": "0e6d80695d478c440cba73eb2947451f97cd0c02d88d7cfc5956b61b4ff75b88",
       "size": 1900,
       "source_blob_sha256": null,
       "source_path": null,
@@ -280,7 +280,7 @@
     {
       "classification": "public_generated",
       "path": "PUBLIC_SOURCE_PROVENANCE.json",
-      "sha256": "e388bf9c10f13124bb10d9eff1a4c4b1d0f0cc363f676f27ddc27a94fa892715",
+      "sha256": "daef0632e5fff1b2826b344924d2d29a506783fd713fee954ab7869720bc18d4",
       "size": 8659,
       "source_blob_sha256": "3b944ceaa74a0ec08953eb9e5971c8e1224b785fa552cc11636e43c673941fb8",
       "source_path": "public_release/templates/PUBLIC_SOURCE_PROVENANCE.json",
@@ -514,18 +514,18 @@
     {
       "classification": "public_shared",
       "path": "docs/generated/capability-catalog/README.md",
-      "sha256": "3fd958416922b6ecbf854f6c76e2388240adb71b9369881e6961e54b46a2b83c",
-      "size": 48789,
-      "source_blob_sha256": "ae7eefc79198b43364d26d504cf5ccb90c643fa0ff35abed94f2e2181b948004",
+      "sha256": "39398cc101a3dfc9145a3d63b488cdd86b047fda85fd1f8c016941fe45e26f41",
+      "size": 48749,
+      "source_blob_sha256": "d0c2f250417c062bb40daa0498f3878f333cd4dc4196bac6416a9708271b9067",
       "source_path": "docs/generated/capability-catalog/README.md",
       "transformation": "public_catalog_projection"
     },
     {
       "classification": "public_shared",
       "path": "docs/generated/capability-catalog/catalog.json",
-      "sha256": "40e4ed463a33af415e1082b2d89dfd2c7072fc0b8fdc15ed244a2c6eee76e2b5",
-      "size": 108144,
-      "source_blob_sha256": "1dfcc7352266178dcad17f28a21415443e80f3023b7aca69f818802fb98e1f97",
+      "sha256": "76f0c4dcd4346d14a8e130530da936cf3233592d94c03d24ad4133a6a62d5824",
+      "size": 108104,
+      "source_blob_sha256": "7fa973b4a589defc546bce66df731802a201ae68e21ee13d122788ccb2a956ea",
       "source_path": "docs/generated/capability-catalog/catalog.json",
       "transformation": "public_catalog_projection"
     },
@@ -1054,9 +1054,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/capability_forge/hyperv_disposable.py",
-      "sha256": "34877239aa147fdf7532d89ea215d5a211d59f98147ad19713a02eab9d57643a",
-      "size": 25215,
-      "source_blob_sha256": "34877239aa147fdf7532d89ea215d5a211d59f98147ad19713a02eab9d57643a",
+      "sha256": "e217e67f89fe58cfa6ef35b0d803bff92c60916221c422b2257445978bfcb20a",
+      "size": 25659,
+      "source_blob_sha256": "e217e67f89fe58cfa6ef35b0d803bff92c60916221c422b2257445978bfcb20a",
       "source_path": "src/yonerai_discord/capability_forge/hyperv_disposable.py",
       "transformation": "verbatim"
     },
@@ -1459,9 +1459,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/ai/bounded_tools.py",
-      "sha256": "596ed6a5502a05ce5e202e750ecf95aad93d92da55d6346f20e802b94be54890",
-      "size": 43255,
-      "source_blob_sha256": "596ed6a5502a05ce5e202e750ecf95aad93d92da55d6346f20e802b94be54890",
+      "sha256": "24dad4ae87f2ce8f18b2b90e9c38c861cee213c200df6077b24dbe4d405fa409",
+      "size": 43391,
+      "source_blob_sha256": "24dad4ae87f2ce8f18b2b90e9c38c861cee213c200df6077b24dbe4d405fa409",
       "source_path": "src/yonerai_discord/modules/ai/bounded_tools.py",
       "transformation": "verbatim"
     },
@@ -4501,9 +4501,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_ai_bounded_tools.py",
-      "sha256": "3f984246c2536bd86e2db2bd6ea496c7d89250c71264d0ddbf9177e17db9e35f",
-      "size": 23197,
-      "source_blob_sha256": "3f984246c2536bd86e2db2bd6ea496c7d89250c71264d0ddbf9177e17db9e35f",
+      "sha256": "b39009880dd3cf6d87e2fcf6e83996eb1815d1b63b8edcad0c3e0561cf13de1e",
+      "size": 24271,
+      "source_blob_sha256": "b39009880dd3cf6d87e2fcf6e83996eb1815d1b63b8edcad0c3e0561cf13de1e",
       "source_path": "tests/test_ai_bounded_tools.py",
       "transformation": "verbatim"
     },
@@ -6407,6 +6407,6 @@
   "public_classified_source_count": 709,
   "public_file_count": 708,
   "schema_version": 1,
-  "source_commit": "7b4de0e2603031d4e4b4d473c337795478840ca3",
+  "source_commit": "6ef47667ede9026786315137826ac1aacf9f589d",
   "tracked_file_count": 958
 }

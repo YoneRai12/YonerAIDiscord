@@ -195,12 +195,12 @@
       },
       {
         "path": "docs/generated/capability-catalog/README.md",
-        "sha256": "3fd958416922b6ecbf854f6c76e2388240adb71b9369881e6961e54b46a2b83c",
+        "sha256": "39398cc101a3dfc9145a3d63b488cdd86b047fda85fd1f8c016941fe45e26f41",
         "transformation": "public_catalog_projection"
       },
       {
         "path": "docs/generated/capability-catalog/catalog.json",
-        "sha256": "40e4ed463a33af415e1082b2d89dfd2c7072fc0b8fdc15ed244a2c6eee76e2b5",
+        "sha256": "76f0c4dcd4346d14a8e130530da936cf3233592d94c03d24ad4133a6a62d5824",
         "transformation": "public_catalog_projection"
       },
       {
@@ -221,7 +221,7 @@
     ],
     "policy_sha256": "f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0",
     "receipt": "PUBLIC_EXPORT_MANIFEST.json",
-    "source_commit": "7b4de0e2603031d4e4b4d473c337795478840ca3"
+    "source_commit": "6ef47667ede9026786315137826ac1aacf9f589d"
   },
   "schema_version": 1
 }
