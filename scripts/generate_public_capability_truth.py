@@ -21,10 +21,11 @@ from yonerai_discord.capabilities import (  # noqa: E402
     ACTION_CAPABILITIES,
     CATALOG_CONNECTED_CAPABILITY_IDS,
     COMMAND_CAPABILITIES,
+    COMMAND_RBAC_FLOORS,
     EVENT_CAPABILITIES,
     MODEL_TOOL_CAPABILITY_BINDINGS,
 )
-from yonerai_discord.control_plane import Registry, load_capability_catalog  # noqa: E402
+from yonerai_discord.control_plane import RbacLevel, Registry, load_capability_catalog  # noqa: E402
 from yonerai_discord.runtime_manifest import (  # noqa: E402
     RUNTIME_CAPABILITIES,
     register_runtime_capabilities,
@@ -462,7 +463,13 @@ def render_command_index(document: Mapping[str, Any]) -> bytes:
     rows_by_id = {str(row["capability_id"]): row for row in document["capabilities"]}
     registry = _load_registry()
 
-    def section(title: str, mapping: Mapping[str, str], prefix: str) -> list[str]:
+    def section(
+        title: str,
+        mapping: Mapping[str, str],
+        prefix: str,
+        *,
+        command_floors: Mapping[str, RbacLevel] | None = None,
+    ) -> list[str]:
         lines = [
             f"## {title}",
             "",
@@ -471,16 +478,21 @@ def render_command_index(document: Mapping[str, Any]) -> bytes:
         ]
         for path, capability_id in sorted(mapping.items()):
             row = rows_by_id.get(capability_id)
+            spec = registry.capability(capability_id)
+            minimum_floor = spec.safety_floor
+            if command_floors is not None:
+                minimum_floor = max(
+                    minimum_floor,
+                    command_floors.get(path, RbacLevel.EVERYONE),
+                )
+            minimum_rbac = minimum_floor.name.lower()
             if row is None:
-                spec = registry.capability(capability_id)
                 module_id = spec.module_id
                 risk = spec.risk.name.lower()
-                minimum_rbac = spec.safety_floor.name.lower()
                 public_availability = "unavailable_public" if module_id == SITE_MODULE_ID else "integrated_offline"
             else:
                 module_id = row["module_id"]
                 risk = row["risk"]
-                minimum_rbac = row["minimum_rbac"]
                 public_availability = row["public_availability"]
             lines.append(
                 "| "
@@ -503,7 +515,12 @@ def render_command_index(document: Mapping[str, Any]) -> bytes:
         "",
         "静的binding一覧です。Discord登録、設定、runtime readiness、live成功は別の証拠です。",
         "",
-        *section("Command paths", COMMAND_CAPABILITIES, "/"),
+        *section(
+            "Command paths",
+            COMMAND_CAPABILITIES,
+            "/",
+            command_floors=COMMAND_RBAC_FLOORS,
+        ),
         "",
         *section("Event paths", EVENT_CAPABILITIES, ""),
         "",

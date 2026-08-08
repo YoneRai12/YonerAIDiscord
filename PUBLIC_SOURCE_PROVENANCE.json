@@ -110,7 +110,7 @@
       },
       {
         "path": "PUBLIC_COMMAND_INDEX.md",
-        "sha256": "e985213cb1ce74d9fdf19ead8a6cbdba87420588d0353333b06af92e689d0a47",
+        "sha256": "2332519fcb6d1e9112c2b4148de3908a28af68d8f59a001fc893174eb0fbffb7",
         "transformation": "public_generated"
       },
       {
@@ -221,7 +221,7 @@
     ],
     "policy_sha256": "f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0",
     "receipt": "PUBLIC_EXPORT_MANIFEST.json",
-    "source_commit": "c8cf41f6c2af157472df74ee225f3f118f615cd7"
+    "source_commit": "7b4de0e2603031d4e4b4d473c337795478840ca3"
   },
   "schema_version": 1
 }

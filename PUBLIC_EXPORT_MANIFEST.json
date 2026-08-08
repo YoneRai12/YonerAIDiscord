@@ -217,9 +217,9 @@
     {
       "classification": "public_generated",
       "path": "PUBLIC_COMMAND_INDEX.md",
-      "sha256": "e985213cb1ce74d9fdf19ead8a6cbdba87420588d0353333b06af92e689d0a47",
-      "size": 24267,
-      "source_blob_sha256": "e985213cb1ce74d9fdf19ead8a6cbdba87420588d0353333b06af92e689d0a47",
+      "sha256": "2332519fcb6d1e9112c2b4148de3908a28af68d8f59a001fc893174eb0fbffb7",
+      "size": 24327,
+      "source_blob_sha256": "2332519fcb6d1e9112c2b4148de3908a28af68d8f59a001fc893174eb0fbffb7",
       "source_path": "public_release/templates/PUBLIC_COMMAND_INDEX.md",
       "transformation": "public_generated"
     },
@@ -235,7 +235,7 @@
     {
       "classification": "generated_public_audit",
       "path": "PUBLIC_EXCLUSION_MATRIX.json",
-      "sha256": "6b2249c8053194deee602ff8e5dd22bc0bf36428a2b28612bbbd66a76765fab5",
+      "sha256": "c1bbc0c3448b96e8d7b1678ea03f43947eb98c3bd31c93157a3ded9529445498",
       "size": 142929,
       "source_blob_sha256": null,
       "source_path": null,
@@ -244,7 +244,7 @@
     {
       "classification": "generated_public_audit",
       "path": "PUBLIC_EXPORT_COVERAGE.md",
-      "sha256": "53ad36b43c72a418e7179138d1c5d76a8b2a25c698e29f64dcc1bdbae03a33e5",
+      "sha256": "5e2a71456b0bce19ee822586b9a9ae1f6993c3e5695eca4ea7bb5dff4b4a5198",
       "size": 1900,
       "source_blob_sha256": null,
       "source_path": null,
@@ -280,7 +280,7 @@
     {
       "classification": "public_generated",
       "path": "PUBLIC_SOURCE_PROVENANCE.json",
-      "sha256": "a714a2c8cd67e8a1e052a7199c7449c0b88ed23b36bc40c5495983381e58f8d5",
+      "sha256": "e388bf9c10f13124bb10d9eff1a4c4b1d0f0cc363f676f27ddc27a94fa892715",
       "size": 8659,
       "source_blob_sha256": "3b944ceaa74a0ec08953eb9e5971c8e1224b785fa552cc11636e43c673941fb8",
       "source_path": "public_release/templates/PUBLIC_SOURCE_PROVENANCE.json",
@@ -739,9 +739,9 @@
     {
       "classification": "public_shared",
       "path": "scripts/generate_public_capability_truth.py",
-      "sha256": "a634ac65ac88c1898ab5bda826ffb23d6a2c7960dd6b3421b5d2e4f52a294398",
-      "size": 24956,
-      "source_blob_sha256": "a634ac65ac88c1898ab5bda826ffb23d6a2c7960dd6b3421b5d2e4f52a294398",
+      "sha256": "09b0e07a30bbb3a01a2bfe76fa9670d196c82314dd735373e9689354b9ba2e50",
+      "size": 25374,
+      "source_blob_sha256": "09b0e07a30bbb3a01a2bfe76fa9670d196c82314dd735373e9689354b9ba2e50",
       "source_path": "scripts/generate_public_capability_truth.py",
       "transformation": "verbatim"
     },
@@ -5806,9 +5806,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_public_capability_truth.py",
-      "sha256": "1792c791bf5cd26b4024f08d608221638d70b466bcdbd77323ced2ddbda4299f",
-      "size": 6433,
-      "source_blob_sha256": "1792c791bf5cd26b4024f08d608221638d70b466bcdbd77323ced2ddbda4299f",
+      "sha256": "cf29e9e048686a2d868f3d98c6b1c85a0cdd124fb37a88ea84de9b5cf8ed1ab6",
+      "size": 7850,
+      "source_blob_sha256": "cf29e9e048686a2d868f3d98c6b1c85a0cdd124fb37a88ea84de9b5cf8ed1ab6",
       "source_path": "tests/test_public_capability_truth.py",
       "transformation": "verbatim"
     },
@@ -6407,6 +6407,6 @@
   "public_classified_source_count": 709,
   "public_file_count": 708,
   "schema_version": 1,
-  "source_commit": "c8cf41f6c2af157472df74ee225f3f118f615cd7",
+  "source_commit": "7b4de0e2603031d4e4b4d473c337795478840ca3",
   "tracked_file_count": 958
 }

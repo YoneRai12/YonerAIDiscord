@@ -67,7 +67,7 @@
 | `/mod warn` | `cap-run-mod-warn` | `moderation.actions` | `high` | `moderator` | `integrated_offline` |
 | `/mod warnings` | `cap-run-mod-warnings` | `moderation.actions` | `medium` | `moderator` | `integrated_offline` |
 | `/music clear-mine` | `cap-run-music-clear-mine` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music import` | `cap-run-music-import` | `media.music` | `medium` | `everyone` | `integrated_offline` |
+| `/music import` | `cap-run-music-import` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
 | `/music join` | `cap-run-music-join` | `media.music` | `medium` | `everyone` | `integrated_offline` |
 | `/music leave` | `cap-run-music-leave` | `media.music` | `medium` | `everyone` | `integrated_offline` |
 | `/music loop` | `cap-run-music-loop` | `media.music` | `medium` | `everyone` | `integrated_offline` |
@@ -81,19 +81,19 @@
 | `/music playlist save` | `cap-run-music-playlist-save` | `media.music` | `medium` | `everyone` | `integrated_offline` |
 | `/music queue` | `cap-run-music-queue` | `media.music` | `low` | `everyone` | `integrated_offline` |
 | `/music radio` | `cap-run-music-radio` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music read-aloud dictionary-delete` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music read-aloud dictionary-set` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music read-aloud disable` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music read-aloud enable` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music read-aloud exclude-add` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music read-aloud exclude-delete` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music read-aloud focus-cancel` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music read-aloud focus-start` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music read-aloud list` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
+| `/music read-aloud dictionary-delete` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
+| `/music read-aloud dictionary-set` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
+| `/music read-aloud disable` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
+| `/music read-aloud enable` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
+| `/music read-aloud exclude-add` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
+| `/music read-aloud exclude-delete` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
+| `/music read-aloud focus-cancel` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
+| `/music read-aloud focus-start` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
+| `/music read-aloud list` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
 | `/music read-aloud my-preset` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music read-aloud policy` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
+| `/music read-aloud policy` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
 | `/music read-aloud preset` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
-| `/music read-aloud server-preset` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `everyone` | `integrated_offline` |
+| `/music read-aloud server-preset` | `cap-run-music-read-aloud-message` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |
 | `/music remove` | `cap-run-music-remove` | `media.music` | `medium` | `everyone` | `integrated_offline` |
 | `/music resume` | `cap-run-music-resume` | `media.music` | `medium` | `everyone` | `integrated_offline` |
 | `/music search` | `cap-run-music-search` | `media.music` | `low` | `everyone` | `integrated_offline` |
@@ -145,16 +145,16 @@
 | `/suggest status` | `cap-run-suggest-status` | `interaction.discord-surface` | `low` | `everyone` | `integrated_offline` |
 | `/system audit` | `cap-run-system-audit` | `operations.observability` | `high` | `guild_admin` | `integrated_offline` |
 | `/system backup` | `cap-run-system-backup` | `data.storage` | `critical` | `bot_owner` | `integrated_offline` |
-| `/system capabilities` | `cap-can-0589` | `platform.runtime` | `low` | `everyone` | `integrated_offline` |
-| `/system capability-set` | `cap-can-0613` | `security.access-control` | `low` | `everyone` | `integrated_offline` |
-| `/system doctor` | `cap-can-0278` | `interaction.discord-surface` | `low` | `everyone` | `integrated_offline` |
-| `/system health` | `cap-can-0519` | `operations.observability` | `low` | `everyone` | `integrated_offline` |
-| `/system module-set` | `cap-can-0613` | `security.access-control` | `low` | `everyone` | `integrated_offline` |
-| `/system modules` | `cap-can-0589` | `platform.runtime` | `low` | `everyone` | `integrated_offline` |
+| `/system capabilities` | `cap-can-0589` | `platform.runtime` | `low` | `guild_admin` | `integrated_offline` |
+| `/system capability-set` | `cap-can-0613` | `security.access-control` | `low` | `guild_admin` | `integrated_offline` |
+| `/system doctor` | `cap-can-0278` | `interaction.discord-surface` | `low` | `guild_admin` | `integrated_offline` |
+| `/system health` | `cap-can-0519` | `operations.observability` | `low` | `guild_admin` | `integrated_offline` |
+| `/system module-set` | `cap-can-0613` | `security.access-control` | `low` | `guild_admin` | `integrated_offline` |
+| `/system modules` | `cap-can-0589` | `platform.runtime` | `low` | `guild_admin` | `integrated_offline` |
 | `/system overrides` | `cap-run-system-overrides` | `operations.observability` | `high` | `guild_admin` | `integrated_offline` |
-| `/system permission-set` | `cap-can-0613` | `security.access-control` | `low` | `everyone` | `integrated_offline` |
+| `/system permission-set` | `cap-can-0613` | `security.access-control` | `low` | `guild_admin` | `integrated_offline` |
 | `/system ping` | `cap-can-0265` | `interaction.discord-surface` | `low` | `everyone` | `integrated_offline` |
-| `/system plugins` | `cap-can-0588` | `platform.runtime` | `low` | `everyone` | `integrated_offline` |
+| `/system plugins` | `cap-can-0588` | `platform.runtime` | `low` | `guild_admin` | `integrated_offline` |
 | `/system runtime` | `cap-run-system-runtime` | `operations.observability` | `high` | `guild_admin` | `integrated_offline` |
 | `/ticket add` | `cap-run-ticket-add` | `interaction.discord-surface` | `low` | `everyone` | `integrated_offline` |
 | `/ticket close` | `cap-run-ticket-close` | `interaction.discord-surface` | `low` | `everyone` | `integrated_offline` |

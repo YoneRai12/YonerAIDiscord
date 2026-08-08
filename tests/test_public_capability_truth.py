@@ -125,6 +125,38 @@ def test_all_five_artifacts_are_deterministic_strict_utf8_lf_and_content_complet
     assert sum(line.startswith("| `/") for line in command_index.splitlines()) == 175
 
 
+def test_command_index_uses_per_command_rbac_floors() -> None:
+    command_index = generator.expected_artifacts()["PUBLIC_COMMAND_INDEX.md"].decode("utf-8")
+    command_rows = {
+        cells[0].removeprefix("/"): cells[4]
+        for line in command_index.splitlines()
+        if line.startswith("| `/")
+        for cells in ([cell.strip().strip("`") for cell in line.strip("|").split("|")],)
+    }
+    registry = generator._load_registry()
+
+    for path, floor in generator.COMMAND_RBAC_FLOORS.items():
+        capability_id = generator.COMMAND_CAPABILITIES[path]
+        expected = max(registry.capability(capability_id).safety_floor, floor).name.lower()
+        assert command_rows[path] == expected
+
+    assert (
+        "| `/music import` | `cap-run-music-import` | `media.music` | `medium` | `guild_admin` | `integrated_offline` |"
+    ) in command_index
+    assert (
+        "| `/music read-aloud enable` | `cap-run-music-read-aloud-message` | `media.music` | "
+        "`medium` | `guild_admin` | `integrated_offline` |"
+    ) in command_index
+    assert (
+        "| `/music read-aloud my-preset` | `cap-run-music-read-aloud-message` | `media.music` | "
+        "`medium` | `everyone` | `integrated_offline` |"
+    ) in command_index
+    assert (
+        "| `/system health` | `cap-can-0519` | `operations.observability` | `low` | "
+        "`guild_admin` | `integrated_offline` |"
+    ) in command_index
+
+
 def test_cli_write_check_and_drift_detection_are_bounded_to_five_outputs(
     tmp_path: Path,
     capsys,
