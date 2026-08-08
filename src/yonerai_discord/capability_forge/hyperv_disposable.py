@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import ipaddress
 import json
 import re
 from collections.abc import Callable, Mapping
@@ -549,13 +550,26 @@ def _valid_cleanup(binding: HyperVDisposableBinding, receipt: object) -> bool:
 
 def _contains_forbidden_public_text(value: object) -> bool:
     if isinstance(value, str):
-        return bool(_LOCATOR.search(value) or _IPV4.search(value) or _IPV6.search(value) or _SECRET.search(value))
+        return bool(
+            _LOCATOR.search(value) or _IPV4.search(value) or _contains_ipv6_literal(value) or _SECRET.search(value)
+        )
     if isinstance(value, Mapping):
         return any(
             _contains_forbidden_public_text(key) or _contains_forbidden_public_text(item) for key, item in value.items()
         )
     if isinstance(value, (tuple, list)):
         return any(_contains_forbidden_public_text(item) for item in value)
+    return False
+
+
+def _contains_ipv6_literal(value: str) -> bool:
+    for candidate in _IPV6.finditer(value):
+        try:
+            address = ipaddress.ip_address(candidate.group(0))
+        except ValueError:
+            continue
+        if isinstance(address, ipaddress.IPv6Address):
+            return True
     return False
 
 
