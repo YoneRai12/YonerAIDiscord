@@ -13,6 +13,7 @@ from yonerai_discord.capability_forge.lifecycle import (
     SqliteForgeLifecycleRepository,
 )
 from yonerai_discord.capability_forge.sandbox_contract import (
+    SANDBOX_POLICY_REVISION,
     SandboxArtifactDescriptor,
     SandboxCandidate,
     SandboxHandshake,
@@ -168,7 +169,9 @@ async def test_cleanup_confirmed_success_records_only_fixed_sandbox_metadata(rep
     summary = repository.get_user_success(digest, 42)
     assert stored is not None
     assert stored.candidate_kind is CandidateKind.SANDBOX_PYTHON_PURE
-    assert [(item.primitive_id, item.revision) for item in stored.templates] == [("python_pure", "1")]
+    assert [(item.primitive_id, item.revision) for item in stored.templates] == [
+        ("python_pure", SANDBOX_POLICY_REVISION)
+    ]
     assert stored.code_owned_description == "External sandbox Python-pure success proposal"
     assert stored.notification_state == NotificationState.PENDING
     assert stored.official is False

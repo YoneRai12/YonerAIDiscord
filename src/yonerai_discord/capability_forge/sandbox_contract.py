@@ -16,7 +16,7 @@ from types import MappingProxyType
 from typing import Protocol
 
 
-SANDBOX_POLICY_REVISION = "1"
+SANDBOX_POLICY_REVISION = "2"
 MAX_SOURCE_BYTES = 32_768
 MAX_JSON_BYTES = 16_384
 MAX_OUTPUT_BYTES = 16_384
@@ -29,7 +29,6 @@ MAX_FILES = 8
 _MAX_STATIC_TEXT_FRAGMENTS = 512
 _MAX_STATIC_TEXT_NODES = 2_048
 _MAX_STATIC_TEXT_DEPTH = 64
-_MAX_STATIC_TEXT_CANDIDATES = 64
 
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_-]{0,63}\Z")
 _NONCE = re.compile(r"[a-f0-9]{32}\Z")
@@ -474,20 +473,27 @@ def _contains_forbidden_text(value: str, *, include_ip: bool = True) -> bool:
 
 
 def _contains_python_static_forbidden_text(value: str) -> bool:
-    """Reject statically reconstructable data while leaving slice operators alone."""
+    """Apply bounded literal-only hygiene without interpreting runtime reconstruction."""
 
     try:
         tree = ast.parse(value, mode="exec")
+        _validate_python_ast_bounds(tree, depth=0, nodes=[0])
         fragments: list[str] = []
-        _collect_static_text_fragments(tree, fragments, depth=0, nodes=[0])
+        _collect_static_text_fragments(tree, fragments, depth=0, nodes=[0], fragment_count=[0])
         if any(_contains_forbidden_text(fragment) for fragment in fragments):
-            return True
-        if _static_text_block_contains_forbidden(tree.body, {}):
             return True
         tokens = tokenize.generate_tokens(io.StringIO(value).readline)
         return any(token.type == tokenize.COMMENT and _contains_forbidden_text(token.string) for token in tokens)
     except (IndentationError, RecursionError, SyntaxError, tokenize.TokenError, ValueError):
         return True
+
+
+def _validate_python_ast_bounds(node: ast.AST, *, depth: int, nodes: list[int]) -> None:
+    if depth > _MAX_STATIC_TEXT_DEPTH or nodes[0] >= _MAX_STATIC_TEXT_NODES:
+        raise ValueError("Python source is too complex")
+    nodes[0] += 1
+    for child in ast.iter_child_nodes(node):
+        _validate_python_ast_bounds(child, depth=depth + 1, nodes=nodes)
 
 
 def _collect_static_text_fragments(
@@ -496,340 +502,92 @@ def _collect_static_text_fragments(
     *,
     depth: int,
     nodes: list[int],
+    fragment_count: list[int],
 ) -> None:
     if depth > _MAX_STATIC_TEXT_DEPTH or nodes[0] >= _MAX_STATIC_TEXT_NODES:
         raise ValueError("Python source is too complex")
     nodes[0] += 1
+    if isinstance(node, ast.expr) and not isinstance(node, ast.Constant):
+        folded = _literal_text_value(node)
+        if folded is not None:
+            fragment_count[0] += folded[2]
+            fragments.append(folded[1])
+            if fragment_count[0] > _MAX_STATIC_TEXT_FRAGMENTS or sum(map(len, fragments)) > MAX_SOURCE_BYTES:
+                raise ValueError("Python static text is too large")
+            return
     if isinstance(node, ast.Constant) and isinstance(node.value, (bytes, str)):
         literal = node.value.decode("ascii", "ignore") if isinstance(node.value, bytes) else node.value
+        fragment_count[0] += 1
         fragments.append(literal)
-        if len(fragments) > _MAX_STATIC_TEXT_FRAGMENTS or sum(len(item) for item in fragments) > MAX_SOURCE_BYTES:
+        if fragment_count[0] > _MAX_STATIC_TEXT_FRAGMENTS or sum(len(item) for item in fragments) > MAX_SOURCE_BYTES:
             raise ValueError("Python static text is too large")
         return
     for child in ast.iter_child_nodes(node):
-        _collect_static_text_fragments(child, fragments, depth=depth + 1, nodes=nodes)
-
-
-_StaticTextValue = tuple[str, str, int]
-
-
-@dataclass(frozen=True, slots=True)
-class _StaticTextBinding:
-    values: tuple[_StaticTextValue, ...]
-    uncertain: bool = False
-
-
-def _static_text_block_contains_forbidden(
-    statements: list[ast.stmt],
-    environment: dict[str, _StaticTextBinding],
-) -> bool:
-    for statement in statements:
-        for expression in _statement_header_expressions(statement):
-            if _static_text_expression_contains_forbidden(expression, environment):
-                return True
-
-        if isinstance(statement, (ast.Assign, ast.AnnAssign)):
-            assigned = _static_text_value(statement.value, environment) if statement.value is not None else None
-            targets = statement.targets if isinstance(statement, ast.Assign) else [statement.target]
-            for target in targets:
-                _update_static_text_bindings(target, assigned, environment)
-        elif isinstance(statement, ast.AugAssign):
-            assigned = None
-            if isinstance(statement.op, ast.Add) and isinstance(statement.target, ast.Name):
-                left = environment.get(statement.target.id)
-                right = _static_text_value(statement.value, environment)
-                assigned = _combine_static_text(left, right)
-                if assigned is not None and any(_contains_forbidden_text(value[1]) for value in assigned.values):
-                    return True
-            _update_static_text_bindings(statement.target, assigned, environment)
-        elif isinstance(statement, ast.Delete):
-            for target in statement.targets:
-                for name in _bound_static_text_names(target):
-                    environment[name] = _StaticTextBinding((), uncertain=True)
-
-        if isinstance(statement, ast.If):
-            if isinstance(statement.test, ast.Constant) and isinstance(statement.test.value, bool):
-                selected = statement.body if statement.test.value else statement.orelse
-                if _static_text_block_contains_forbidden(selected, environment):
-                    return True
-            elif _merge_static_text_branches((statement.body, statement.orelse), environment):
-                return True
-        elif isinstance(statement, (ast.For, ast.AsyncFor, ast.While)):
-            loop_environment = dict(environment)
-            if isinstance(statement, (ast.For, ast.AsyncFor)):
-                _mark_static_text_bindings_uncertain(statement.target, loop_environment)
-            if _static_text_block_contains_forbidden(statement.body, loop_environment):
-                return True
-            paths = [dict(environment), loop_environment]
-            if statement.orelse:
-                orelse_environment = _merge_static_text_environments(paths)
-                if _static_text_block_contains_forbidden(statement.orelse, orelse_environment):
-                    return True
-                paths.append(orelse_environment)
-            environment.clear()
-            environment.update(_merge_static_text_environments(paths))
-            _mark_static_text_names_uncertain(_mutated_static_text_names(statement.body), environment)
-        elif isinstance(statement, (ast.With, ast.AsyncWith)):
-            for item in statement.items:
-                if item.optional_vars is not None:
-                    _mark_static_text_bindings_uncertain(item.optional_vars, environment)
-            if _static_text_block_contains_forbidden(statement.body, environment):
-                return True
-        elif isinstance(statement, (ast.Try, ast.TryStar)):
-            paths: list[dict[str, _StaticTextBinding]] = []
-            successful = dict(environment)
-            if _static_text_block_contains_forbidden(statement.body, successful):
-                return True
-            if statement.orelse and _static_text_block_contains_forbidden(statement.orelse, successful):
-                return True
-            paths.append(successful)
-            for handler in statement.handlers:
-                handled = dict(environment)
-                if handler.name is not None:
-                    handled[handler.name] = _StaticTextBinding((), uncertain=True)
-                if _static_text_block_contains_forbidden(handler.body, handled):
-                    return True
-                if handler.name is not None:
-                    handled.pop(handler.name, None)
-                paths.append(handled)
-            merged = _merge_static_text_environments(paths)
-            if statement.handlers:
-                _mark_static_text_names_uncertain(_mutated_static_text_names(statement.body), merged)
-            if statement.finalbody and _static_text_block_contains_forbidden(statement.finalbody, merged):
-                return True
-            environment.clear()
-            environment.update(merged)
-        elif isinstance(statement, ast.Match):
-            branches = [case.body for case in statement.cases]
-            branches.append([])
-            if _merge_static_text_branches(tuple(branches), environment):
-                return True
-        elif isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            nested_environment = dict(environment)
-            _remove_argument_bindings(statement.args, nested_environment)
-            if _static_text_block_contains_forbidden(statement.body, nested_environment):
-                return True
-            environment.pop(statement.name, None)
-        elif isinstance(statement, ast.ClassDef):
-            if _static_text_block_contains_forbidden(statement.body, dict(environment)):
-                return True
-            environment.pop(statement.name, None)
-    return False
-
-
-def _merge_static_text_branches(
-    branches: tuple[list[ast.stmt], ...],
-    environment: dict[str, _StaticTextBinding],
-) -> bool:
-    outcomes: list[dict[str, _StaticTextBinding]] = []
-    for branch in branches:
-        outcome = dict(environment)
-        if _static_text_block_contains_forbidden(branch, outcome):
-            return True
-        outcomes.append(outcome)
-    environment.clear()
-    environment.update(_merge_static_text_environments(outcomes))
-    return False
-
-
-def _merge_static_text_environments(
-    environments: list[dict[str, _StaticTextBinding]],
-) -> dict[str, _StaticTextBinding]:
-    merged: dict[str, _StaticTextBinding] = {}
-    names = {name for environment in environments for name in environment}
-    for name in names:
-        bindings = [environment.get(name) for environment in environments]
-        values = tuple(dict.fromkeys(value for binding in bindings if binding is not None for value in binding.values))
-        if len(values) > _MAX_STATIC_TEXT_CANDIDATES:
-            raise ValueError("Python static text has too many candidates")
-        merged[name] = _StaticTextBinding(
-            values,
-            uncertain=any(binding is None or binding.uncertain for binding in bindings),
+        _collect_static_text_fragments(
+            child,
+            fragments,
+            depth=depth + 1,
+            nodes=nodes,
+            fragment_count=fragment_count,
         )
-    return merged
 
 
-def _statement_header_expressions(statement: ast.stmt) -> tuple[ast.expr, ...]:
-    expressions: list[ast.expr] = []
-
-    def collect(node: ast.AST) -> None:
-        for child in ast.iter_child_nodes(node):
-            if isinstance(child, ast.stmt):
-                continue
-            if isinstance(child, ast.expr):
-                expressions.append(child)
-            else:
-                collect(child)
-
-    collect(statement)
-    return tuple(expressions)
+_LiteralText = tuple[str, str, int]
 
 
-def _static_text_expression_contains_forbidden(
+def _literal_text_value(
     node: ast.expr,
-    environment: dict[str, _StaticTextBinding],
-) -> bool:
-    if isinstance(node, ast.Lambda):
-        nested_environment = dict(environment)
-        _remove_argument_bindings(node.args, nested_environment)
-        return _static_text_expression_contains_forbidden(node.body, nested_environment)
-    value = _static_text_value(node, environment)
-    if value is not None and any(_contains_forbidden_text(candidate[1]) for candidate in value.values):
-        return True
-    for child in ast.iter_child_nodes(node):
-        if isinstance(child, ast.expr) and _static_text_expression_contains_forbidden(child, environment):
-            return True
-    return False
-
-
-def _static_text_value(
-    node: ast.expr,
-    environment: dict[str, _StaticTextBinding],
     *,
     depth: int = 0,
     nodes: list[int] | None = None,
-) -> _StaticTextBinding | None:
+) -> _LiteralText | None:
     if nodes is None:
         nodes = [0]
     if depth > _MAX_STATIC_TEXT_DEPTH or nodes[0] >= _MAX_STATIC_TEXT_NODES:
         raise ValueError("Python static expression is too complex")
     nodes[0] += 1
-
     if isinstance(node, ast.Constant) and isinstance(node.value, (bytes, str)):
         if isinstance(node.value, bytes):
-            return _StaticTextBinding((("bytes", node.value.decode("ascii", "ignore"), 1),))
-        return _StaticTextBinding((("str", node.value, 1),))
-    if isinstance(node, ast.Name):
-        return environment.get(node.id)
+            literal = node.value.decode("ascii", "ignore")
+            kind = "bytes"
+        else:
+            literal = node.value
+            kind = "str"
+        if _contains_forbidden_text(literal):
+            raise ValueError("Python literal is outside sandbox contract")
+        return (kind, literal, 1)
     if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
-        left = _static_text_value(node.left, environment, depth=depth + 1, nodes=nodes)
-        right = _static_text_value(node.right, environment, depth=depth + 1, nodes=nodes)
-        return _combine_static_text(left, right)
+        left = _literal_text_value(node.left, depth=depth + 1, nodes=nodes)
+        right = _literal_text_value(node.right, depth=depth + 1, nodes=nodes)
+        if left is None or right is None or left[0] != right[0]:
+            return None
+        return _combine_literal_text(left, right)
     if isinstance(node, ast.JoinedStr):
-        combined = _StaticTextBinding((("str", "", 0),))
+        combined: _LiteralText = ("str", "", 0)
         for item in node.values:
             if isinstance(item, ast.Constant) and isinstance(item.value, str):
-                part: _StaticTextBinding | None = _StaticTextBinding((("str", item.value, 1),))
+                part: _LiteralText | None = ("str", item.value, 1)
             elif (
                 isinstance(item, ast.FormattedValue) and item.conversion in {-1, ord("s")} and item.format_spec is None
             ):
-                evaluated = _static_text_value(item.value, environment, depth=depth + 1, nodes=nodes)
-                part = (
-                    None
-                    if evaluated is None
-                    else _StaticTextBinding(
-                        tuple(("str", value[1], value[2]) for value in evaluated.values),
-                        uncertain=evaluated.uncertain,
-                    )
-                )
+                part = _literal_text_value(item.value, depth=depth + 1, nodes=nodes)
+                if part is not None and part[0] == "bytes":
+                    return None
             else:
                 return None
-            combined = _combine_static_text(combined, part)
-            if combined is None:
+            if part is None:
                 return None
+            combined = _combine_literal_text(combined, part)
         return combined
     return None
 
 
-def _combine_static_text(
-    left: _StaticTextBinding | None,
-    right: _StaticTextBinding | None,
-) -> _StaticTextBinding | None:
-    if (left is not None and left.uncertain) or (right is not None and right.uncertain):
-        raise ValueError("Python static text depends on an uncertain mutation")
-    if left is None or right is None:
-        return None
-    combined: list[_StaticTextValue] = []
-    for left_value in left.values:
-        for right_value in right.values:
-            if left_value[0] != right_value[0]:
-                continue
-            fragments = left_value[2] + right_value[2]
-            text = left_value[1] + right_value[1]
-            if fragments > _MAX_STATIC_TEXT_FRAGMENTS or len(text.encode("utf-8", "strict")) > MAX_SOURCE_BYTES:
-                raise ValueError("Python static text is too large")
-            combined.append((left_value[0], text, fragments))
-            if len(combined) > _MAX_STATIC_TEXT_CANDIDATES:
-                raise ValueError("Python static text has too many candidates")
-    return _StaticTextBinding(tuple(dict.fromkeys(combined))) if combined else None
-
-
-def _update_static_text_bindings(
-    target: ast.expr,
-    value: _StaticTextBinding | None,
-    environment: dict[str, _StaticTextBinding],
-) -> None:
-    for name in _bound_static_text_names(target):
-        if value is None:
-            environment[name] = _StaticTextBinding((), uncertain=True)
-        elif not isinstance(target, ast.Name):
-            environment[name] = _StaticTextBinding((), uncertain=True)
-        else:
-            environment[name] = value
-
-
-def _mark_static_text_bindings_uncertain(
-    target: ast.expr,
-    environment: dict[str, _StaticTextBinding],
-) -> None:
-    for name in _bound_static_text_names(target):
-        environment[name] = _StaticTextBinding((), uncertain=True)
-
-
-def _mark_static_text_names_uncertain(
-    names: set[str],
-    environment: dict[str, _StaticTextBinding],
-) -> None:
-    for name in names:
-        binding = environment.get(name)
-        environment[name] = (
-            _StaticTextBinding((), uncertain=True)
-            if binding is None
-            else _StaticTextBinding(
-                binding.values,
-                uncertain=True,
-            )
-        )
-
-
-def _mutated_static_text_names(statements: list[ast.stmt]) -> set[str]:
-    names: set[str] = set()
-    for statement in statements:
-        for node in ast.walk(statement):
-            if isinstance(node, ast.Assign):
-                for target in node.targets:
-                    names.update(_bound_static_text_names(target))
-            elif isinstance(node, (ast.AnnAssign, ast.AugAssign)):
-                names.update(_bound_static_text_names(node.target))
-            elif isinstance(node, (ast.For, ast.AsyncFor)):
-                names.update(_bound_static_text_names(node.target))
-            elif isinstance(node, (ast.With, ast.AsyncWith)):
-                for item in node.items:
-                    if item.optional_vars is not None:
-                        names.update(_bound_static_text_names(item.optional_vars))
-            elif isinstance(node, ast.Delete):
-                for target in node.targets:
-                    names.update(_bound_static_text_names(target))
-    return names
-
-
-def _bound_static_text_names(target: ast.expr) -> tuple[str, ...]:
-    if isinstance(target, ast.Name):
-        return (target.id,)
-    if isinstance(target, (ast.List, ast.Tuple)):
-        return tuple(name for item in target.elts for name in _bound_static_text_names(item))
-    if isinstance(target, ast.Starred):
-        return _bound_static_text_names(target.value)
-    return ()
-
-
-def _remove_argument_bindings(arguments: ast.arguments, environment: dict[str, _StaticTextBinding]) -> None:
-    for argument in (*arguments.posonlyargs, *arguments.args, *arguments.kwonlyargs):
-        environment.pop(argument.arg, None)
-    if arguments.vararg is not None:
-        environment.pop(arguments.vararg.arg, None)
-    if arguments.kwarg is not None:
-        environment.pop(arguments.kwarg.arg, None)
+def _combine_literal_text(left: _LiteralText, right: _LiteralText) -> _LiteralText:
+    fragments = left[2] + right[2]
+    text = left[1] + right[1]
+    if fragments > _MAX_STATIC_TEXT_FRAGMENTS or len(text.encode("utf-8", "strict")) > MAX_SOURCE_BYTES:
+        raise ValueError("Python static text is too large")
+    return (left[0], text, fragments)
 
 
 def _freeze_json(value: object, maximum_bytes: int) -> object:

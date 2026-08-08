@@ -1,6 +1,6 @@
 # Public Export Coverage
 
-- source commit: `042fb7c392d60ce4c6f768b1eeccde5ab600490c`
+- source commit: `ed5717d9e753fabfd9106344d8440bfe3877744c`
 - classification policy SHA-256: `f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0`
 - raw source content included in this report: `false`
 - unknown exclusions: `0` (generation fails closed on `unknown_blocked`)
@@ -9,11 +9,11 @@
 
 | Measure | Count |
 |---|---:|
-| Tracked source files | 958 |
+| Tracked source files | 959 |
 | Public-classified source files | 709 |
 | Materialized public files | 708 |
 | Non-materialized control files | 1 |
-| Excluded source files | 249 |
+| Excluded source files | 250 |
 | Excluded files with executable behavior | 128 |
 | Generated export receipt files | 1 |
 | Generated export audit files | 2 |
@@ -33,7 +33,7 @@ export_tracked_file_count = materialized_file_count + generated_audit_file_count
 | Classification | Count |
 |---|---:|
 | `official_private` | 71 |
-| `private_internal` | 178 |
+| `private_internal` | 179 |
 | `public_generated` | 40 |
 | `public_shared` | 669 |
 
@@ -42,7 +42,7 @@ export_tracked_file_count = materialized_file_count + generated_audit_file_count
 | Reason code | Count |
 |---|---:|
 | `historical_research` | 13 |
-| `internal_evidence_or_handoff` | 85 |
+| `internal_evidence_or_handoff` | 86 |
 | `internal_test_boundary` | 57 |
 | `live_identity_or_real_id` | 1 |
 | `official_deployment_inventory` | 23 |

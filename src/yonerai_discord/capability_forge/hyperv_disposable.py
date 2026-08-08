@@ -48,7 +48,26 @@ _LOCATOR = re.compile(
 _IPV4 = re.compile(r"(?<![0-9])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?![0-9])")
 _IPV6 = re.compile(r"(?i)(?<![0-9a-f])(?:[0-9a-f]{0,4}:){2,}[0-9a-f]{0,4}(?![0-9a-f])")
 _SECRET = re.compile(
-    r"(?i)(?:(?:basic|bearer)\s+\S+|(?:api[_-]?key|authorization|cookie|password|secret|token)\s*[:=])"
+    r"(?i)(?:\b(?:basic|bearer)\s+[a-z0-9._~+/=-]{4,}"
+    r"|\b(?:api[_-]?key|authorization|cookie|token|secret|password)\s*[:=]\s*\S+"
+    r"|\bsk-(?:proj-)?[a-z0-9_-]{8,}"
+    r"|\bgithub_pat_[a-z0-9_]{8,}"
+    r"|\bgh[pousr]_[a-z0-9]{8,}"
+    r"|\bxox[baprs]-[a-z0-9-]{8,}"
+    r"|\bAIza[a-z0-9_-]{16,}"
+    r"|\b(?:AKIA|ASIA)[A-Z0-9]{12,}"
+    r"|-----BEGIN(?: [A-Z0-9]+)* PRIVATE KEY-----)"
+)
+_SPLIT_SECRET = re.compile(
+    r"(?i)(?:(?:basic|bearer)\s+[a-z0-9._~+/=-]{4,}"
+    r"|(?:api[_-]?key|authorization|cookie|token|secret|password)\s*[:=]\s*\S+"
+    r"|sk-(?:proj-)?[a-z0-9_-]{8,}"
+    r"|github_pat_[a-z0-9_]{8,}"
+    r"|gh[pousr]_[a-z0-9]{8,}"
+    r"|xox[baprs]-[a-z0-9-]{8,}"
+    r"|AIza[a-z0-9_-]{16,}"
+    r"|(?:AKIA|ASIA)[A-Z0-9]{12,}"
+    r"|-----BEGIN(?: [A-Z0-9]+)* PRIVATE KEY-----)"
 )
 _MAX_PUBLIC_TEXT_LEAVES = 256
 _MAX_PUBLIC_TEXT_DEPTH = 32
@@ -563,9 +582,29 @@ def _contains_forbidden_public_text(value: object) -> bool:
         return True
     ordered_leaves, mapping_keys, mapping_values = streams
     joined = ("".join(ordered_leaves), "".join(mapping_keys), "".join(mapping_values))
-    return any(
+    if any(
         _LOCATOR.search(item) or _contains_ipv4_literal(item) or _contains_ipv6_literal(item) or _SECRET.search(item)
         for item in (*ordered_leaves, *joined)
+    ):
+        return True
+    return any(
+        _contains_secret_across_leaf_boundary(stream) for stream in (ordered_leaves, mapping_keys, mapping_values)
+    )
+
+
+def _contains_secret_across_leaf_boundary(stream: tuple[str, ...]) -> bool:
+    if len(stream) < 2:
+        return False
+    boundaries: list[int] = []
+    offset = 0
+    for item in stream[:-1]:
+        offset += len(item)
+        boundaries.append(offset)
+    joined = "".join(stream)
+    starts = {0, *boundaries}
+    return any(
+        match.start() in starts and any(match.start() < boundary < match.end() for boundary in boundaries)
+        for match in _SPLIT_SECRET.finditer(joined)
     )
 
 

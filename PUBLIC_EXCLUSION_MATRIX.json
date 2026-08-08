@@ -3,12 +3,12 @@
     "audit_output_file_count": 2,
     "classification_counts": {
       "official_private": 71,
-      "private_internal": 178,
+      "private_internal": 179,
       "public_generated": 40,
       "public_shared": 669
     },
     "excluded_executable_file_count": 128,
-    "excluded_source_file_count": 249,
+    "excluded_source_file_count": 250,
     "export_tracked_file_count": 711,
     "generated_audit_file_count": 2,
     "generated_receipt_file_count": 1,
@@ -17,8 +17,8 @@
     "policy_sha256": "f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0",
     "public_classified_source_count": 709,
     "public_file_count": 708,
-    "source_commit": "042fb7c392d60ce4c6f768b1eeccde5ab600490c",
-    "tracked_file_count": 958
+    "source_commit": "ed5717d9e753fabfd9106344d8440bfe3877744c",
+    "tracked_file_count": 959
   },
   "excluded": [
     {
@@ -356,6 +356,17 @@
       "decision": "retain_private_until_sanitized_equivalent",
       "executable_behavior": false,
       "path_sha256": "a855db2d1330adc7f776056fc0ae2d92f05bedc610ad31c57e234b399d879a7b",
+      "public_safe_equivalent": false,
+      "public_value": "Current public truth should be projected into a purpose-built public document.",
+      "reason_code": "internal_evidence_or_handoff",
+      "secret_or_live_risk": "private_history_or_live_evidence",
+      "test_impact": "no_executable_test_impact"
+    },
+    {
+      "classification": "private_internal",
+      "decision": "retain_private_until_sanitized_equivalent",
+      "executable_behavior": false,
+      "path_sha256": "a7e4d0d4a6dd8034729f60e0652d915443480197a3fbcf0f12f52334165945c4",
       "public_safe_equivalent": false,
       "public_value": "Current public truth should be projected into a purpose-built public document.",
       "reason_code": "internal_evidence_or_handoff",
@@ -2790,5 +2801,5 @@
     "unsafe_binary_or_generated_media"
   ],
   "schema": "yonerai.public-exclusion-matrix.v1",
-  "source_commit": "042fb7c392d60ce4c6f768b1eeccde5ab600490c"
+  "source_commit": "ed5717d9e753fabfd9106344d8440bfe3877744c"
 }
