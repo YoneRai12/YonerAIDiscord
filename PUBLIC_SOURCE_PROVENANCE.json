@@ -221,7 +221,7 @@
     ],
     "policy_sha256": "f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0",
     "receipt": "PUBLIC_EXPORT_MANIFEST.json",
-    "source_commit": "a0469d2098cde521a49aee709efec8dd064ca738"
+    "source_commit": "b03e5988f03e0dbe72815ae0f05b33322c46ddba"
   },
   "schema_version": 1
 }

@@ -551,7 +551,10 @@ def _valid_cleanup(binding: HyperVDisposableBinding, receipt: object) -> bool:
 def _contains_forbidden_public_text(value: object) -> bool:
     if isinstance(value, str):
         return bool(
-            _LOCATOR.search(value) or _IPV4.search(value) or _contains_ipv6_literal(value) or _SECRET.search(value)
+            _LOCATOR.search(value)
+            or _contains_ipv4_literal(value)
+            or _contains_ipv6_literal(value)
+            or _SECRET.search(value)
         )
     if isinstance(value, Mapping):
         return any(
@@ -559,6 +562,17 @@ def _contains_forbidden_public_text(value: object) -> bool:
         )
     if isinstance(value, (tuple, list)):
         return any(_contains_forbidden_public_text(item) for item in value)
+    return False
+
+
+def _contains_ipv4_literal(value: str) -> bool:
+    for candidate in _IPV4.finditer(value):
+        try:
+            address = ipaddress.ip_address(candidate.group(0))
+        except ValueError:
+            continue
+        if isinstance(address, ipaddress.IPv4Address):
+            return True
     return False
 
 
