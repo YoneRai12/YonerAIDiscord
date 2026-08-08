@@ -48,7 +48,8 @@ _LOCATOR = re.compile(
 _IPV4 = re.compile(r"(?<![0-9])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?![0-9])")
 _IPV6 = re.compile(r"(?i)(?<![0-9a-f])(?:[0-9a-f]{0,4}:){2,}[0-9a-f]{0,4}(?![0-9a-f])")
 _SECRET = re.compile(
-    r"(?i)(?:\b(?:basic|bearer)\s+[a-z0-9._~+/=-]{4,}"
+    r"(?i)(?:\bbearer\s+\S+"
+    r"|\bbasic\s+[a-z0-9._~+/=-]{4,}"
     r"|\b(?:api[_-]?key|authorization|cookie|token|secret|password)\s*[:=]\s*\S+"
     r"|\bsk-(?:proj-)?[a-z0-9_-]{8,}"
     r"|\bgithub_pat_[a-z0-9_]{8,}"
@@ -59,7 +60,8 @@ _SECRET = re.compile(
     r"|-----BEGIN(?: [A-Z0-9]+)* PRIVATE KEY-----)"
 )
 _SPLIT_SECRET = re.compile(
-    r"(?i)(?:(?:basic|bearer)\s+[a-z0-9._~+/=-]{4,}"
+    r"(?i)(?:bearer\s+\S+"
+    r"|basic\s+[a-z0-9._~+/=-]{4,}"
     r"|(?:api[_-]?key|authorization|cookie|token|secret|password)\s*[:=]\s*\S+"
     r"|sk-(?:proj-)?[a-z0-9_-]{8,}"
     r"|github_pat_[a-z0-9_]{8,}"
