@@ -13,7 +13,11 @@ from yonerai_discord.capability_forge.sandbox_contract import (
     SandboxScope,
 )
 from yonerai_discord.capability_forge.sandbox_runtime import DiscordSandboxRuntime
-from yonerai_discord.capability_forge.sandbox_service import SandboxRunOutcome, SandboxRunStatus
+from yonerai_discord.capability_forge.sandbox_service import (
+    SandboxRunCancelledError,
+    SandboxRunOutcome,
+    SandboxRunStatus,
+)
 from yonerai_discord.sandbox_operator_cli import SandboxCliDependencies, SandboxCode, SandboxTemplate
 
 
@@ -24,7 +28,10 @@ class _Lifecycle:
         self.release = asyncio.Event()
         self.block = False
         self.on_cancel = None
+        self.cancel_release: asyncio.Event | None = None
+        self.cancel_cleanup_confirmed: bool | None = None
         self.error: Exception | None = None
+        self.outcome_status = SandboxRunStatus.SUCCEEDED
 
     async def run(
         self,
@@ -42,9 +49,15 @@ class _Lifecycle:
             except asyncio.CancelledError:
                 if self.on_cancel is not None:
                     self.on_cancel()
+                if self.cancel_release is not None:
+                    await self.cancel_release.wait()
+                if self.cancel_cleanup_confirmed is not None:
+                    raise SandboxRunCancelledError(cleanup_confirmed=self.cancel_cleanup_confirmed) from None
                 raise
         if self.error is not None:
             raise self.error
+        if self.outcome_status is not SandboxRunStatus.SUCCEEDED:
+            return SandboxRunOutcome(self.outcome_status)
         return SandboxRunOutcome(
             SandboxRunStatus.SUCCEEDED,
             result=SandboxResult(
@@ -66,6 +79,32 @@ class _Audit:
     def __call__(self, event: str, **values: object) -> int:
         self.rows.append((event, values))
         return len(self.rows)
+
+
+class _EventFailingAudit(_Audit):
+    def __init__(self, event: str) -> None:
+        super().__init__()
+        self.event = event
+
+    def __call__(self, event: str, **values: object) -> int:
+        if event == self.event:
+            return 0
+        return super().__call__(event, **values)
+
+
+class _StateObservingAudit(_Audit):
+    def __init__(self, database_path: Path) -> None:
+        super().__init__()
+        self.database_path = database_path
+        self.terminal_states: list[tuple[str, int]] = []
+
+    def __call__(self, event: str, **values: object) -> int:
+        if event == "sandbox.template.completed":
+            with sqlite3.connect(self.database_path) as connection:
+                row = connection.execute("SELECT state,signed FROM execution_sandbox_discord_job_v1").fetchone()
+            assert row is not None
+            self.terminal_states.append((str(row[0]), int(row[1])))
+        return super().__call__(event, **values)
 
 
 def _interaction(interaction_id: int, guild_id: int, *, channel_id: int = 77) -> object:
@@ -100,7 +139,7 @@ def _runtime(
 @pytest.mark.asyncio
 async def test_fixed_template_runs_with_exact_discord_scope_and_persists_redacted_receipt(tmp_path: Path) -> None:
     lifecycle = _Lifecycle()
-    audit = _Audit()
+    audit = _StateObservingAudit(tmp_path / "runtime.sqlite3")
     runtime = _runtime(tmp_path, lifecycle, audit)
     access = runtime.bind_dependencies(_interaction(1234, 9001), SandboxCliDependencies())
     assert access.read_projection is not None and access.mutations is not None
@@ -125,6 +164,7 @@ async def test_fixed_template_runs_with_exact_discord_scope_and_persists_redacte
         None,
     )
     assert {event for event, _ in audit.rows} == {"sandbox.template.requested", "sandbox.template.completed"}
+    assert audit.terminal_states == [("running", 0)]
     assert "answer" not in repr(audit.rows)
     with sqlite3.connect(tmp_path / "runtime.sqlite3") as connection:
         row = connection.execute(
@@ -239,6 +279,235 @@ async def test_cancel_is_scope_bound_and_never_infers_cleanup_from_readiness(tmp
     assert cancelled.code is SandboxCode.MUTATION_FAILED and cancelled.changed is False
     receipt = await access.read_projection.read_receipt("job_d1234")
     assert receipt is not None and receipt.state == "cleanup_unconfirmed" and receipt.cleanup_confirmed is False
+
+
+@pytest.mark.asyncio
+async def test_cleanup_confirmed_cancellation_is_durable_and_preserves_task_cancellation(tmp_path: Path) -> None:
+    lifecycle = _Lifecycle()
+    lifecycle.block = True
+    lifecycle.cancel_cleanup_confirmed = True
+    audit = _StateObservingAudit(tmp_path / "runtime.sqlite3")
+    runtime = _runtime(tmp_path, lifecycle, audit)
+    access = runtime.bind_dependencies(_interaction(1234, 9001), SandboxCliDependencies())
+    assert access.mutations is not None and access.read_projection is not None
+    running = asyncio.create_task(access.mutations.run_template(SandboxTemplate.PYTHON_SMOKE))
+    await asyncio.wait_for(lifecycle.started.wait(), timeout=1)
+
+    cancelled = await access.mutations.cancel("job_d1234")
+    with pytest.raises(asyncio.CancelledError):
+        await running
+
+    assert cancelled.code is SandboxCode.OK
+    assert cancelled.changed is True and cancelled.audit_recorded is True
+    receipt = await access.read_projection.read_receipt("job_d1234")
+    assert receipt is not None
+    assert (receipt.state, receipt.signed, receipt.cleanup_confirmed, receipt.failure_code) == (
+        "cancelled",
+        False,
+        True,
+        "cancelled",
+    )
+    assert runtime.ready is True
+    assert tuple(event for event, _values in audit.rows) == (
+        "sandbox.template.requested",
+        "sandbox.cancel.requested",
+        "sandbox.template.completed",
+        "sandbox.cancel.completed",
+    )
+    assert audit.terminal_states == [("running", 0)]
+
+
+@pytest.mark.asyncio
+async def test_failed_run_is_audited_before_terminal_state_commit(tmp_path: Path) -> None:
+    lifecycle = _Lifecycle()
+    lifecycle.outcome_status = SandboxRunStatus.FAILED
+    audit = _StateObservingAudit(tmp_path / "runtime.sqlite3")
+    runtime = _runtime(tmp_path, lifecycle, audit)
+    access = runtime.bind_dependencies(_interaction(1234, 9001), SandboxCliDependencies())
+    assert access.mutations is not None and access.read_projection is not None
+
+    outcome = await access.mutations.run_template(SandboxTemplate.PYTHON_SMOKE)
+
+    assert outcome.code is SandboxCode.MUTATION_FAILED
+    assert outcome.changed is False and outcome.audit_recorded is True
+    assert outcome.state == "failed"
+    receipt = await access.read_projection.read_receipt("job_d1234")
+    assert receipt is not None
+    assert (receipt.state, receipt.signed, receipt.cleanup_confirmed, receipt.failure_code) == (
+        "failed",
+        False,
+        True,
+        "failed",
+    )
+    assert audit.terminal_states == [("running", 0)]
+
+
+@pytest.mark.asyncio
+async def test_typed_cancellation_without_confirmed_cleanup_remains_quarantined(tmp_path: Path) -> None:
+    lifecycle = _Lifecycle()
+    lifecycle.block = True
+    lifecycle.cancel_cleanup_confirmed = False
+    runtime = _runtime(tmp_path, lifecycle, _Audit())
+    access = runtime.bind_dependencies(_interaction(1234, 9001), SandboxCliDependencies())
+    assert access.mutations is not None and access.read_projection is not None
+    running = asyncio.create_task(access.mutations.run_template(SandboxTemplate.PYTHON_SMOKE))
+    await asyncio.wait_for(lifecycle.started.wait(), timeout=1)
+
+    cancelled = await access.mutations.cancel("job_d1234")
+    with pytest.raises(asyncio.CancelledError):
+        await running
+
+    assert cancelled.code is SandboxCode.MUTATION_FAILED and cancelled.changed is False
+    receipt = await access.read_projection.read_receipt("job_d1234")
+    assert receipt is not None
+    assert (receipt.state, receipt.cleanup_confirmed, receipt.failure_code) == (
+        "cleanup_unconfirmed",
+        False,
+        "lifecycle_cancelled_cleanup_unconfirmed",
+    )
+    assert runtime.ready is False
+
+
+@pytest.mark.asyncio
+async def test_terminal_audit_failure_never_publishes_success(tmp_path: Path) -> None:
+    lifecycle = _Lifecycle()
+    audit = _EventFailingAudit("sandbox.template.completed")
+    runtime = _runtime(tmp_path, lifecycle, audit)
+    access = runtime.bind_dependencies(_interaction(1234, 9001), SandboxCliDependencies())
+    assert access.mutations is not None and access.read_projection is not None
+
+    outcome = await access.mutations.run_template(SandboxTemplate.PYTHON_SMOKE)
+
+    assert outcome.code is SandboxCode.AUDIT_UNAVAILABLE
+    assert outcome.changed is False and outcome.audit_recorded is False
+    assert outcome.state == "failed"
+    receipt = await access.read_projection.read_receipt("job_d1234")
+    assert receipt is not None
+    assert (receipt.state, receipt.signed, receipt.cleanup_confirmed, receipt.failure_code) == (
+        "failed",
+        False,
+        True,
+        "terminal_audit_unavailable",
+    )
+    with sqlite3.connect(tmp_path / "runtime.sqlite3") as connection:
+        evidence = connection.execute(
+            """SELECT broker_job_id,broker_evidence_digest
+               FROM execution_sandbox_discord_job_v1 WHERE job_id='job_d1234'"""
+        ).fetchone()
+    assert evidence is not None and all(value is not None for value in evidence)
+
+
+@pytest.mark.asyncio
+async def test_cleanup_and_terminal_audit_failure_preserves_durable_quarantine(tmp_path: Path) -> None:
+    lifecycle = _Lifecycle()
+    lifecycle.outcome_status = SandboxRunStatus.CLEANUP_UNCONFIRMED
+    runtime = _runtime(tmp_path, lifecycle, _EventFailingAudit("sandbox.template.completed"))
+    access = runtime.bind_dependencies(_interaction(1234, 9001), SandboxCliDependencies())
+    assert access.mutations is not None and access.read_projection is not None
+
+    outcome = await access.mutations.run_template(SandboxTemplate.PYTHON_SMOKE)
+
+    assert outcome.code is SandboxCode.AUDIT_UNAVAILABLE
+    assert outcome.changed is False and outcome.audit_recorded is False
+    assert outcome.state == "cleanup_unconfirmed"
+    receipt = await access.read_projection.read_receipt("job_d1234")
+    assert receipt is not None
+    assert (receipt.state, receipt.cleanup_confirmed, receipt.failure_code) == (
+        "cleanup_unconfirmed",
+        False,
+        "cleanup_and_audit_unavailable",
+    )
+    assert runtime.ready is False
+    runtime._connection.close()  # type: ignore[union-attr]
+    runtime._connection = None
+
+    reopened = _runtime(tmp_path, _Lifecycle(), _Audit())
+    assert reopened.ready is False
+    reopened_access = reopened.bind_dependencies(_interaction(1235, 9001), SandboxCliDependencies())
+    assert reopened_access.read_projection is not None
+    assert (await reopened_access.read_projection.read_status()).blockers == ("cleanup_unconfirmed",)
+
+
+@pytest.mark.asyncio
+async def test_confirmed_cancellation_terminal_audit_failure_is_not_reported_as_success(tmp_path: Path) -> None:
+    lifecycle = _Lifecycle()
+    lifecycle.block = True
+    lifecycle.cancel_cleanup_confirmed = True
+    runtime = _runtime(tmp_path, lifecycle, _EventFailingAudit("sandbox.template.completed"))
+    access = runtime.bind_dependencies(_interaction(1234, 9001), SandboxCliDependencies())
+    assert access.mutations is not None and access.read_projection is not None
+    running = asyncio.create_task(access.mutations.run_template(SandboxTemplate.PYTHON_SMOKE))
+    await asyncio.wait_for(lifecycle.started.wait(), timeout=1)
+
+    cancelled = await access.mutations.cancel("job_d1234")
+    with pytest.raises(asyncio.CancelledError):
+        await running
+
+    assert cancelled.code is SandboxCode.AUDIT_UNAVAILABLE
+    assert cancelled.changed is False and cancelled.audit_recorded is False
+    assert cancelled.state == "cancelled"
+    receipt = await access.read_projection.read_receipt("job_d1234")
+    assert receipt is not None
+    assert (receipt.state, receipt.cleanup_confirmed, receipt.failure_code) == (
+        "cancelled",
+        True,
+        "terminal_audit_unavailable",
+    )
+
+
+@pytest.mark.asyncio
+async def test_cancel_completed_audit_failure_is_durable_and_not_reported_as_success(tmp_path: Path) -> None:
+    lifecycle = _Lifecycle()
+    lifecycle.block = True
+    lifecycle.cancel_cleanup_confirmed = True
+    runtime = _runtime(tmp_path, lifecycle, _EventFailingAudit("sandbox.cancel.completed"))
+    access = runtime.bind_dependencies(_interaction(1234, 9001), SandboxCliDependencies())
+    assert access.mutations is not None and access.read_projection is not None
+    running = asyncio.create_task(access.mutations.run_template(SandboxTemplate.PYTHON_SMOKE))
+    await asyncio.wait_for(lifecycle.started.wait(), timeout=1)
+
+    cancelled = await access.mutations.cancel("job_d1234")
+    with pytest.raises(asyncio.CancelledError):
+        await running
+
+    assert cancelled.code is SandboxCode.AUDIT_UNAVAILABLE
+    assert cancelled.changed is False and cancelled.audit_recorded is False
+    assert cancelled.state == "cancelled"
+    receipt = await access.read_projection.read_receipt("job_d1234")
+    assert receipt is not None
+    assert (receipt.state, receipt.cleanup_confirmed, receipt.failure_code) == (
+        "cancelled",
+        True,
+        "cancel_audit_unavailable",
+    )
+
+
+@pytest.mark.asyncio
+async def test_cancelling_cancel_request_propagates_while_job_cleanup_continues(tmp_path: Path) -> None:
+    lifecycle = _Lifecycle()
+    lifecycle.block = True
+    lifecycle.cancel_cleanup_confirmed = True
+    lifecycle.cancel_release = asyncio.Event()
+    cancel_started = asyncio.Event()
+    lifecycle.on_cancel = cancel_started.set
+    runtime = _runtime(tmp_path, lifecycle, _Audit())
+    access = runtime.bind_dependencies(_interaction(1234, 9001), SandboxCliDependencies())
+    assert access.mutations is not None and access.read_projection is not None
+    running = asyncio.create_task(access.mutations.run_template(SandboxTemplate.PYTHON_SMOKE))
+    await asyncio.wait_for(lifecycle.started.wait(), timeout=1)
+    cancelling = asyncio.create_task(access.mutations.cancel("job_d1234"))
+    await asyncio.wait_for(cancel_started.wait(), timeout=1)
+
+    cancelling.cancel("caller cancellation detail")
+    lifecycle.cancel_release.set()
+    with pytest.raises(asyncio.CancelledError):
+        await cancelling
+
+    with pytest.raises(asyncio.CancelledError):
+        await running
+    receipt = await access.read_projection.read_receipt("job_d1234")
+    assert receipt is not None
+    assert (receipt.state, receipt.cleanup_confirmed) == ("cancelled", True)
 
 
 @pytest.mark.asyncio

@@ -27,7 +27,7 @@ from .hyperv_disposable import (
     hyperv_execution_evidence,
 )
 from .sandbox_contract import SandboxCandidate, SandboxScope
-from .sandbox_service import SandboxRunOutcome, SandboxRunStatus
+from .sandbox_service import SandboxRunCancelledError, SandboxRunOutcome, SandboxRunStatus
 
 
 _PYTHON_SMOKE_SOURCE = "answer = {'ok': True, 'value': data['value']}"
@@ -300,7 +300,6 @@ class DiscordSandboxRuntime:
                     channel_id=channel_id,
                     owner_user_id=owner_user_id,
                     interaction_id=interaction_id,
-                    audit_recorded=audit_recorded,
                 ),
                 name=f"discord-sandbox-{job_id}",
             )
@@ -339,7 +338,6 @@ class DiscordSandboxRuntime:
         channel_id: int,
         owner_user_id: int,
         interaction_id: int,
-        audit_recorded: bool,
     ) -> SandboxMutationOutcome:
         self._update_job(job_id, state="running", signed=False, cleanup_confirmed=False, failure_code=None)
         candidate = SandboxCandidate(source=_PYTHON_SMOKE_SOURCE, input_data=_PYTHON_SMOKE_INPUT)
@@ -356,6 +354,30 @@ class DiscordSandboxRuntime:
                 scope=scope,
                 backend_identity=HYPERV_DISPOSABLE_BACKEND_ID,
             )
+        except SandboxRunCancelledError as exc:
+            if exc.cleanup_confirmed:
+                if self._append_terminal_audit(job_id, guild_id, owner_user_id, "cancelled"):
+                    self._update_job(
+                        job_id,
+                        state="cancelled",
+                        signed=False,
+                        cleanup_confirmed=True,
+                        failure_code="cancelled",
+                    )
+                else:
+                    self._persist_terminal_audit_failure(
+                        job_id=job_id,
+                        state="cancelled",
+                        cleanup_confirmed=True,
+                    )
+            else:
+                self._persist_untyped_cleanup_failure(
+                    job_id=job_id,
+                    guild_id=guild_id,
+                    owner_user_id=owner_user_id,
+                    failure_code="lifecycle_cancelled_cleanup_unconfirmed",
+                )
+            raise
         except asyncio.CancelledError:
             self._persist_untyped_cleanup_failure(
                 job_id=job_id,
@@ -365,7 +387,7 @@ class DiscordSandboxRuntime:
             )
             raise
         except Exception:
-            self._persist_untyped_cleanup_failure(
+            terminal_audit_recorded = self._persist_untyped_cleanup_failure(
                 job_id=job_id,
                 guild_id=guild_id,
                 owner_user_id=owner_user_id,
@@ -376,13 +398,26 @@ class DiscordSandboxRuntime:
                 False,
                 job_id=job_id,
                 state="cleanup_unconfirmed",
-                audit_recorded=audit_recorded,
+                audit_recorded=terminal_audit_recorded,
             )
         evidence: HyperVExecutionEvidence | None = None
         if outcome.status is SandboxRunStatus.SUCCEEDED:
             try:
                 evidence = hyperv_execution_evidence(outcome.result)  # type: ignore[arg-type]
             except Exception:
+                terminal_audit_recorded = self._append_terminal_audit(job_id, guild_id, owner_user_id, "failed")
+                if not terminal_audit_recorded:
+                    self._persist_terminal_audit_failure(
+                        job_id=job_id,
+                        state="failed",
+                        cleanup_confirmed=True,
+                    )
+                    return SandboxMutationOutcome(
+                        SandboxCode.AUDIT_UNAVAILABLE,
+                        False,
+                        job_id=job_id,
+                        state="failed",
+                    )
                 self._update_job(
                     job_id,
                     state="failed",
@@ -390,13 +425,12 @@ class DiscordSandboxRuntime:
                     cleanup_confirmed=True,
                     failure_code="broker_evidence_invalid",
                 )
-                self._append_terminal_audit(job_id, guild_id, owner_user_id, "failed")
                 return SandboxMutationOutcome(
                     SandboxCode.MUTATION_FAILED,
                     False,
                     job_id=job_id,
                     state="failed",
-                    audit_recorded=audit_recorded,
+                    audit_recorded=terminal_audit_recorded,
                 )
         state = outcome.status.value
         signed = outcome.status is SandboxRunStatus.SUCCEEDED
@@ -407,6 +441,33 @@ class DiscordSandboxRuntime:
         failure_code = None if signed else state
         if outcome.status is SandboxRunStatus.CLEANUP_UNCONFIRMED:
             self._quarantined = True
+        terminal_audit_recorded = self._append_terminal_audit(
+            job_id,
+            guild_id,
+            owner_user_id,
+            state,
+            evidence=evidence,
+        )
+        if not terminal_audit_recorded:
+            audit_failure_state = "failed" if signed else state
+            audit_failure_code = (
+                "cleanup_and_audit_unavailable"
+                if outcome.status is SandboxRunStatus.CLEANUP_UNCONFIRMED
+                else "terminal_audit_unavailable"
+            )
+            self._persist_terminal_audit_failure(
+                job_id=job_id,
+                state=audit_failure_state,
+                cleanup_confirmed=cleanup_confirmed,
+                evidence=evidence,
+                failure_code=audit_failure_code,
+            )
+            return SandboxMutationOutcome(
+                SandboxCode.AUDIT_UNAVAILABLE,
+                False,
+                job_id=job_id,
+                state=audit_failure_state,
+            )
         self._update_job(
             job_id,
             state=state,
@@ -415,14 +476,13 @@ class DiscordSandboxRuntime:
             failure_code=failure_code,
             evidence=evidence,
         )
-        self._append_terminal_audit(job_id, guild_id, owner_user_id, state, evidence=evidence)
         if outcome.status is SandboxRunStatus.SUCCEEDED:
             return SandboxMutationOutcome(
                 SandboxCode.OK,
                 True,
                 job_id=job_id,
                 state=state,
-                audit_recorded=audit_recorded,
+                audit_recorded=terminal_audit_recorded,
             )
         code = (
             SandboxCode.SANDBOX_NOT_READY
@@ -434,7 +494,25 @@ class DiscordSandboxRuntime:
             False,
             job_id=job_id,
             state=state,
-            audit_recorded=audit_recorded,
+            audit_recorded=terminal_audit_recorded,
+        )
+
+    def _persist_terminal_audit_failure(
+        self,
+        *,
+        job_id: str,
+        state: str,
+        cleanup_confirmed: bool,
+        evidence: HyperVExecutionEvidence | None = None,
+        failure_code: str = "terminal_audit_unavailable",
+    ) -> None:
+        self._update_job(
+            job_id,
+            state=state,
+            signed=False,
+            cleanup_confirmed=cleanup_confirmed,
+            failure_code=failure_code,
+            evidence=evidence,
         )
 
     def _persist_untyped_cleanup_failure(
@@ -444,16 +522,22 @@ class DiscordSandboxRuntime:
         guild_id: int,
         owner_user_id: int,
         failure_code: str,
-    ) -> None:
+    ) -> bool:
         self._quarantined = True
+        terminal_audit_recorded = self._append_terminal_audit(
+            job_id,
+            guild_id,
+            owner_user_id,
+            "cleanup_unconfirmed",
+        )
         self._update_job(
             job_id,
             state="cleanup_unconfirmed",
             signed=False,
             cleanup_confirmed=False,
-            failure_code=failure_code,
+            failure_code=(failure_code if terminal_audit_recorded else "cleanup_and_audit_unavailable"),
         )
-        self._append_terminal_audit(job_id, guild_id, owner_user_id, "cleanup_unconfirmed")
+        return terminal_audit_recorded
 
     async def _cancel(
         self,
@@ -498,16 +582,41 @@ class DiscordSandboxRuntime:
         try:
             await asyncio.shield(task)
         except asyncio.CancelledError:
-            pass
+            current = asyncio.current_task()
+            if (current is not None and current.cancelling()) or not task.done():
+                raise
         terminal = self._read_job(guild_id=guild_id, owner_user_id=owner_user_id, job_id=job_id)
+        if (
+            terminal is not None
+            and terminal["cleanup_confirmed"] == 1
+            and terminal["failure_code"] == "terminal_audit_unavailable"
+        ):
+            return SandboxMutationOutcome(
+                SandboxCode.AUDIT_UNAVAILABLE,
+                False,
+                job_id=job_id,
+                state=str(terminal["state"]),
+            )
         if terminal is None or terminal["state"] != "cancelled" or terminal["cleanup_confirmed"] != 1:
             return SandboxMutationOutcome(SandboxCode.MUTATION_FAILED, False, job_id=job_id)
-        self._append_audit(
+        if not self._append_audit(
             "sandbox.cancel.completed",
             guild_id=guild_id,
             owner_user_id=owner_user_id,
             details={"job_id": job_id, "state": "cancelled"},
-        )
+        ):
+            self._persist_terminal_audit_failure(
+                job_id=job_id,
+                state="cancelled",
+                cleanup_confirmed=True,
+                failure_code="cancel_audit_unavailable",
+            )
+            return SandboxMutationOutcome(
+                SandboxCode.AUDIT_UNAVAILABLE,
+                False,
+                job_id=job_id,
+                state="cancelled",
+            )
         return SandboxMutationOutcome(
             SandboxCode.OK,
             True,

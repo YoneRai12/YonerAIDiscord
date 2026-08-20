@@ -13,7 +13,12 @@ from .sandbox_contract import (
     SandboxResult,
     SandboxScope,
 )
-from .sandbox_service import ExternalSandboxService, SandboxRunOutcome, SandboxRunStatus
+from .sandbox_service import (
+    ExternalSandboxService,
+    SandboxRunCancelledError,
+    SandboxRunOutcome,
+    SandboxRunStatus,
+)
 
 
 class SandboxProposalLifecycleBridge:
@@ -76,10 +81,11 @@ class SandboxProposalLifecycleBridge:
         ):
             return outcome
 
-        async with self._record_lock:
-            if self._closed or not self._is_current():
-                return outcome
-            try:
+        cancelled = False
+        try:
+            async with self._record_lock:
+                if self._closed or not self._is_current():
+                    return outcome
                 self._repository.record_sandbox_success(
                     user_id=owner_user_id,
                     sandbox=self._sandbox,
@@ -87,11 +93,13 @@ class SandboxProposalLifecycleBridge:
                     candidate=candidate,
                     succeeded_at=self._clock(),
                 )
-            except asyncio.CancelledError:
-                raise
-            except Exception:
-                # A failed metadata write is never promotion or runtime evidence.
-                pass
+        except asyncio.CancelledError:
+            cancelled = True
+        except Exception:
+            # A failed metadata write is never promotion or runtime evidence.
+            pass
+        if cancelled:
+            raise SandboxRunCancelledError(cleanup_confirmed=True) from None
         return outcome
 
     async def begin_close(self) -> None:

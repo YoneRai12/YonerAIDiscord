@@ -25,6 +25,7 @@ from yonerai_discord.capability_forge.sandbox_contract import (
 from yonerai_discord.capability_forge.sandbox_lifecycle import SandboxProposalLifecycleBridge
 from yonerai_discord.capability_forge.sandbox_service import (
     ExternalSandboxService,
+    SandboxRunCancelledError,
     SandboxRunOutcome,
     SandboxRunStatus,
 )
@@ -303,10 +304,17 @@ async def test_unavailable_cancelled_stale_or_closed_bridge_records_nothing(repo
     )
     while "terminate:completed" not in completed_port.calls:
         await asyncio.sleep(0)
-    after_cleanup.cancel()
+    while completed_bridge._sandbox._active_runs != 0:
+        await asyncio.sleep(0)
+    after_cleanup.cancel("bridge private cancellation detail")
     completed_bridge._record_lock.release()
-    with pytest.raises(asyncio.CancelledError):
+    with pytest.raises(SandboxRunCancelledError) as raised:
         await after_cleanup
+    assert raised.value.cleanup_confirmed is True
+    assert raised.value.args == ()
+    assert raised.value.__cause__ is None
+    assert raised.value.__context__ is None
+    assert "bridge private cancellation detail" not in repr(raised.value)
 
     stale = _bridge(repository, port=_Port(), current=lambda: False)
     assert (

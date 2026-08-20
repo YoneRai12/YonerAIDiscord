@@ -37,6 +37,18 @@ class SandboxOperationProfile(StrEnum):
     DISPOSABLE_VM = "disposable_vm"
 
 
+class SandboxRunCancelledError(asyncio.CancelledError):
+    """Content-free cancellation carrying only exact cleanup confirmation."""
+
+    __slots__ = ("cleanup_confirmed",)
+
+    def __init__(self, *, cleanup_confirmed: bool) -> None:
+        if type(cleanup_confirmed) is not bool:
+            raise TypeError("cleanup_confirmed must be bool")
+        super().__init__()
+        self.cleanup_confirmed = cleanup_confirmed
+
+
 # 65s VM boot/socket accept + 60s guest wall + 60s owner cleanup + 10s
 # bounded scheduling overhead.  The guest's own wall/CPU policy is unchanged.
 DISPOSABLE_VM_OPERATION_TIMEOUT_SECONDS = 195.0
@@ -214,7 +226,7 @@ class ExternalSandboxService:
         started = False
         reason = SandboxTerminationReason.FAILED
         outcome = SandboxRunOutcome(SandboxRunStatus.FAILED)
-        cancelled: asyncio.CancelledError | None = None
+        cancelled = False
         cleanup_confirmed = True
         try:
             # A timed-out handshake may have allocated a remote session. Treat
@@ -242,9 +254,9 @@ class ExternalSandboxService:
                             SandboxRunStatus.SUCCEEDED,
                             result=result,
                         )
-        except asyncio.CancelledError as exc:
+        except asyncio.CancelledError:
             reason = SandboxTerminationReason.CANCELLED
-            cancelled = exc
+            cancelled = True
         except Exception:
             outcome = SandboxRunOutcome(SandboxRunStatus.FAILED)
         finally:
@@ -255,13 +267,12 @@ class ExternalSandboxService:
                     reason,
                     timeout_seconds=self._cleanup_timeout_seconds,
                 )
-                if cleanup_cancelled is not None and cancelled is None:
-                    cancelled = cleanup_cancelled
+                cancelled = cancelled or cleanup_cancelled
                 cleanup_confirmed = _valid_termination(request, receipt, reason) and self._is_current(lease)
                 if not cleanup_confirmed:
                     self._quarantine(lease)
-        if cancelled is not None:
-            raise cancelled
+        if cancelled:
+            raise SandboxRunCancelledError(cleanup_confirmed=cleanup_confirmed) from None
         if not cleanup_confirmed:
             return SandboxRunOutcome(SandboxRunStatus.CLEANUP_UNCONFIRMED)
         if outcome.status is SandboxRunStatus.SUCCEEDED and not self._is_current(lease):
@@ -344,11 +355,11 @@ async def _terminate_shielded(
     reason: SandboxTerminationReason,
     *,
     timeout_seconds: float,
-) -> tuple[SandboxTerminationReceipt | None, asyncio.CancelledError | None]:
+) -> tuple[SandboxTerminationReceipt | None, bool]:
     cleanup = asyncio.create_task(_terminate(port, request, reason, timeout_seconds=timeout_seconds))
     try:
-        return await asyncio.shield(cleanup), None
-    except asyncio.CancelledError as exc:
+        return await asyncio.shield(cleanup), False
+    except asyncio.CancelledError:
         # Preserve the reservation until the already bounded cleanup task has
         # actually stopped, even if cancellation is requested repeatedly.
         while not cleanup.done():
@@ -358,7 +369,7 @@ async def _terminate_shielded(
                 continue
         if not cleanup.cancelled():
             cleanup.exception()
-        return None, exc
+        return None, True
 
 
 def _same_binding(request: SandboxRequest, value: object) -> bool:
@@ -412,6 +423,7 @@ __all__ = [
     "DISPOSABLE_VM_OPERATION_TIMEOUT_SECONDS",
     "ExternalSandboxService",
     "SandboxOperationProfile",
+    "SandboxRunCancelledError",
     "SandboxRunOutcome",
     "SandboxRunStatus",
 ]

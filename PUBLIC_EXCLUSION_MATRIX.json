@@ -17,7 +17,7 @@
     "policy_sha256": "bbec31abbe5292fd3340da0780ba342094037333087276b96fc7a67fa1fce111",
     "public_classified_source_count": 728,
     "public_file_count": 727,
-    "source_commit": "7136f31fc79ba9e92474178f4e0d893de6cd1469",
+    "source_commit": "10b8f229bfbe2d82ea7bea749339c9c8a3ec9b4b",
     "tracked_file_count": 1061
   },
   "excluded": [
@@ -3714,5 +3714,5 @@
     "unsafe_binary_or_generated_media"
   ],
   "schema": "yonerai.public-exclusion-matrix.v1",
-  "source_commit": "7136f31fc79ba9e92474178f4e0d893de6cd1469"
+  "source_commit": "10b8f229bfbe2d82ea7bea749339c9c8a3ec9b4b"
 }
