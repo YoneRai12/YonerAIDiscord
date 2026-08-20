@@ -17,6 +17,10 @@ from yonerai_discord.agent_audit_projection import (
 from yonerai_discord.db import Database
 
 
+_STORE_A = "a" * 64
+_STORE_B = "b" * 64
+
+
 @dataclass(frozen=True, slots=True)
 class _Record:
     id: int
@@ -60,6 +64,7 @@ def _projection(
         source,
         source_current=lambda: current[0],
         authorization_current=allowed,
+        store_binding_digest=_STORE_A,
     )
 
 
@@ -86,6 +91,7 @@ def test_projection_filters_exact_real_scope_without_reading_details() -> None:
         (4, "agent.completed", None, "2026-08-08T00:00:00Z"),
     ]
     assert page.next_after_id == 4
+    assert page.next_cursor.store_binding_digest == _STORE_A
     assert page.scanned_count == 4
     assert page.exhausted is True
     assert source.calls == [(1_000, 0)]
@@ -126,6 +132,41 @@ def test_cursor_replay_is_rejected_across_request_or_session_binding() -> None:
         with pytest.raises(AuditProjectionError) as error:
             projection.read_page(scope=other, cursor=AgentAuditCursor.start(first))
         _assert_code(error, AuditProjectionFailureCode.BINDING_MISMATCH)
+    assert source.calls == []
+
+
+def test_scope_only_cursor_is_only_a_start_cursor_and_next_cursor_is_composite() -> None:
+    source = _Source((_Record(id=1),))
+    scope = _scope()
+    projection = _projection(source)
+
+    page = projection.read_page(scope=scope, cursor=AgentAuditCursor.start(scope))
+
+    assert page.next_cursor.binding_digest == scope.binding_digest
+    assert page.next_cursor.store_binding_digest == _STORE_A
+
+    legacy_resume = AgentAuditCursor(after_id=1, binding_digest=scope.binding_digest)
+    with pytest.raises(AuditProjectionError) as error:
+        projection.read_page(scope=scope, cursor=legacy_resume)
+    _assert_code(error, AuditProjectionFailureCode.BINDING_MISMATCH)
+    assert source.calls == [(1_000, 0)]
+
+
+def test_cursor_cannot_cross_store_binding() -> None:
+    source = _Source((_Record(id=1),))
+    scope = _scope()
+    cursor = _projection(source).read_page(scope=scope, cursor=AgentAuditCursor.start(scope)).next_cursor
+    source.calls.clear()
+
+    with pytest.raises(AuditProjectionError) as error:
+        AgentAuditProjection(
+            source,
+            source_current=lambda: source,
+            authorization_current=lambda _scope: True,
+            store_binding_digest=_STORE_B,
+        ).read_page(scope=scope, cursor=cursor)
+
+    _assert_code(error, AuditProjectionFailureCode.BINDING_MISMATCH)
     assert source.calls == []
 
 
@@ -191,7 +232,12 @@ def test_source_identity_replacement_fails_closed(replace_at: str) -> None:
             current[0] = replacement
         return current[0]
 
-    projection = AgentAuditProjection(source, source_current=source_current, authorization_current=lambda _scope: True)
+    projection = AgentAuditProjection(
+        source,
+        source_current=source_current,
+        authorization_current=lambda _scope: True,
+        store_binding_digest=_STORE_A,
+    )
     scope = _scope()
     with pytest.raises(AuditProjectionError) as error:
         projection.read_page(scope=scope, cursor=AgentAuditCursor.start(scope))
@@ -278,6 +324,7 @@ def test_real_database_cursor_resumes_after_reopen_without_duplicates(tmp_path) 
         first,
         source_current=lambda: first,
         authorization_current=lambda _scope: True,
+        store_binding_digest=first.agent_audit_store_binding_digest,
     ).read_page(scope=scope, cursor=AgentAuditCursor.start(scope))
     first.close()
 
@@ -295,6 +342,7 @@ def test_real_database_cursor_resumes_after_reopen_without_duplicates(tmp_path) 
             reopened,
             source_current=lambda: reopened,
             authorization_current=lambda _scope: True,
+            store_binding_digest=reopened.agent_audit_store_binding_digest,
         ).read_page(scope=scope, cursor=page.next_cursor)
     finally:
         reopened.close()

@@ -258,7 +258,7 @@
         "vcpu": 1,
         "dynamic_vhd_max_bytes": null,
         "required_free_bytes": null,
-        "allocation": "blocked_until_trusted_data_channel_and_owner_preflight",
+        "allocation": "blocked_until_protected_backend_and_owner_preflight",
         "evidence": [
           "src/yonerai_discord/capability_forge/hyperv_disposable.py",
           "docs/VM_AND_SANDBOX.md"
@@ -288,18 +288,22 @@
       "readiness": {
         "state": "implemented_unconfigured",
         "live_verified": false,
+        "trusted_data_channel_implemented": true,
+        "offline_runtime_composition_connected": true,
         "runtime_connected": false,
         "execution_allowed": false,
-        "blocker": "trusted_data_channel_unimplemented",
+        "blocker": "trusted_broker_unavailable",
         "required_checks": [
-          "trusted_data_channel",
           "fixed_broker_identity",
           "base_image_digest",
+          "protected_broker_readiness",
+          "protected_worker_readiness",
           "network_adapter_exact_zero",
           "cleanup_destroy_confirmation",
-          "runtime_composition"
+          "vm_guest_handshake",
+          "owner_live_canary"
         ],
-        "failure_mode": "unavailable_trusted_data_channel_unimplemented"
+        "failure_mode": "unavailable_trusted_broker"
       },
       "doctor": {
         "read_only": true,

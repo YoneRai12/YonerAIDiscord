@@ -79,13 +79,13 @@ class AgentAuditScope:
 class AgentAuditCursor:
     after_id: int
     binding_digest: str
+    store_binding_digest: str | None = None
 
     def __post_init__(self) -> None:
         _require_non_negative_id(self.after_id, "after_id")
-        if not isinstance(self.binding_digest, str) or len(self.binding_digest) != 64:
-            raise ValueError("binding_digest must be a SHA-256 digest")
-        if any(character not in "0123456789abcdef" for character in self.binding_digest):
-            raise ValueError("binding_digest must be a SHA-256 digest")
+        _require_digest(self.binding_digest, "binding_digest")
+        if self.store_binding_digest is not None:
+            _require_digest(self.store_binding_digest, "store_binding_digest")
 
     @classmethod
     def start(cls, scope: AgentAuditScope) -> AgentAuditCursor:
@@ -147,7 +147,7 @@ class AgentAuditPage:
 class AgentAuditProjection:
     """Scope-bound, content-free projection over the existing append-only audit log."""
 
-    __slots__ = ("_authorization_current", "_source", "_source_current")
+    __slots__ = ("_authorization_current", "_source", "_source_current", "_store_binding_digest")
 
     def __init__(
         self,
@@ -155,6 +155,7 @@ class AgentAuditProjection:
         *,
         source_current: Callable[[], object | None],
         authorization_current: Callable[[AgentAuditScope], bool],
+        store_binding_digest: str,
     ) -> None:
         if not callable(getattr(source, "list_audit", None)):
             raise TypeError("source must expose list_audit")
@@ -162,9 +163,11 @@ class AgentAuditProjection:
             raise TypeError("source_current must be callable")
         if not callable(authorization_current):
             raise TypeError("authorization_current must be callable")
+        _require_digest(store_binding_digest, "store_binding_digest")
         self._source = source
         self._source_current = source_current
         self._authorization_current = authorization_current
+        self._store_binding_digest = store_binding_digest
 
     def read_page(self, *, scope: AgentAuditScope, cursor: AgentAuditCursor) -> AgentAuditPage:
         if not isinstance(scope, AgentAuditScope):
@@ -172,6 +175,16 @@ class AgentAuditProjection:
         if not isinstance(cursor, AgentAuditCursor):
             raise TypeError("cursor must be an AgentAuditCursor")
         if not hmac.compare_digest(cursor.binding_digest, scope.binding_digest):
+            raise AuditProjectionError(AuditProjectionFailureCode.BINDING_MISMATCH)
+        if cursor.store_binding_digest is None:
+            if cursor.after_id != 0:
+                raise AuditProjectionError(AuditProjectionFailureCode.BINDING_MISMATCH)
+            cursor = AgentAuditCursor(
+                after_id=0,
+                binding_digest=cursor.binding_digest,
+                store_binding_digest=self._store_binding_digest,
+            )
+        elif not hmac.compare_digest(cursor.store_binding_digest, self._store_binding_digest):
             raise AuditProjectionError(AuditProjectionFailureCode.BINDING_MISMATCH)
 
         self._require_current(scope)
@@ -221,7 +234,11 @@ class AgentAuditProjection:
         exhausted = scanned_count == len(rows) and len(rows) < _MAX_SCAN
         return AgentAuditPage(
             events=tuple(events),
-            next_cursor=AgentAuditCursor(after_id=next_after_id, binding_digest=cursor.binding_digest),
+            next_cursor=AgentAuditCursor(
+                after_id=next_after_id,
+                binding_digest=cursor.binding_digest,
+                store_binding_digest=self._store_binding_digest,
+            ),
             scanned_count=scanned_count,
             exhausted=exhausted,
         )
@@ -259,6 +276,13 @@ def _require_non_negative_id(value: object, label: str) -> None:
         raise TypeError(f"{label} must be an integer")
     if not 0 <= value <= _MAX_SQLITE_ID:
         raise ValueError(f"{label} must be a non-negative 64-bit integer")
+
+
+def _require_digest(value: object, label: str) -> None:
+    if not isinstance(value, str) or len(value) != 64:
+        raise ValueError(f"{label} must be a SHA-256 digest")
+    if any(character not in "0123456789abcdef" for character in value):
+        raise ValueError(f"{label} must be a SHA-256 digest")
 
 
 def _require_opaque_binding(value: object, label: str) -> None:

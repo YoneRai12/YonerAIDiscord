@@ -27,8 +27,10 @@ live状態は公開版では未検証です。
 
 Discordを含むYonerAI各surfaceから将来共有する、1 job 1 VMの使い捨て実行境界です。
 Stage 1はnetwork adapter 0、IP/DNS/Web routeなし、host mountなし、secret注入なし、
-capability空です。trusted data channelとruntime compositionが未接続なので
-`implemented_unconfigured` / `trusted_data_channel_unimplemented` / execution 0です。
+capability空です。trusted data channelのコード境界は`implemented_offline`で、offline runtime
+compositionは接続済みですが、protected broker/workerへのruntime/live接続、実VM/guest handshake、
+owner live canaryが未成立なので
+`implemented_unconfigured` / `trusted_broker_unavailable` / execution 0です。
 Searchやbrowserが必要な処理をこのVMへ持ち込まず、別のtyped capabilityへ分離します。
 
 ## `hybrid_local_core`

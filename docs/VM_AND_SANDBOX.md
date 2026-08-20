@@ -35,6 +35,9 @@ cleanupを対象環境で確認するまで外部capabilityは利用不可です
 processへの置換を行いません。どのprofileもmodule/capabilityの既定OFF、fresh
 authorization、typed receipt、artifact ownershipを迂回しません。
 
-`hyperv_execution_sandbox`は`implemented_unconfigured`です。trusted data channel、固定broker、
-base image digest、runtime compositionが揃うまで`trusted_data_channel_unimplemented`でfail closedし、
-executionは0です。Stage 1はVM作成済み・live ready・artifact delivery済みを意味しません。
+`hyperv_execution_sandbox`は`implemented_unconfigured`です。trusted data channelのコード境界は
+`implemented_offline`で、offline runtime compositionは接続済みです。protected broker/workerへの
+runtime/live接続、base image digest、
+network adapter 0、cleanup/destroy確認、実VM/guest handshake、owner live canaryが揃うまで
+`trusted_broker_unavailable`でfail closedし、executionは0です。Stage 1はVM作成済み・live ready・
+artifact delivery済みを意味しません。

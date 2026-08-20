@@ -16,7 +16,7 @@
 ## Public alpha boundaries
 
 - Real Discord, credentials, external providers, SearchSandbox, VM, and YonerAI Core are live未検証 (live-unverified).
-- YonerAI共通Execution Sandboxは`implemented_unconfigured`で、trusted data channelとruntime compositionが未接続のためexecution 0です。Discord専用VMではありません。
+- YonerAI共通Execution Sandboxはtrusted data channelのコード境界が`implemented_offline`で、offline runtime compositionは接続済みです。protected broker/workerへのruntime/live接続と実VM readinessが未成立のため`implemented_unconfigured` / execution 0で、Discord専用VMではありません。
 - Dangerous or externally impactful capabilities require explicit configuration and fresh authorization.
 - Generated rows marked `integrated_offline` are not configured or production-ready claims.
 - unavailable public modules: publishing.site-host

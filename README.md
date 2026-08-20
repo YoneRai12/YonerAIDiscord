@@ -87,7 +87,9 @@ tokenをGit、ログ、issue、スクリーンショットへ載せないでく�
 VM要件とprofileは[`docs/VM_AND_SANDBOX.md`](docs/VM_AND_SANDBOX.md)と[`PUBLIC_SELF_HOST_PROFILES.json`](PUBLIC_SELF_HOST_PROFILES.json)を参照してください。
 
 YonerAI共通Execution Sandbox Stage 1はDiscord専用VMではありません。公開alphaでは
-`implemented_unconfigured`、capability 0、runtime未接続、trusted data channel未実装のため
+`implemented_unconfigured`、capability 0です。trusted data channelのコード境界は
+`implemented_offline`で、offline runtime compositionは接続済みですが、protected broker/workerへの
+runtime/live接続と実VM readinessが未成立なので
 execution 0です。VM作成済み・利用可能とは主張しません。
 
 ## Search Fabric

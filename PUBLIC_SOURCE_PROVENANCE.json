@@ -55,7 +55,7 @@
       },
       {
         "path": "ARCHITECTURE.md",
-        "sha256": "b2fc11d41648e18d0f76fda18f19c5810951c80769520cccd5dad26a9af9d082",
+        "sha256": "d0e5dd7918f8bf4e648526caa219d1f6ea7271761a1e7b9389a1d5a00f305545",
         "transformation": "public_generated"
       },
       {
@@ -115,7 +115,7 @@
       },
       {
         "path": "PUBLIC_CURRENT_STATUS.md",
-        "sha256": "28b2717dabb627a534bf36b8a0b7d0fe56017b7b0c1b358b7df6e19b522b5dfe",
+        "sha256": "3ed38ad81025e37a40d1532110c4156f0881fef08dae55dba9d94ae108c014ad",
         "transformation": "public_generated"
       },
       {
@@ -130,12 +130,12 @@
       },
       {
         "path": "PUBLIC_SELF_HOST_PROFILES.json",
-        "sha256": "de1d83c3de052e59efc5635df6aa221d77cb52a726ca1d02ef8ee86919ced6bb",
+        "sha256": "e96e68c44343e2af4185518891688ca9666f35c4f4d44d70e3e1415e8f93c50b",
         "transformation": "public_generated"
       },
       {
         "path": "README.md",
-        "sha256": "e9083ed9c5ad8e27ecda8ae72fe621651ab4847331b623a45c5c5d3357f31f45",
+        "sha256": "72e7212344e4c8f50fac7672bcc985e21996b5d1f012d027756801e7c1ec04c7",
         "transformation": "public_generated"
       },
       {
@@ -185,12 +185,12 @@
       },
       {
         "path": "docs/SELF_HOST_PROFILES.md",
-        "sha256": "fc0a52bbdfee97710353de919a665af3861de48791a26fb438d6bc33a7673363",
+        "sha256": "cefe86d35efc037d72f9c350fa0105e712773f80ecb4002f1b6d0e0d155c86bd",
         "transformation": "public_generated"
       },
       {
         "path": "docs/VM_AND_SANDBOX.md",
-        "sha256": "9553727ac2e372862c41bb8940fc0859f63ba6ae58674fa5b138d954e55ff3d8",
+        "sha256": "faab6319a3253eb1fbef6a760708df200598588c3420b0b69020a9ba2b5fc218",
         "transformation": "public_generated"
       },
       {
@@ -221,7 +221,7 @@
     ],
     "policy_sha256": "bbec31abbe5292fd3340da0780ba342094037333087276b96fc7a67fa1fce111",
     "receipt": "PUBLIC_EXPORT_MANIFEST.json",
-    "source_commit": "6e1eb329d3b6a35ead3960c2c37740499a13aaf1"
+    "source_commit": "c487fd21a7dc19a0d30da6a8478280db33dae223"
   },
   "schema_version": 1
 }

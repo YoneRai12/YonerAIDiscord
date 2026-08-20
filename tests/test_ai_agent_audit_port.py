@@ -143,6 +143,7 @@ async def test_actual_database_read_is_request_bound_and_checks_fresh_authorizat
     assert [(event.id, event.event, event.plugin) for event in page.events] == [(3, "agent.completed", "ai")]
     assert page.scanned_count == 1
     assert page.next_after_id == 3
+    assert page.next_cursor.store_binding_digest == audit_database.agent_audit_store_binding_digest
     assert state.fresh_calls == 3
     assert state.seen_scopes and all(seen is scope for seen in state.seen_scopes)
 
@@ -239,6 +240,79 @@ async def test_concurrent_request_bindings_do_not_mix_scope_or_cursor(
     assert first_fresh_calls == second_fresh_calls == 3
     assert first_page.next_cursor.binding_digest == first_scope.binding_digest
     assert second_page.next_cursor.binding_digest == second_scope.binding_digest
+    assert first_page.next_cursor.store_binding_digest == audit_database.agent_audit_store_binding_digest
+    assert second_page.next_cursor.store_binding_digest == audit_database.agent_audit_store_binding_digest
+
+
+@pytest.mark.asyncio
+async def test_scope_only_legacy_resume_cursor_is_rejected_before_auth_or_read(
+    audit_database: Database,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    state = _PortState(database_current=audit_database)
+    port = _bound_port(audit_database, state)
+    scope = _scope()
+    reads = 0
+
+    def counted_read(*, guild_id: int, actor_id: int, limit: int = 100, after_id: int = 0) -> tuple[object, ...]:
+        nonlocal reads
+        reads += 1
+        return ()
+
+    monkeypatch.setattr(audit_database, "list_agent_audit_projection", counted_read)
+    legacy_resume = AgentAuditCursor(after_id=1, binding_digest=scope.binding_digest)
+
+    with pytest.raises(AuditProjectionError) as error:
+        await port.read_page(binding=_binding(scope, state), cursor=legacy_resume)
+
+    _assert_code(error, AuditProjectionFailureCode.BINDING_MISMATCH)
+    assert state.fresh_calls == 0
+    assert reads == 0
+
+
+@pytest.mark.asyncio
+async def test_cursor_allows_same_canonical_path_restart_but_rejects_database_copy(
+    tmp_path,
+) -> None:
+    path = tmp_path / "control.sqlite3"
+    copied_path = tmp_path / "copied.sqlite3"
+    scope = _scope()
+
+    first = Database(path)
+    first.open()
+    first.migrate()
+    first.append_audit("agent.started", actor_id=20, guild_id=10)
+    first_state = _PortState(database_current=first)
+    first_port = _bound_port(first, first_state)
+    cursor = (
+        await first_port.read_page(binding=_binding(scope, first_state), cursor=AgentAuditCursor.start(scope))
+    ).next_cursor
+    first.online_backup(copied_path)
+    first.close()
+
+    reopened = Database(path.parent / "nested" / ".." / path.name)
+    reopened.open()
+    reopened.migrate()
+    reopened.append_audit("agent.completed", actor_id=20, guild_id=10)
+    reopened_state = _PortState(database_current=reopened)
+    reopened_port = _bound_port(reopened, reopened_state)
+    resumed = await reopened_port.read_page(binding=_binding(scope, reopened_state), cursor=cursor)
+    assert [event.event for event in resumed.events] == ["agent.completed"]
+
+    copied = Database(copied_path)
+    copied.open()
+    copied.migrate()
+    copied_state = _PortState(database_current=copied)
+    copied_port = _bound_port(copied, copied_state)
+    try:
+        with pytest.raises(AuditProjectionError) as error:
+            await copied_port.read_page(binding=_binding(scope, copied_state), cursor=cursor)
+    finally:
+        copied.close()
+        reopened.close()
+
+    _assert_code(error, AuditProjectionFailureCode.BINDING_MISMATCH)
+    assert copied_state.fresh_calls == 0
 
 
 @pytest.mark.asyncio
@@ -372,6 +446,43 @@ async def test_database_replace_or_close_before_during_or_final_fails_as_source_
     rendered = repr(error.value) + str(error.value)
     assert "replacement.sqlite3" not in rendered
     assert "control.sqlite3" not in rendered
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("stage", ["before", "during", "after", "final"])
+async def test_same_database_close_reopen_aba_fails_at_every_checkpoint(
+    audit_database: Database,
+    monkeypatch: pytest.MonkeyPatch,
+    stage: str,
+) -> None:
+    state = _PortState(database_current=audit_database)
+    port = _bound_port(audit_database, state)
+    scope = _scope()
+    original = audit_database.list_agent_audit_projection
+
+    def close_reopen() -> None:
+        audit_database.close()
+        audit_database.open()
+
+    if stage == "before":
+        close_reopen()
+    elif stage == "during":
+
+        def mutating_read(*, guild_id: int, actor_id: int, limit: int = 100, after_id: int = 0) -> tuple[object, ...]:
+            close_reopen()
+            return original(guild_id=guild_id, actor_id=actor_id, limit=limit, after_id=after_id)
+
+        monkeypatch.setattr(audit_database, "list_agent_audit_projection", mutating_read)
+    else:
+        mutate_at = 2 if stage == "after" else 3
+        state.fresh_hook = lambda call: close_reopen() if call == mutate_at else None
+
+    with pytest.raises(AuditProjectionError) as error:
+        await port.read_page(binding=_binding(scope, state), cursor=AgentAuditCursor.start(scope))
+
+    _assert_code(error, AuditProjectionFailureCode.SOURCE_REPLACED)
+    assert error.value.__cause__ is None
+    assert error.value.__context__ is None
 
 
 @pytest.mark.asyncio

@@ -147,7 +147,7 @@ def test_search_and_media_resource_budgets_match_code_owned_assets_without_claim
     assert media["readiness"]["state"] == "implemented_unconfigured"  # type: ignore[index]
 
 
-def test_yonerai_execution_sandbox_is_disconnected_networkless_and_execution_zero() -> None:
+def test_yonerai_execution_sandbox_has_offline_composition_but_no_live_backend() -> None:
     profile = _profiles()["hyperv_execution_sandbox"]
 
     assert profile["topology"] == "yonerai_shared_offline_execution"
@@ -174,9 +174,42 @@ def test_yonerai_execution_sandbox_is_disconnected_networkless_and_execution_zer
     }
     readiness = profile["readiness"]
     assert readiness["state"] == "implemented_unconfigured"  # type: ignore[index]
+    assert readiness["trusted_data_channel_implemented"] is True  # type: ignore[index]
+    assert readiness["offline_runtime_composition_connected"] is True  # type: ignore[index]
     assert readiness["runtime_connected"] is False  # type: ignore[index]
     assert readiness["execution_allowed"] is False  # type: ignore[index]
-    assert readiness["blocker"] == "trusted_data_channel_unimplemented"  # type: ignore[index]
+    assert readiness["blocker"] == "trusted_broker_unavailable"  # type: ignore[index]
+    assert readiness["failure_mode"] == "unavailable_trusted_broker"  # type: ignore[index]
+    assert profile["resource"]["allocation"] == "blocked_until_protected_backend_and_owner_preflight"  # type: ignore[index]
+    assert readiness["required_checks"] == [  # type: ignore[index]
+        "fixed_broker_identity",
+        "base_image_digest",
+        "protected_broker_readiness",
+        "protected_worker_readiness",
+        "network_adapter_exact_zero",
+        "cleanup_destroy_confirmation",
+        "vm_guest_handshake",
+        "owner_live_canary",
+    ]
+
+
+def test_public_sandbox_truth_does_not_call_implemented_offline_seams_unimplemented() -> None:
+    paths = (
+        PROFILE_PATH,
+        TEMPLATES / "ARCHITECTURE.md",
+        TEMPLATES / "PUBLIC_CURRENT_STATUS.md",
+        TEMPLATES / "README.md",
+        TEMPLATES / "docs" / "VM_AND_SANDBOX.md",
+        TEMPLATES / "docs" / "SELF_HOST_PROFILES.md",
+    )
+    forbidden = (
+        "trusted_data_channel_unimplemented",
+        "trusted data channel未実装",
+        "trusted data channelとruntime compositionが未接続",
+    )
+    for path in paths:
+        text = path.read_text(encoding="utf-8", errors="strict")
+        assert all(marker not in text for marker in forbidden), path
 
 
 def test_every_profile_evidence_path_exists_in_the_public_export_projection() -> None:

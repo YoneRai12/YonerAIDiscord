@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import hashlib
 import sqlite3
+from pathlib import Path
 
 import pytest
 
@@ -17,6 +19,74 @@ def database(tmp_path):
         yield instance
     finally:
         instance.close()
+
+
+def test_connection_generation_advances_only_after_successful_closed_to_open(
+    tmp_path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    instance = Database(tmp_path / "generation.sqlite3")
+    assert instance.connection_generation == 0
+
+    instance.open()
+    first_generation = instance.connection_generation
+    assert first_generation == 1
+
+    instance.open()
+    assert instance.connection_generation == first_generation
+
+    instance.close()
+    instance.open()
+    second_generation = instance.connection_generation
+    assert second_generation == first_generation + 1
+    instance.close()
+
+    def failed_connect(*_args: object, **_kwargs: object) -> sqlite3.Connection:
+        raise sqlite3.OperationalError("private failed database path")
+
+    monkeypatch.setattr(sqlite3, "connect", failed_connect)
+    with pytest.raises(sqlite3.OperationalError):
+        instance.open()
+
+    assert instance.is_open is False
+    assert instance.connection_generation == second_generation
+
+
+def test_agent_audit_store_binding_is_canonical_content_free_and_requires_no_migration(tmp_path) -> None:
+    path = tmp_path / "binding.sqlite3"
+    canonical = Database(path)
+    equivalent = Database(path.parent / "nested" / ".." / path.name)
+    copy = Database(tmp_path / "copy.sqlite3")
+
+    assert canonical.agent_audit_store_binding_digest == equivalent.agent_audit_store_binding_digest
+    assert canonical.agent_audit_store_binding_digest != copy.agent_audit_store_binding_digest
+    assert len(canonical.agent_audit_store_binding_digest) == hashlib.sha256().digest_size * 2
+    assert str(path.resolve()) not in canonical.agent_audit_store_binding_digest
+    assert canonical.is_open is False
+
+
+def test_database_pins_relative_path_before_working_directory_changes(
+    tmp_path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    original_working_directory = tmp_path / "original"
+    later_working_directory = tmp_path / "later"
+    original_working_directory.mkdir()
+    later_working_directory.mkdir()
+    monkeypatch.chdir(original_working_directory)
+
+    database = Database(Path("nested/control.sqlite3"))
+    expected_path = (original_working_directory / "nested/control.sqlite3").resolve()
+    unexpected_path = later_working_directory / "nested/control.sqlite3"
+
+    monkeypatch.chdir(later_working_directory)
+    database.open()
+    try:
+        assert database.path == expected_path
+        assert expected_path.is_file()
+        assert not unexpected_path.exists()
+    finally:
+        database.close()
 
 
 def test_overrides_preserve_exact_scope_and_resolve_guild_before_global(database: Database) -> None:

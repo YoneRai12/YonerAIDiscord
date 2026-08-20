@@ -110,7 +110,9 @@ public defaultはread-only preflightです。host shell、arbitrary command、ho
 
 `hyperv_execution_sandbox`はYonerAI共通の使い捨て実行境界で、Discordはconsumerの1つです。
 Stage 1はnetwork adapter 0、IP/DNS/Web routeなし、host mountなし、secret注入なし、capability 0です。
-trusted data channelとruntime compositionが未接続なので`implemented_unconfigured` / execution 0であり、
+trusted data channelのコード境界は`implemented_offline`で、offline runtime compositionは接続済みです。
+protected broker/workerへのruntime/live接続、base image pin、実VM/guest handshake、owner live canaryが
+未成立なので`implemented_unconfigured` / execution 0であり、
 既存のnetwork付きSearch/Media VMへ暗黙fallbackしません。
 
 ## Topologies

@@ -2,13 +2,13 @@
   "accounting": {
     "audit_output_file_count": 2,
     "classification_counts": {
-      "official_private": 147,
+      "official_private": 153,
       "private_internal": 186,
       "public_generated": 40,
       "public_shared": 688
     },
-    "excluded_executable_file_count": 197,
-    "excluded_source_file_count": 333,
+    "excluded_executable_file_count": 203,
+    "excluded_source_file_count": 339,
     "export_tracked_file_count": 730,
     "generated_audit_file_count": 2,
     "generated_receipt_file_count": 1,
@@ -17,8 +17,8 @@
     "policy_sha256": "bbec31abbe5292fd3340da0780ba342094037333087276b96fc7a67fa1fce111",
     "public_classified_source_count": 728,
     "public_file_count": 727,
-    "source_commit": "6e1eb329d3b6a35ead3960c2c37740499a13aaf1",
-    "tracked_file_count": 1061
+    "source_commit": "c487fd21a7dc19a0d30da6a8478280db33dae223",
+    "tracked_file_count": 1067
   },
   "excluded": [
     {
@@ -2885,6 +2885,28 @@
       "classification": "official_private",
       "decision": "retain_private_until_sanitized_equivalent",
       "executable_behavior": true,
+      "path_sha256": "f5e346c3edb8e70123276d735371e2670870811c08e9577998163fbbc7766127",
+      "public_safe_equivalent": false,
+      "public_value": "A sanitized, configurable deployment example may be useful publicly.",
+      "reason_code": "official_deployment_inventory",
+      "secret_or_live_risk": "official_topology_or_operator_assumptions",
+      "test_impact": "executable_behavior_absent_from_public_export"
+    },
+    {
+      "classification": "official_private",
+      "decision": "retain_private_until_sanitized_equivalent",
+      "executable_behavior": true,
+      "path_sha256": "d843e16cdd9abd6bb83a0261608c4345365b8bc8c13ce16a0f3394028a4a10f3",
+      "public_safe_equivalent": false,
+      "public_value": "A sanitized, configurable deployment example may be useful publicly.",
+      "reason_code": "official_deployment_inventory",
+      "secret_or_live_risk": "official_topology_or_operator_assumptions",
+      "test_impact": "executable_behavior_absent_from_public_export"
+    },
+    {
+      "classification": "official_private",
+      "decision": "retain_private_until_sanitized_equivalent",
+      "executable_behavior": true,
       "path_sha256": "af4e8187d7f8ab6314e024f796420a4b4d13dbd489c10fc2fb0091e024dbe7a2",
       "public_safe_equivalent": false,
       "public_value": "A sanitized, configurable deployment example may be useful publicly.",
@@ -2908,6 +2930,17 @@
       "decision": "retain_private_until_sanitized_equivalent",
       "executable_behavior": true,
       "path_sha256": "85ce2008858709e4100b1c1a8b3f1bbc068c7b8fd617c52c3e89420d6f005f8c",
+      "public_safe_equivalent": false,
+      "public_value": "A sanitized, configurable deployment example may be useful publicly.",
+      "reason_code": "official_deployment_inventory",
+      "secret_or_live_risk": "official_topology_or_operator_assumptions",
+      "test_impact": "executable_behavior_absent_from_public_export"
+    },
+    {
+      "classification": "official_private",
+      "decision": "retain_private_until_sanitized_equivalent",
+      "executable_behavior": true,
+      "path_sha256": "9018f4f1fd1870bb5041a06d6e8549cc64b08c94446054389d85e0af692b0baa",
       "public_safe_equivalent": false,
       "public_value": "A sanitized, configurable deployment example may be useful publicly.",
       "reason_code": "official_deployment_inventory",
@@ -3358,6 +3391,28 @@
       "classification": "official_private",
       "decision": "retain_private_until_sanitized_equivalent",
       "executable_behavior": true,
+      "path_sha256": "d0f73d9954f7cae7868a08ee3ca23b2ce1d9fcde1ea31bc889700d735fd7d289",
+      "public_safe_equivalent": false,
+      "public_value": "A sanitized, configurable deployment example may be useful publicly.",
+      "reason_code": "official_deployment_inventory",
+      "secret_or_live_risk": "official_topology_or_operator_assumptions",
+      "test_impact": "executable_behavior_absent_from_public_export"
+    },
+    {
+      "classification": "official_private",
+      "decision": "retain_private_until_sanitized_equivalent",
+      "executable_behavior": true,
+      "path_sha256": "f4f7973195d4b26083da21141e91146e0b24c2f822476f5aaed5ff9d3e6fdd8c",
+      "public_safe_equivalent": false,
+      "public_value": "A sanitized, configurable deployment example may be useful publicly.",
+      "reason_code": "official_deployment_inventory",
+      "secret_or_live_risk": "official_topology_or_operator_assumptions",
+      "test_impact": "executable_behavior_absent_from_public_export"
+    },
+    {
+      "classification": "official_private",
+      "decision": "retain_private_until_sanitized_equivalent",
+      "executable_behavior": true,
       "path_sha256": "d7058a6c0ede5e0bdbd7b217f9b7618c00891d088ceafc1f499731d16a7b02a0",
       "public_safe_equivalent": false,
       "public_value": "A sanitized, configurable deployment example may be useful publicly.",
@@ -3381,6 +3436,17 @@
       "decision": "retain_private_until_sanitized_equivalent",
       "executable_behavior": true,
       "path_sha256": "d9b473aa9c73f1194bd2bdb711b57a7e2917bf16c042c9c8fca78157550b452d",
+      "public_safe_equivalent": false,
+      "public_value": "A sanitized, configurable deployment example may be useful publicly.",
+      "reason_code": "official_deployment_inventory",
+      "secret_or_live_risk": "official_topology_or_operator_assumptions",
+      "test_impact": "executable_behavior_absent_from_public_export"
+    },
+    {
+      "classification": "official_private",
+      "decision": "retain_private_until_sanitized_equivalent",
+      "executable_behavior": true,
+      "path_sha256": "35e513bc14192ba9f7e5f9312a06998251f058124b8ce1c08e4099cda4e5bbb1",
       "public_safe_equivalent": false,
       "public_value": "A sanitized, configurable deployment example may be useful publicly.",
       "reason_code": "official_deployment_inventory",
@@ -3714,5 +3780,5 @@
     "unsafe_binary_or_generated_media"
   ],
   "schema": "yonerai.public-exclusion-matrix.v1",
-  "source_commit": "6e1eb329d3b6a35ead3960c2c37740499a13aaf1"
+  "source_commit": "c487fd21a7dc19a0d30da6a8478280db33dae223"
 }

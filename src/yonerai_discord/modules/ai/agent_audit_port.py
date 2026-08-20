@@ -88,8 +88,10 @@ class BoundAgentAuditReadPort:
         "_closing_current",
         "_database",
         "_database_current",
+        "_database_generation",
         "_owner_loop",
         "_port_current",
+        "_store_binding_digest",
     )
 
     def __init__(
@@ -112,9 +114,11 @@ class BoundAgentAuditReadPort:
             raise RuntimeError("agent audit port requires a running event loop")
         self._database = database
         self._database_current = database_current
+        self._database_generation = database.connection_generation
         self._owner_loop = owner_loop
         self._port_current = port_current
         self._closing_current = closing_current
+        self._store_binding_digest = database.agent_audit_store_binding_digest
 
     async def read_page(
         self,
@@ -146,6 +150,11 @@ class BoundAgentAuditReadPort:
             binding.scope.binding_digest,
         ):
             raise AuditProjectionError(AuditProjectionFailureCode.BINDING_MISMATCH)
+        if cursor.store_binding_digest is None:
+            if cursor.after_id != 0:
+                raise AuditProjectionError(AuditProjectionFailureCode.BINDING_MISMATCH)
+        elif not hmac.compare_digest(cursor.store_binding_digest, self._store_binding_digest):
+            raise AuditProjectionError(AuditProjectionFailureCode.BINDING_MISMATCH)
 
         await self._require_fresh_authorization(binding)
         failure: AuditProjectionFailureCode | None = None
@@ -155,6 +164,7 @@ class BoundAgentAuditReadPort:
                 source,
                 source_current=lambda: source if self._projection_source_current() is self._database else None,
                 authorization_current=lambda scope: self._projection_authorization_current(binding, scope),
+                store_binding_digest=self._store_binding_digest,
             )
             page = projection.read_page(scope=binding.scope, cursor=cursor)
         except AuditProjectionError as exc:
@@ -218,6 +228,7 @@ class BoundAgentAuditReadPort:
                 and self._port_current() is self
                 and self._database_current() is self._database
                 and self._database.is_open is True
+                and self._database.connection_generation == self._database_generation
             )
         except Exception:
             return False
@@ -260,8 +271,8 @@ class BoundAgentAuditReadPort:
             and self._runtime_binding_current(binding)
         )
 
-    @staticmethod
     def _page_is_bound(
+        self,
         page: object,
         *,
         binding: AgentAuditReadBinding,
@@ -273,6 +284,16 @@ class BoundAgentAuditReadPort:
             if not hmac.compare_digest(page.next_cursor.binding_digest, cursor.binding_digest):
                 return False
             if not hmac.compare_digest(page.next_cursor.binding_digest, binding.scope.binding_digest):
+                return False
+            if page.next_cursor.store_binding_digest is None or not hmac.compare_digest(
+                page.next_cursor.store_binding_digest,
+                self._store_binding_digest,
+            ):
+                return False
+            if cursor.store_binding_digest is not None and not hmac.compare_digest(
+                page.next_cursor.store_binding_digest,
+                cursor.store_binding_digest,
+            ):
                 return False
             if page.next_cursor.after_id < cursor.after_id:
                 return False
