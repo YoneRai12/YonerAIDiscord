@@ -202,10 +202,19 @@ class DiscordSandboxRuntime:
 
     @property
     def ready(self) -> bool:
-        if self._closing or self._quarantined or self._connection is None:
+        if self._quarantined or not self.cancellation_ready:
             return False
         try:
-            return self._current() is True and self._backend_ready() is True
+            return self._backend_ready() is True
+        except Exception:
+            return False
+
+    @property
+    def cancellation_ready(self) -> bool:
+        if self._closing or self._connection is None:
+            return False
+        try:
+            return self._current() is True
         except Exception:
             return False
 

@@ -263,12 +263,16 @@ class CapabilityForgePlugin:
                     **dict.fromkeys(_SANDBOX_BACKEND_CAPABILITY_IDS, False),
                 },
             )
-            for capability_id in _SANDBOX_BACKEND_CAPABILITY_IDS:
-                publish_runtime_readiness_probe(
-                    bot,
-                    capability_id,
-                    lambda: owner_configured and sandbox_group_current() and sandbox_runtime.ready,
-                )
+            publish_runtime_readiness_probe(
+                bot,
+                SANDBOX_RUN_TEMPLATE_CAPABILITY_ID,
+                lambda: owner_configured and sandbox_group_current() and sandbox_runtime.ready,
+            )
+            publish_runtime_readiness_probe(
+                bot,
+                SANDBOX_CANCEL_CAPABILITY_ID,
+                lambda: owner_configured and sandbox_group_current() and sandbox_runtime.cancellation_ready,
+            )
         except BaseException:
             with suppress(BaseException):
                 await self._cleanup()

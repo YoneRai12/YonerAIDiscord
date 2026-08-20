@@ -16,6 +16,7 @@ from yonerai_discord.runtime_manifests.capability_forge import (  # noqa: E402
 from yonerai_discord.runtime_readiness import refresh_runtime_readiness  # noqa: E402
 from yonerai_discord.sandbox_operator_cli import (  # noqa: E402
     SandboxCliDependencies,
+    SandboxCode,
     SandboxJobView,
     SandboxMutationOutcome,
     SandboxReceiptView,
@@ -176,12 +177,17 @@ class _Mutations:
     async def run_template(self, template: object) -> SandboxMutationOutcome:
         del template
         self.run_calls += 1
-        raise AssertionError("unready surface must not mutate")
+        raise AssertionError("unready run surface must not mutate")
 
     async def cancel(self, job_id: str) -> SandboxMutationOutcome:
-        del job_id
         self.cancel_calls += 1
-        raise AssertionError("unready surface must not mutate")
+        return SandboxMutationOutcome(
+            code=SandboxCode.OK,
+            changed=True,
+            job_id=job_id,
+            state="cancel_requested",
+            audit_recorded=True,
+        )
 
 
 def _group(bot: _Bot, dependencies: SandboxCliDependencies | None = None) -> SandboxGroup:
@@ -274,7 +280,7 @@ async def test_capability_revoke_after_projection_hides_stale_result() -> None:
 
 
 @pytest.mark.asyncio
-async def test_unready_run_and_cancel_have_exact_zero_mutation_and_no_raw_code() -> None:
+async def test_unready_run_stays_blocked_but_cancel_reaches_injected_owner_bound_mutation() -> None:
     bot = _Bot()
     mutations = _Mutations()
     dependencies = SandboxCliDependencies(read_projection=_Projection(), doctor=_doctor, mutations=mutations)
@@ -285,9 +291,12 @@ async def test_unready_run_and_cancel_have_exact_zero_mutation_and_no_raw_code()
     cancel = _Interaction(bot)
     await group.cancel.callback(group, cancel, "job-1")
 
-    assert mutations.run_calls == mutations.cancel_calls == 0
+    assert mutations.run_calls == 0
+    assert mutations.cancel_calls == 1
     assert "SANDBOX_NOT_READY" in run.messages[0][0]
-    assert "SANDBOX_NOT_READY" in cancel.messages[0][0]
+    assert "code: OK" in cancel.messages[0][0]
+    assert "ready: false" in cancel.messages[0][0]
+    assert "changed: true" in cancel.messages[0][0]
     assert run.deferred == cancel.deferred == [{"ephemeral": True, "thinking": True}]
     assert "raw" not in (run.messages[0][0] + cancel.messages[0][0]).lower()
 
@@ -391,7 +400,7 @@ async def test_plugin_registers_once_binds_identity_and_removes_exact_group(tmp_
     assert bot.runtime_capability_readiness[SANDBOX_COMMAND_CAPABILITY_IDS["jobs"]] is True
     assert bot.runtime_capability_readiness[SANDBOX_COMMAND_CAPABILITY_IDS["receipt"]] is True
     assert bot.runtime_capability_readiness[SANDBOX_COMMAND_CAPABILITY_IDS["run-template"]] is False
-    assert bot.runtime_capability_readiness[SANDBOX_COMMAND_CAPABILITY_IDS["cancel"]] is False
+    assert bot.runtime_capability_readiness[SANDBOX_COMMAND_CAPABILITY_IDS["cancel"]] is True
 
     bot.capability_guard.registry = object()
     drifted = _Interaction(bot)
@@ -412,16 +421,21 @@ async def test_backend_routes_refresh_from_current_runtime_probe_and_withdraw_on
     await plugin.start(bot)
     runtime = plugin.sandbox_runtime
     assert runtime is not None
-    capability_id = SANDBOX_COMMAND_CAPABILITY_IDS["run-template"]
-    assert refresh_runtime_readiness(bot, capability_id) is False
+    run_capability_id = SANDBOX_COMMAND_CAPABILITY_IDS["run-template"]
+    cancel_capability_id = SANDBOX_COMMAND_CAPABILITY_IDS["cancel"]
+    assert refresh_runtime_readiness(bot, run_capability_id) is False
+    assert refresh_runtime_readiness(bot, cancel_capability_id) is True
 
     runtime._backend_ready = lambda: True
-    assert refresh_runtime_readiness(bot, capability_id) is True
+    assert refresh_runtime_readiness(bot, run_capability_id) is True
+    assert refresh_runtime_readiness(bot, cancel_capability_id) is True
     runtime._backend_ready = lambda: False
-    assert refresh_runtime_readiness(bot, capability_id) is False
+    assert refresh_runtime_readiness(bot, run_capability_id) is False
+    assert refresh_runtime_readiness(bot, cancel_capability_id) is True
 
     await plugin.stop()
-    assert refresh_runtime_readiness(bot, capability_id) is None
+    assert refresh_runtime_readiness(bot, run_capability_id) is None
+    assert refresh_runtime_readiness(bot, cancel_capability_id) is None
 
 
 @pytest.mark.asyncio

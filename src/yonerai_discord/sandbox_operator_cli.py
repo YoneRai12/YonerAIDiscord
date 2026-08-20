@@ -526,7 +526,7 @@ async def _cancel(command: SandboxCommand, job_id: str, deps: SandboxCliDependen
         snapshot = await _read_status(deps)
     except Exception:
         return _result(command, SandboxCode.READ_FAILED, ready=False, data={"job_id": job_id})
-    if not snapshot.ready or deps.mutations is None:
+    if deps.mutations is None:
         blockers = snapshot.blockers or ("mutation_port_unconfigured",)
         return _result(
             command,

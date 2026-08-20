@@ -419,6 +419,44 @@ async def test_cancel_is_owner_bound_and_returns_typed_audited_result() -> None:
 
 
 @pytest.mark.asyncio
+async def test_cancel_reaches_owner_bound_mutation_when_backend_readiness_drops() -> None:
+    read = _ReadProjection(ready=False)
+    owner = _Owner(True)
+    mutations = _Mutations()
+
+    result = await dispatch_sandbox_command(
+        parse_sandbox_args(["cancel", "job-1"]),
+        SandboxCliDependencies(read_projection=read, owner_authorizer=owner, mutations=mutations),
+    )
+
+    assert result.code is SandboxCode.OK
+    assert result.ready is False and result.changed is True
+    assert result.blockers == ("actual_vm_absent",)
+    assert owner.calls == 1
+    assert mutations.cancelled == ["job-1"]
+
+
+@pytest.mark.asyncio
+async def test_unready_cancel_still_rejects_non_owner_before_mutation() -> None:
+    owner = _Owner(False)
+    mutations = _Mutations()
+
+    result = await dispatch_sandbox_command(
+        parse_sandbox_args(["cancel", "job-1"]),
+        SandboxCliDependencies(
+            read_projection=_ReadProjection(ready=False),
+            owner_authorizer=owner,
+            mutations=mutations,
+        ),
+    )
+
+    assert result.code is SandboxCode.OWNER_DENIED
+    assert result.ready is False and result.changed is False
+    assert owner.calls == 1
+    assert mutations.cancelled == []
+
+
+@pytest.mark.asyncio
 async def test_mutation_errors_are_content_free_and_report_no_change() -> None:
     source_path = _synthetic_host_path()
 

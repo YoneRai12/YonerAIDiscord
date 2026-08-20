@@ -137,6 +137,34 @@ def _runtime(
 
 
 @pytest.mark.asyncio
+async def test_cancellation_ready_ignores_backend_and_quarantine_but_requires_current_open_runtime(
+    tmp_path: Path,
+) -> None:
+    current = [True]
+    runtime = DiscordSandboxRuntime(
+        database_path=tmp_path / "runtime.sqlite3",
+        lifecycle=_Lifecycle(),
+        backend_ready=lambda: False,
+        current=lambda: current[0],
+        append_audit=_Audit(),
+    )
+    runtime.open()
+
+    assert runtime.ready is False
+    assert runtime.cancellation_ready is True
+
+    runtime._quarantined = True
+    assert runtime.ready is False
+    assert runtime.cancellation_ready is True
+
+    current[0] = False
+    assert runtime.cancellation_ready is False
+    current[0] = True
+    await runtime.begin_close()
+    assert runtime.cancellation_ready is False
+
+
+@pytest.mark.asyncio
 async def test_fixed_template_runs_with_exact_discord_scope_and_persists_redacted_receipt(tmp_path: Path) -> None:
     lifecycle = _Lifecycle()
     audit = _StateObservingAudit(tmp_path / "runtime.sqlite3")
