@@ -23,14 +23,14 @@ Pythonのimport packageは`yonerai_discord`、配布名は`yonerai-discord-suite
 
 | 項目 | 公開正本 |
 | --- | --- |
-| runtime-declared capabilities | **170** |
-| command paths | **175** |
+| runtime-declared capabilities | **177** |
+| command paths | **182** |
 | event paths | **14** |
 | direct command/event/model-tool未接続runtime | **16** |
 | planner actionを含む全known binding未接続runtime | **7** |
 | public live-verification claim | **0** |
 
-`656 historical canonical`と`826 registry total`は履歴・静的registryの母集団であり、現在liveで使える機能数ではありません。全170件の状態は[`PUBLIC_CAPABILITY_MATRIX.json`](PUBLIC_CAPABILITY_MATRIX.json)、概要は[`PUBLIC_CAPABILITY_SUMMARY.md`](PUBLIC_CAPABILITY_SUMMARY.md)、command一覧は[`PUBLIC_COMMAND_INDEX.md`](PUBLIC_COMMAND_INDEX.md)を参照してください。
+`656 historical canonical`と`833 registry total`は履歴・静的registryの母集団であり、現在liveで使える機能数ではありません。全177件の状態は[`PUBLIC_CAPABILITY_MATRIX.json`](PUBLIC_CAPABILITY_MATRIX.json)、概要は[`PUBLIC_CAPABILITY_SUMMARY.md`](PUBLIC_CAPABILITY_SUMMARY.md)、command一覧は[`PUBLIC_COMMAND_INDEX.md`](PUBLIC_COMMAND_INDEX.md)を参照してください。
 
 ## Architecture
 

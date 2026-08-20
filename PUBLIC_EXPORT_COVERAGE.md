@@ -1,7 +1,7 @@
 # Public Export Coverage
 
-- source commit: `851b29fda8b6c0db98c7b8bb96ae86f23806be7b`
-- classification policy SHA-256: `f693173736c1aef09d9482334f58931d9cc17a97c083bf086b283837593343a0`
+- source commit: `465c84efbd3a7c3f57fe239e39bbc80e50c2d711`
+- classification policy SHA-256: `bbec31abbe5292fd3340da0780ba342094037333087276b96fc7a67fa1fce111`
 - raw source content included in this report: `false`
 - unknown exclusions: `0` (generation fails closed on `unknown_blocked`)
 
@@ -9,15 +9,15 @@
 
 | Measure | Count |
 |---|---:|
-| Tracked source files | 959 |
-| Public-classified source files | 709 |
-| Materialized public files | 708 |
+| Tracked source files | 1061 |
+| Public-classified source files | 728 |
+| Materialized public files | 727 |
 | Non-materialized control files | 1 |
-| Excluded source files | 250 |
-| Excluded files with executable behavior | 128 |
+| Excluded source files | 333 |
+| Excluded files with executable behavior | 197 |
 | Generated export receipt files | 1 |
 | Generated export audit files | 2 |
-| Export tracked files | 711 |
+| Export tracked files | 730 |
 
 The control manifest is classified as a public source control but is not copied into the export.
 `PUBLIC_EXPORT_MANIFEST.json` is generated after materialization and has no tracked source row.
@@ -32,22 +32,22 @@ export_tracked_file_count = materialized_file_count + generated_audit_file_count
 
 | Classification | Count |
 |---|---:|
-| `official_private` | 71 |
-| `private_internal` | 179 |
+| `official_private` | 147 |
+| `private_internal` | 186 |
 | `public_generated` | 40 |
-| `public_shared` | 669 |
+| `public_shared` | 688 |
 
 ## Exclusion reasons
 
 | Reason code | Count |
 |---|---:|
 | `historical_research` | 13 |
-| `internal_evidence_or_handoff` | 86 |
-| `internal_test_boundary` | 57 |
+| `internal_evidence_or_handoff` | 92 |
+| `internal_test_boundary` | 58 |
 | `live_identity_or_real_id` | 1 |
-| `official_deployment_inventory` | 23 |
-| `official_hosted_overlay` | 42 |
-| `private_operation_runbook` | 28 |
+| `official_deployment_inventory` | 97 |
+| `official_hosted_overlay` | 43 |
+| `private_operation_runbook` | 29 |
 
 The complete exclusion decision matrix is in `PUBLIC_EXCLUSION_MATRIX.json`.
 Excluded source paths are represented only by SHA-256 digests; file bodies, credentials, names, private IDs, and live values are never copied.

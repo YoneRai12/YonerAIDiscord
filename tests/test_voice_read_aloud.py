@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import sqlite3
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -645,7 +646,9 @@ async def test_duplicate_content_same_scope_is_rejected_before_provider_or_sink(
 
 @pytest.mark.asyncio
 async def test_content_deduplication_is_scoped_and_expires(monkeypatch: pytest.MonkeyPatch) -> None:
+    now = [0.0]
     monkeypatch.setattr(read_aloud, "_CONTENT_DEDUPE_TTL_SECONDS", 0.01)
+    monkeypatch.setattr(read_aloud, "time", SimpleNamespace(monotonic=lambda: now[0]))
     coordinator = ReadAloudBurstCoordinator(
         synthesize=_synthesize_wav,
         deliver=_deliver_noop,
@@ -672,7 +675,7 @@ async def test_content_deduplication_is_scoped_and_expires(monkeypatch: pytest.M
             author_is_current_voice_member=True,
         )
 
-    await asyncio.sleep(0.02)
+    now[0] = 0.01
     await coordinator.submit(
         _route(),
         author_id=4,

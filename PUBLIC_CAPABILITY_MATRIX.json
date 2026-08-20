@@ -672,6 +672,237 @@
       "unbound_classification": "intentionally_internal"
     },
     {
+      "audit_class": "audit_high_risk",
+      "binding_classification": "command_event_or_model_tool",
+      "capability_id": "cap-run-capability-forge-sandbox-cancel",
+      "command_paths": [
+        "sandbox cancel"
+      ],
+      "configured_state": "implemented_unconfigured",
+      "default_state": "disabled_by_manifest",
+      "display_name_en": "Discord command /sandbox cancel",
+      "display_name_ja": "Execution Sandbox owner cancellation",
+      "docs_anchor": "PUBLIC_CAPABILITY_SUMMARY.md#module-intelligence-capability-forge",
+      "event_paths": [],
+      "implementation_state": "integrated_offline",
+      "legacy_unbound_without_actions": false,
+      "live_verification_state": "integrated_offline",
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "owner_only": true,
+      "plugin": "capability_forge",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "required_dependencies": [],
+      "required_owner_action": "configure_and_enable",
+      "risk": "high",
+      "supported_profiles": [
+        "hybrid_local_core"
+      ],
+      "surfaces": [
+        "command:sandbox cancel"
+      ],
+      "unbound_classification": null
+    },
+    {
+      "audit_class": "audit_standard",
+      "binding_classification": "command_event_or_model_tool",
+      "capability_id": "cap-run-capability-forge-sandbox-doctor",
+      "command_paths": [
+        "sandbox doctor"
+      ],
+      "configured_state": "implemented_unconfigured",
+      "default_state": "enabled_by_manifest",
+      "display_name_en": "Discord command /sandbox doctor",
+      "display_name_ja": "Execution Sandbox owner doctor",
+      "docs_anchor": "PUBLIC_CAPABILITY_SUMMARY.md#module-intelligence-capability-forge",
+      "event_paths": [],
+      "implementation_state": "integrated_offline",
+      "legacy_unbound_without_actions": false,
+      "live_verification_state": "integrated_offline",
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "owner_only": true,
+      "plugin": "capability_forge",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "required_dependencies": [],
+      "required_owner_action": "run_preflight_before_live_use",
+      "risk": "low",
+      "supported_profiles": [
+        "hybrid_local_core"
+      ],
+      "surfaces": [
+        "command:sandbox doctor"
+      ],
+      "unbound_classification": null
+    },
+    {
+      "audit_class": "audit_sensitive",
+      "binding_classification": "command_event_or_model_tool",
+      "capability_id": "cap-run-capability-forge-sandbox-jobs",
+      "command_paths": [
+        "sandbox jobs"
+      ],
+      "configured_state": "implemented_unconfigured",
+      "default_state": "disabled_by_manifest",
+      "display_name_en": "Discord command /sandbox jobs",
+      "display_name_ja": "Execution Sandbox owner job projection",
+      "docs_anchor": "PUBLIC_CAPABILITY_SUMMARY.md#module-intelligence-capability-forge",
+      "event_paths": [],
+      "implementation_state": "integrated_offline",
+      "legacy_unbound_without_actions": false,
+      "live_verification_state": "integrated_offline",
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "owner_only": true,
+      "plugin": "capability_forge",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "required_dependencies": [],
+      "required_owner_action": "configure_and_enable",
+      "risk": "medium",
+      "supported_profiles": [
+        "hybrid_local_core"
+      ],
+      "surfaces": [
+        "command:sandbox jobs"
+      ],
+      "unbound_classification": null
+    },
+    {
+      "audit_class": "audit_standard",
+      "binding_classification": "command_event_or_model_tool",
+      "capability_id": "cap-run-capability-forge-sandbox-plan",
+      "command_paths": [
+        "sandbox plan"
+      ],
+      "configured_state": "implemented_unconfigured",
+      "default_state": "enabled_by_manifest",
+      "display_name_en": "Discord command /sandbox plan",
+      "display_name_ja": "Execution Sandbox owner plan",
+      "docs_anchor": "PUBLIC_CAPABILITY_SUMMARY.md#module-intelligence-capability-forge",
+      "event_paths": [],
+      "implementation_state": "integrated_offline",
+      "legacy_unbound_without_actions": false,
+      "live_verification_state": "integrated_offline",
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "owner_only": true,
+      "plugin": "capability_forge",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "required_dependencies": [],
+      "required_owner_action": "run_preflight_before_live_use",
+      "risk": "low",
+      "supported_profiles": [
+        "hybrid_local_core"
+      ],
+      "surfaces": [
+        "command:sandbox plan"
+      ],
+      "unbound_classification": null
+    },
+    {
+      "audit_class": "audit_sensitive",
+      "binding_classification": "command_event_or_model_tool",
+      "capability_id": "cap-run-capability-forge-sandbox-receipt",
+      "command_paths": [
+        "sandbox receipt"
+      ],
+      "configured_state": "implemented_unconfigured",
+      "default_state": "disabled_by_manifest",
+      "display_name_en": "Discord command /sandbox receipt",
+      "display_name_ja": "Execution Sandbox owner receipt projection",
+      "docs_anchor": "PUBLIC_CAPABILITY_SUMMARY.md#module-intelligence-capability-forge",
+      "event_paths": [],
+      "implementation_state": "integrated_offline",
+      "legacy_unbound_without_actions": false,
+      "live_verification_state": "integrated_offline",
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "owner_only": true,
+      "plugin": "capability_forge",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "required_dependencies": [],
+      "required_owner_action": "configure_and_enable",
+      "risk": "medium",
+      "supported_profiles": [
+        "hybrid_local_core"
+      ],
+      "surfaces": [
+        "command:sandbox receipt"
+      ],
+      "unbound_classification": null
+    },
+    {
+      "audit_class": "audit_high_risk",
+      "binding_classification": "command_event_or_model_tool",
+      "capability_id": "cap-run-capability-forge-sandbox-run-template",
+      "command_paths": [
+        "sandbox run-template"
+      ],
+      "configured_state": "implemented_unconfigured",
+      "default_state": "disabled_by_manifest",
+      "display_name_en": "Discord command /sandbox run-template",
+      "display_name_ja": "Execution Sandbox owner fixed-template run",
+      "docs_anchor": "PUBLIC_CAPABILITY_SUMMARY.md#module-intelligence-capability-forge",
+      "event_paths": [],
+      "implementation_state": "integrated_offline",
+      "legacy_unbound_without_actions": false,
+      "live_verification_state": "integrated_offline",
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "owner_only": true,
+      "plugin": "capability_forge",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "required_dependencies": [],
+      "required_owner_action": "configure_and_enable",
+      "risk": "high",
+      "supported_profiles": [
+        "hybrid_local_core"
+      ],
+      "surfaces": [
+        "command:sandbox run-template"
+      ],
+      "unbound_classification": null
+    },
+    {
+      "audit_class": "audit_standard",
+      "binding_classification": "command_event_or_model_tool",
+      "capability_id": "cap-run-capability-forge-sandbox-status",
+      "command_paths": [
+        "sandbox status"
+      ],
+      "configured_state": "implemented_unconfigured",
+      "default_state": "enabled_by_manifest",
+      "display_name_en": "Discord command /sandbox status",
+      "display_name_ja": "Execution Sandbox owner status",
+      "docs_anchor": "PUBLIC_CAPABILITY_SUMMARY.md#module-intelligence-capability-forge",
+      "event_paths": [],
+      "implementation_state": "integrated_offline",
+      "legacy_unbound_without_actions": false,
+      "live_verification_state": "integrated_offline",
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "owner_only": true,
+      "plugin": "capability_forge",
+      "public_availability": "integrated_offline",
+      "public_readiness_claim": false,
+      "required_dependencies": [],
+      "required_owner_action": "run_preflight_before_live_use",
+      "risk": "low",
+      "supported_profiles": [
+        "hybrid_local_core"
+      ],
+      "surfaces": [
+        "command:sandbox status"
+      ],
+      "unbound_classification": null
+    },
+    {
       "audit_class": "audit_standard",
       "binding_classification": "command_event_or_model_tool",
       "capability_id": "cap-run-discovery-help",
@@ -5684,15 +5915,15 @@
       "unbound_classification": null
     }
   ],
-  "catalog_revision": "509d39c9a06caaa29e295a64eff5ee24c0a1c377ee32604d4426d8035e3f79d3",
+  "catalog_revision": "c466504b676722e350488f55429f22e5d5e2d968690819dd542765e2d7593b39",
   "counts": {
     "action_paths": 9,
-    "command_capability_ids": 157,
-    "command_paths": 175,
+    "command_capability_ids": 164,
+    "command_paths": 182,
     "event_capability_ids": 14,
     "event_paths": 14,
     "public_live_verification_claims": 0,
-    "runtime_declared": 170
+    "runtime_declared": 177
   },
   "public_alpha_claim": "implemented_offline_and_live_unverified",
   "schema_version": "yonerai.discord.public-capability-truth.v1"

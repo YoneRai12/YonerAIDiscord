@@ -1,22 +1,22 @@
 {
-  "catalog_revision": "eef1974947698f5d92da3fccbd85434f0b2b6610ea3cf7158f8f71c225fad9d1",
+  "catalog_revision": "447cb7ff8a98d5bf4d95b29579aeb1da30a09710a76c3e6ac40e221524ebb758",
   "catalog_scope": "static_candidate_metadata",
   "counts": {
     "action_capability_ids": 9,
     "action_paths": 9,
-    "command_capability_ids": 157,
-    "command_paths": 175,
+    "command_capability_ids": 164,
+    "command_paths": 182,
     "direct_surface_unbound_runtime": 16,
     "event_capability_ids": 14,
     "event_paths": 14,
     "historical_canonical": 656,
     "model_tool_bindings": 1,
     "projected_canonical_provenance": 17,
-    "projected_runtime_provenance": 163,
-    "projected_total": 180,
-    "registry_total": 826,
-    "runtime_declared": 170,
-    "surface_unique": 170,
+    "projected_runtime_provenance": 170,
+    "projected_total": 187,
+    "registry_total": 833,
+    "runtime_declared": 177,
+    "surface_unique": 177,
     "unbound_runtime": 7
   },
   "entries": [
@@ -585,6 +585,125 @@
       "source_provenance": "runtime_manifest",
       "surface_bindings": [
         "action:browser.screenshot"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-cancel",
+      "content_revision": "aeeefd6b40506f60226c58cd184222d18ff15a5a65d667281ed04ea23b7e8faf",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner cancellation",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.cancel"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-doctor",
+      "content_revision": "f6c62db9f83e152a6c8f0fdddd73152c700fd9ef4360ccb16e0d09f8a349f636",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner doctor",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.doctor"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-jobs",
+      "content_revision": "11b45df612a8786a2d043b65d7a9d036cc95143fa4631ee1bf113bce3526f3b8",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner job projection",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.jobs"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-plan",
+      "content_revision": "5a2a9adb9cf4de487876ff33807d7c1849dc9bae9db9166e13c293c379736aac",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner plan",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.plan"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-receipt",
+      "content_revision": "0c1579f76dce3e61070a2822d32a729f2ced10757e0166fe3850345a23444120",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner receipt projection",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.receipt"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-run-template",
+      "content_revision": "72acd4ad06dbbff3d8f13ba8d0ae636a737ff2de7a9076763173054089e8070c",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner fixed-template run",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.run-template"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-status",
+      "content_revision": "2aacf12c75798e6eff26e4a75e311029baf7109fac4e716f3d426311d33c43cb",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner status",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.status"
       ]
     },
     {
@@ -3189,7 +3308,7 @@
     ]
   },
   "schema_version": "yonerai.discord.capability-catalog.v1",
-  "source_revision": "78fd09c5aa0b6bc1ecc200a0947e3aec384fa9a1a1fbf2c7d73863f41a01e46f",
+  "source_revision": "ddbb783da6cc9d568b1a88457054e4be03299d5fc55f50a9b4a806e137bdcdf4",
   "sources": [
     {
       "path": "docs/CAPABILITY_COUNTS.json",
@@ -3205,7 +3324,7 @@
     },
     {
       "path": "src/yonerai_discord/capabilities.py",
-      "sha256": "aabd9857a9f5d6a90f188aa748623238252d39c9cf35baeddd55bfeb5f9258d6"
+      "sha256": "d426e70d386c7d0282dd45d2d95e449bf99c20504494104564a0e446c8186bea"
     },
     {
       "path": "src/yonerai_discord/capability_metadata_contract.py",
@@ -3213,7 +3332,7 @@
     },
     {
       "path": "src/yonerai_discord/config.py",
-      "sha256": "ca498bd88b8ce5ee803ce349d3e06d5de4ed6a820d5aa246922d2d9d6df45b3e"
+      "sha256": "9c49e6373ce7f143d9ae0e21787ff1ee5af63008997dfb65723737230f0dc505"
     },
     {
       "path": "src/yonerai_discord/secret_detection.py",
@@ -3277,7 +3396,7 @@
     },
     {
       "path": "src/yonerai_discord/runtime_manifests/capability_forge.py",
-      "sha256": "8c3f55c0fac6b99cddedf7e2a3ada30e6130b648d72d7becb45123a89d3154a1"
+      "sha256": "28a492c13993f6a101bd4dac5cbabae1b25586f09447b6835f35030809b4651d"
     },
     {
       "path": "src/yonerai_discord/runtime_manifests/discovery.py",

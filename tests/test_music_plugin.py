@@ -24,6 +24,8 @@ from yonerai_discord.modules.music.models import (
     MusicActor,
     MusicAuthorizationError,
     MusicSessionError,
+    MusicSpeechReceipt,
+    MusicSpeechStatus,
     PersistedMusicTrackRef,
 )
 from yonerai_discord.modules.music.repository import MusicPlaylistRepository
@@ -109,12 +111,29 @@ class RecordingMusicService:
 
     def __init__(self) -> None:
         self.speech_calls = []
+        self.speech_receipt_log: list[MusicSpeechReceipt] = []
         self.radio_calls: list[tuple[int, MusicActor, bool]] = []
 
-    async def add_speech_wav(self, guild_id, actor, wav, *, commit_check=None):
+    async def add_speech_wav(
+        self,
+        guild_id,
+        actor,
+        wav,
+        *,
+        commit_check=None,
+        receipt_source_channel_id=None,
+    ):
         assert commit_check is not None and await commit_check() is not None
         self.speech_calls.append((guild_id, actor, wav))
-        return 1
+        receipt = MusicSpeechReceipt(
+            guild_id=guild_id,
+            source_channel_id=receipt_source_channel_id,
+            requester_id=actor.user_id,
+            voice_channel_id=actor.voice_channel_id,
+            queue_position=1,
+        )
+        self.speech_receipt_log.append(receipt)
+        return receipt
 
     async def set_local_radio(self, guild_id, actor, enabled, *, commit_check=None):
         assert commit_check is not None and await commit_check() is not None
@@ -681,6 +700,13 @@ def test_youtube_helper_only_builds_official_search_results_url() -> None:
     assert "%5Blive%5D%28x%29+%3C%40123456%3E" in hostile_url
 
 
+def test_speak_exposes_only_code_owned_speaker_choice() -> None:
+    group = MusicGroup(SimpleNamespace(), RecordingMusicService())
+    parameter = next(parameter for parameter in group.speak.parameters if parameter.name == "speaker_id")
+
+    assert [(choice.name, choice.value) for choice in parameter.choices] == [("3", 3)]
+
+
 @pytest.mark.asyncio
 async def test_speak_uses_existing_speech_queue_then_audio_session_ducking_path() -> None:
     speech_queue = FakeSpeechQueue()
@@ -707,20 +733,23 @@ async def test_speak_uses_existing_speech_queue_then_audio_session_ducking_path(
         followup=followup,
     )
 
-    await group.speak.callback(group, interaction, "こんにちは", 7)
+    await group.speak.callback(group, interaction, "こんにちは", 3)
 
     assert len(speech_queue.requests) == 1
     request = speech_queue.requests[0]
-    assert (request.text, request.guild_id, request.channel_id, request.speaker_id) == ("こんにちは", 100, 200, 7)
+    assert (request.text, request.guild_id, request.channel_id, request.speaker_id) == ("こんにちは", 100, 200, 3)
     assert len(service.speech_calls) == 1
     guild_id, actor, wav = service.speech_calls[0]
     assert guild_id == 100
     assert actor.user_id == 10
     assert actor.voice_channel_id == 500
     assert wav == b"RIFF-voicevox-wav"
+    assert service.speech_receipt_log == [MusicSpeechReceipt(100, 200, 10, 500, 1, MusicSpeechStatus.QUEUED)]
     assert response.done
     content, kwargs = followup.messages[0]
     assert "ducking" in content
+    assert "queued" in content
+    assert "delivered" not in content and "completed" not in content
     assert kwargs["ephemeral"] is True
     allowed_mentions = kwargs["allowed_mentions"]
     assert isinstance(allowed_mentions, discord.AllowedMentions)
@@ -728,6 +757,36 @@ async def test_speak_uses_existing_speech_queue_then_audio_session_ducking_path(
     assert allowed_mentions.users is False
     assert allowed_mentions.roles is False
     assert allowed_mentions.replied_user is False
+
+
+@pytest.mark.asyncio
+async def test_speak_rejects_non_allowlisted_speaker_before_synthesis_or_receipt() -> None:
+    speech_queue = FakeSpeechQueue()
+    service = RecordingMusicService()
+    member = SimpleNamespace(
+        id=10,
+        voice=SimpleNamespace(channel=SimpleNamespace(id=500)),
+        guild_permissions=SimpleNamespace(administrator=False, manage_guild=False),
+    )
+    interaction = SimpleNamespace(
+        guild_id=100,
+        guild=FreshGuild(member),
+        channel_id=200,
+        user=member,
+        response=FakeResponse(),
+        followup=FakeFollowup(),
+    )
+    group = MusicGroup(
+        SimpleNamespace(speech_queue=speech_queue, capability_guard=ToggleGuard(), is_closing=False),
+        service,
+    )
+
+    await group.speak.callback(group, interaction, "private text", 7)
+
+    assert speech_queue.requests == []
+    assert service.speech_calls == []
+    assert service.speech_receipt_log == []
+    assert "private text" not in repr(interaction.followup.messages)
 
 
 @pytest.mark.asyncio
@@ -816,7 +875,7 @@ async def test_speak_policy_off_while_waiting_never_sends_text_to_synthesizer() 
         SimpleNamespace(speech_queue=speech_queue, capability_guard=guard, is_closing=False),
         service,
     )
-    queued = asyncio.create_task(group.speak.callback(group, interaction, "外部へ送らない", 7))
+    queued = asyncio.create_task(group.speak.callback(group, interaction, "外部へ送らない", 3))
     await speech_queue.blocked_run_started.wait()
     guard.allowed = False
     provider.release_first.set()

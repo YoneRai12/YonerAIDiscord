@@ -110,6 +110,13 @@
 | `/poll close` | `cap-run-poll-close` | `interaction.discord-surface` | `low` | `everyone` | `integrated_offline` |
 | `/poll create` | `cap-run-poll-create` | `interaction.discord-surface` | `low` | `everyone` | `integrated_offline` |
 | `/poll results` | `cap-run-poll-results` | `interaction.discord-surface` | `low` | `everyone` | `integrated_offline` |
+| `/sandbox cancel` | `cap-run-capability-forge-sandbox-cancel` | `intelligence.capability-forge` | `high` | `bot_owner` | `integrated_offline` |
+| `/sandbox doctor` | `cap-run-capability-forge-sandbox-doctor` | `intelligence.capability-forge` | `low` | `bot_owner` | `integrated_offline` |
+| `/sandbox jobs` | `cap-run-capability-forge-sandbox-jobs` | `intelligence.capability-forge` | `medium` | `bot_owner` | `integrated_offline` |
+| `/sandbox plan` | `cap-run-capability-forge-sandbox-plan` | `intelligence.capability-forge` | `low` | `bot_owner` | `integrated_offline` |
+| `/sandbox receipt` | `cap-run-capability-forge-sandbox-receipt` | `intelligence.capability-forge` | `medium` | `bot_owner` | `integrated_offline` |
+| `/sandbox run-template` | `cap-run-capability-forge-sandbox-run-template` | `intelligence.capability-forge` | `high` | `bot_owner` | `integrated_offline` |
+| `/sandbox status` | `cap-run-capability-forge-sandbox-status` | `intelligence.capability-forge` | `low` | `bot_owner` | `integrated_offline` |
 | `/schedule cancel` | `cap-can-0001` | `collaboration.meeting` | `medium` | `everyone` | `integrated_offline` |
 | `/schedule create` | `cap-can-0002` | `collaboration.meeting` | `medium` | `everyone` | `integrated_offline` |
 | `/schedule list` | `cap-can-0007` | `collaboration.meeting` | `low` | `everyone` | `integrated_offline` |

@@ -30,16 +30,17 @@ from .sandbox_contract import (
     SandboxTerminationReason,
     SandboxTerminationReceipt,
 )
-from .sandbox_service import ExternalSandboxService
+from .sandbox_service import ExternalSandboxService, SandboxOperationProfile
 
 
 HYPERV_DISPOSABLE_BACKEND_ID = "hyperv-disposable"
 HYPERV_DISPOSABLE_PIPE_NAME = r"\\.\pipe\YonerAI-ForgeSandbox-Broker-v1"
 HYPERV_BROKER_REQUEST_SCHEMA = "yonerai.exec-sandbox.broker-run.v1"
-HYPERV_BROKER_RECEIPT_SCHEMA = "yonerai.exec-sandbox.broker-receipt.v1"
+HYPERV_BROKER_CANCEL_SCHEMA = "yonerai.exec-sandbox.broker-cancel.v1"
+HYPERV_BROKER_RECEIPT_SCHEMA = "yonerai.exec-sandbox.broker-receipt.v2"
 HYPERV_JOB_SCHEMA = "yonerai.exec-sandbox.job.v1"
 HYPERV_BROKER_PROTOCOL_REVISION = "2026-08-08.1"
-_TRUSTED_DATA_CHANNEL_IMPLEMENTED = False
+_TRUSTED_DATA_CHANNEL_IMPLEMENTED = True
 
 _DIGEST = re.compile(r"[a-f0-9]{64}\Z")
 _LOCATOR = re.compile(
@@ -144,6 +145,109 @@ class HyperVDisposableBinding:
                 "session_nonce": self.session_nonce,
             }
         )
+
+
+@dataclass(frozen=True, slots=True)
+class HyperVExecutionEvidence:
+    """Opaque cross-link from one Discord job to one durable broker receipt."""
+
+    job_id: str
+    generation: int
+    policy_digest: str
+    request_digest: str
+    scope_digest: str
+    nonce_digest: str
+    output_sha256: str
+    evidence_digest: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.job_id, str) or re.fullmatch(r"job_[a-f0-9]{32}", self.job_id) is None:
+            raise ValueError("execution evidence job is invalid")
+        if type(self.generation) is not int or self.generation <= 0:
+            raise ValueError("execution evidence generation is invalid")
+        for value in (
+            self.policy_digest,
+            self.request_digest,
+            self.scope_digest,
+            self.nonce_digest,
+            self.output_sha256,
+            self.evidence_digest,
+        ):
+            if not isinstance(value, str) or re.fullmatch(r"sha256:[a-f0-9]{64}", value) is None:
+                raise ValueError("execution evidence digest is invalid")
+
+
+def hyperv_execution_evidence(result: SandboxResult) -> HyperVExecutionEvidence:
+    """Derive only opaque facts already authenticated by the broker adapter."""
+
+    if (
+        type(result) is not SandboxResult
+        or result.backend_identity != HYPERV_DISPOSABLE_BACKEND_ID
+        or result.artifacts != ()
+    ):
+        raise HyperVDisposableBackendError()
+    resource_token = hashlib.sha256(
+        b"yonerai.execution-sandbox.resource.v1\0"
+        + result.request_digest.encode("ascii")
+        + result.session_nonce.encode("ascii")
+    ).hexdigest()
+    try:
+        binding = HyperVDisposableBinding(
+            scope=result.scope,
+            backend_generation=result.backend_generation,
+            policy_digest=result.policy_digest,
+            request_digest=result.request_digest,
+            session_nonce=result.session_nonce,
+            resource_token=resource_token,
+        )
+        output = json.dumps(
+            _thaw_evidence_json(result.output),
+            ensure_ascii=True,
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("ascii")
+        value = {
+            "generation": binding.backend_generation,
+            "job_id": f"job_{binding.resource_token[:32]}",
+            "nonce_digest": "sha256:"
+            + hashlib.sha256(
+                hashlib.sha256(binding.session_nonce.encode("ascii")).hexdigest().encode("ascii")
+            ).hexdigest(),
+            "output_sha256": "sha256:" + hashlib.sha256(output).hexdigest(),
+            "policy_digest": f"sha256:{binding.policy_digest}",
+            "request_digest": f"sha256:{binding.request_digest}",
+            "scope_digest": f"sha256:{binding.scope_digest}",
+        }
+        evidence_digest = (
+            "sha256:"
+            + hashlib.sha256(
+                b"yonerai.execution-sandbox.discord-evidence.v1\0" + _canonical_evidence(value)
+            ).hexdigest()
+        )
+        return HyperVExecutionEvidence(**value, evidence_digest=evidence_digest)
+    except HyperVDisposableBackendError:
+        raise
+    except Exception:
+        raise HyperVDisposableBackendError() from None
+
+
+def _canonical_evidence(value: object) -> bytes:
+    return json.dumps(
+        value,
+        ensure_ascii=True,
+        allow_nan=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("ascii")
+
+
+def _thaw_evidence_json(value: object) -> object:
+    if isinstance(value, Mapping):
+        return {key: _thaw_evidence_json(item) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return [_thaw_evidence_json(item) for item in value]
+    return value
 
 
 @dataclass(frozen=True, slots=True)
@@ -283,6 +387,9 @@ class FixedNamedPipeExchangePort(Protocol):
     def ready(self) -> bool: ...
 
     @property
+    def verified_current(self) -> bool: ...
+
+    @property
     def pipe_name(self) -> str: ...
 
     async def exchange(self, frame: bytes) -> bytes: ...
@@ -315,6 +422,7 @@ class HyperVDisposableNamedPipeBrokerPort:
                 and self._exchange is not None
                 and self._exchange_identity_current() is self._exchange
                 and self._exchange.pipe_name == HYPERV_DISPOSABLE_PIPE_NAME
+                and self._exchange.verified_current is True
                 and self._exchange.ready is True
             )
         except Exception:
@@ -338,10 +446,30 @@ class HyperVDisposableNamedPipeBrokerPort:
         binding: HyperVDisposableBinding,
         reason: SandboxTerminationReason,
     ) -> HyperVCleanupReceipt:
-        # The Stage 1 pipe contract has no independently authenticated cancel
-        # channel. Cancellation therefore remains unconfigured and fail-closed.
-        del binding, reason
-        raise HyperVDisposableBackendError()
+        if not self.ready or self._exchange is None:
+            raise HyperVDisposableBackendError()
+        try:
+            receipt = _decode_broker_receipt(
+                await self._exchange.exchange(_canonical_cancel_frame(binding, reason)),
+                binding,
+            )
+        except asyncio.CancelledError:
+            raise
+        except HyperVDisposableBackendError:
+            raise
+        except Exception:
+            raise HyperVDisposableBackendError() from None
+        cancelled = (
+            receipt.state is HyperVJobState.FAILED
+            and receipt.failure_code is HyperVFailureCode.CANCELLED
+            and receipt.output is None
+        )
+        completed_before_cancel = (
+            receipt.state is HyperVJobState.COMPLETED and receipt.failure_code is HyperVFailureCode.NONE
+        )
+        if (not cancelled and not completed_before_cancel) or not _valid_cleanup(binding, receipt.cleanup):
+            raise HyperVDisposableBackendError()
+        return receipt.cleanup
 
 
 class HyperVDisposableSandboxPort(ExternalSandboxPort):
@@ -472,6 +600,7 @@ def build_hyperv_disposable_sandbox_service(
         policy=policy,
         cleanup_timeout_seconds=60,
         backend_generation=backend_generation,
+        operation_profile=SandboxOperationProfile.DISPOSABLE_VM,
     )
     return service, port
 
@@ -727,6 +856,36 @@ def _output_count(value: object) -> int:
     return 0 if value is None else 1
 
 
+def _canonical_cancel_frame(
+    binding: HyperVDisposableBinding,
+    reason: SandboxTerminationReason,
+) -> bytes:
+    if type(binding) is not HyperVDisposableBinding or not isinstance(reason, SandboxTerminationReason):
+        raise HyperVDisposableBackendError()
+    value = {
+        "generation": binding.backend_generation,
+        "job_id": f"job_{binding.resource_token[:32]}",
+        "nonce_digest": "sha256:"
+        + hashlib.sha256(hashlib.sha256(binding.session_nonce.encode("ascii")).hexdigest().encode("ascii")).hexdigest(),
+        "policy_digest": f"sha256:{binding.policy_digest}",
+        "protocol_revision": HYPERV_BROKER_PROTOCOL_REVISION,
+        "reason": reason.value,
+        "request_digest": f"sha256:{binding.request_digest}",
+        "schema": HYPERV_BROKER_CANCEL_SCHEMA,
+        "scope_digest": f"sha256:{binding.scope_digest}",
+    }
+    body = json.dumps(
+        value,
+        ensure_ascii=True,
+        allow_nan=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("ascii")
+    if not body or len(body) > 4_096:
+        raise HyperVDisposableBackendError()
+    return len(body).to_bytes(4, "big") + body
+
+
 def _decode_broker_receipt(raw: bytes, binding: HyperVDisposableBinding) -> HyperVBrokerJobReceipt:
     value = _decode_frame(raw)
     if set(value) != {
@@ -736,6 +895,7 @@ def _decode_broker_receipt(raw: bytes, binding: HyperVDisposableBinding) -> Hype
         "generation",
         "job_id",
         "nonce_digest",
+        "output",
         "output_count",
         "output_sha256",
         "policy_digest",
@@ -751,7 +911,17 @@ def _decode_broker_receipt(raw: bytes, binding: HyperVDisposableBinding) -> Hype
         "sha256:"
         + hashlib.sha256(hashlib.sha256(binding.session_nonce.encode("ascii")).hexdigest().encode("ascii")).hexdigest()
     )
-    expected_output_digest = "sha256:" + hashlib.sha256(b"null").hexdigest()
+    try:
+        output_bytes = json.dumps(
+            value["output"],
+            ensure_ascii=True,
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("ascii")
+    except (TypeError, ValueError, OverflowError, RecursionError):
+        raise HyperVDisposableBackendError() from None
+    expected_output_digest = "sha256:" + hashlib.sha256(output_bytes).hexdigest()
     if (
         value["schema"] != HYPERV_BROKER_RECEIPT_SCHEMA
         or value["protocol_revision"] != HYPERV_BROKER_PROTOCOL_REVISION
@@ -762,7 +932,8 @@ def _decode_broker_receipt(raw: bytes, binding: HyperVDisposableBinding) -> Hype
         or value["nonce_digest"] != expected_nonce_digest
         or value["job_id"] != expected_job_id
         or value["artifacts"] != []
-        or value["output_count"] != 0
+        or len(output_bytes) > MAX_OUTPUT_BYTES
+        or value["output_count"] != _output_count(value["output"])
         or value["output_sha256"] != expected_output_digest
     ):
         raise HyperVDisposableBackendError()
@@ -782,7 +953,7 @@ def _decode_broker_receipt(raw: bytes, binding: HyperVDisposableBinding) -> Hype
             binding=binding,
             state=HyperVJobState(value["state"]),
             failure_code=HyperVFailureCode(value["failure_code"]),
-            output=None,
+            output=value["output"],
             output_sha256=value["output_sha256"].removeprefix("sha256:"),
             output_count=value["output_count"],
             cleanup=HyperVCleanupReceipt(

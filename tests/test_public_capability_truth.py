@@ -63,14 +63,14 @@ def test_capability_matrix_covers_exact_runtime_truth_with_required_fields() -> 
 
     assert document["counts"] == {
         "action_paths": 9,
-        "command_capability_ids": 157,
-        "command_paths": 175,
+        "command_capability_ids": 164,
+        "command_paths": 182,
         "event_capability_ids": 14,
         "event_paths": 14,
         "public_live_verification_claims": 0,
-        "runtime_declared": 170,
+        "runtime_declared": 177,
     }
-    assert len(rows) == 170
+    assert len(rows) == 177
     assert [row["capability_id"] for row in rows] == sorted(row["capability_id"] for row in rows)
     assert all(set(row) == REQUIRED_CAPABILITY_FIELDS for row in rows)
     assert all(row["display_name_ja"].strip() and row["display_name_en"].strip() for row in rows)
@@ -131,12 +131,12 @@ def test_all_five_artifacts_are_deterministic_strict_utf8_lf_and_content_complet
     assert all(not payload.startswith(b"\xef\xbb\xbf") for payload in first.values())
     matrix = json.loads(first["PUBLIC_CAPABILITY_MATRIX.json"].decode("utf-8"))
     modules = json.loads(first["PUBLIC_MODULE_MATRIX.json"].decode("utf-8"))
-    assert len(matrix["capabilities"]) == 170
+    assert len(matrix["capabilities"]) == 177
     assert modules["module_count"] == 30
     assert "public live-verification claims: **0**" in first["PUBLIC_CAPABILITY_SUMMARY.md"].decode("utf-8")
     command_index = first["PUBLIC_COMMAND_INDEX.md"].decode("utf-8")
     assert "## Typed planner actions" in command_index
-    assert sum(line.startswith("| `/") for line in command_index.splitlines()) == 175
+    assert sum(line.startswith("| `/") for line in command_index.splitlines()) == 182
 
 
 def test_command_index_uses_per_command_rbac_floors() -> None:

@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import struct
 from types import SimpleNamespace
 from typing import Any
 
 import pytest
 
 from yonerai_discord.control_plane import RbacLevel
+from yonerai_discord.modules.music_generation.artifacts import MAX_WAV_BYTES
+from yonerai_discord.modules.speech_synthesis.provider_voicevox import canonicalize_voicevox_wav
 from yonerai_discord.modules.voice import SpeechQueue, SpeechRequest, SynthesizedSpeech
 from yonerai_discord.modules.voice import VoicePlugin
 from yonerai_discord.modules.voice.adapter import VoiceGroup
@@ -19,6 +22,7 @@ from yonerai_discord.modules.voice.voicevox import (
     _read_limited,
 )
 from yonerai_discord.plugin import PluginManager, PluginStatus
+from yonerai_discord.voice_contract import MIN_VOICEVOX_WAV_BYTES
 
 
 class FakeSynthesizer:
@@ -29,6 +33,20 @@ class FakeSynthesizer:
         self.calls += 1
         await asyncio.sleep(0)
         return SynthesizedSpeech(wav=b"RIFFfake")
+
+
+def _voicevox_wav(*, duration_seconds: float = 1.0, sample_rate: int = 24_000) -> bytes:
+    frame_count = round(duration_seconds * sample_rate)
+    pcm = b"\0\0" * frame_count
+    return (
+        b"RIFF"
+        + struct.pack("<I", 36 + len(pcm))
+        + b"WAVEfmt "
+        + struct.pack("<IHHIIHH", 16, 1, 1, sample_rate, sample_rate * 2, 2, 16)
+        + b"data"
+        + struct.pack("<I", len(pcm))
+        + pcm
+    )
 
 
 class ToggleGuard:
@@ -275,10 +293,10 @@ def test_voicevox_rejects_remote_endpoint_without_opt_in() -> None:
 
 
 class FakeHttpResponse:
-    def __init__(self, status: int, payload: bytes) -> None:
+    def __init__(self, status: int, payload: bytes, *, declared_content_length: int | None = None) -> None:
         self.status = status
         self._payload = payload
-        self.content_length = len(payload)
+        self.content_length = len(payload) if declared_content_length is None else declared_content_length
         self.content = None
 
     async def __aenter__(self) -> FakeHttpResponse:
@@ -321,10 +339,11 @@ async def test_voicevox_posts_never_follow_redirects() -> None:
 
 @pytest.mark.asyncio
 async def test_voicevox_requires_http_200_and_disables_redirects_for_both_posts() -> None:
+    wav = _voicevox_wav()
     session = FakeHttpSession(
         [
             FakeHttpResponse(200, b'{"speedScale": 1.0}'),
-            FakeHttpResponse(200, b"RIFFvoice"),
+            FakeHttpResponse(200, wav),
         ]
     )
     client = VoicevoxClient(endpoint="http://127.0.0.1:50021")
@@ -340,7 +359,9 @@ async def test_voicevox_requires_http_200_and_disables_redirects_for_both_posts(
         )
     )
 
-    assert result.wav == b"RIFFvoice"
+    assert result.wav[:12] == b"RIFF" + struct.pack("<I", len(result.wav) - 8) + b"WAVE"
+    assert struct.unpack_from("<I", result.wav, 24)[0] == 48_000
+    assert result.sample_rate == 48_000
     assert len(session.calls) == 2
     assert all(kwargs["allow_redirects"] is False for _, kwargs in session.calls)
     assert session.calls[1][1]["json"]["speedScale"] == 1.25
@@ -360,9 +381,65 @@ async def test_voicevox_response_limit_is_enforced_without_trusting_content_leng
         await _read_limited(response, 1_024)
 
 
+@pytest.mark.asyncio
+async def test_voicevox_fixed_wav_cap_stops_chunked_stream_at_boundary_content_free() -> None:
+    private_tail = b"private-tail"
+
+    class ChunkedContent:
+        def iter_chunked(self, _size: int):
+            async def chunks():
+                yield b"x" * MAX_WAV_BYTES
+                yield private_tail
+
+            return chunks()
+
+    response = SimpleNamespace(content_length=None, content=ChunkedContent())
+    with pytest.raises(RuntimeError, match="exceeds") as caught:
+        await _read_limited(response, MAX_WAV_BYTES)
+
+    assert private_tail not in str(caught.value).encode()
+
+
+@pytest.mark.asyncio
+async def test_voicevox_synthesis_rejects_fixed_wav_cap_before_read() -> None:
+    session = FakeHttpSession(
+        [
+            FakeHttpResponse(200, b'{"speedScale": 1.0}'),
+            FakeHttpResponse(200, b"not-read", declared_content_length=MAX_WAV_BYTES + 1),
+        ]
+    )
+    client = VoicevoxClient(
+        endpoint="http://127.0.0.1:50021",
+        max_response_bytes=50 * 1024 * 1024,
+    )
+    client._session = session
+
+    with pytest.raises(RuntimeError, match="exceeds"):
+        await client.synthesize(SpeechRequest(text="voice", guild_id=1, channel_id=2))
+
+    assert len(session.calls) == 2
+    await client.close()
+
+
 def test_voicevox_rejects_unsafe_response_limit() -> None:
     with pytest.raises(VoicevoxConfigurationError, match="MAX_RESPONSE"):
-        VoicevoxClient(endpoint="http://127.0.0.1:50021", max_response_bytes=100)
+        VoicevoxClient(
+            endpoint="http://127.0.0.1:50021",
+            max_response_bytes=MIN_VOICEVOX_WAV_BYTES - 1,
+        )
+
+    client = VoicevoxClient(
+        endpoint="http://127.0.0.1:50021",
+        max_response_bytes=MIN_VOICEVOX_WAV_BYTES,
+    )
+    assert client._max_response_bytes == MIN_VOICEVOX_WAV_BYTES
+
+
+def test_voice_synthesize_exposes_only_code_owned_speaker_choice() -> None:
+    group = VoiceGroup(SimpleNamespace(capability_guard=ToggleGuard()), SpeechQueue(FakeSynthesizer()))
+    parameter = next(parameter for parameter in group.synthesize.parameters if parameter.name == "speaker_id")
+
+    assert [(choice.name, choice.value) for choice in parameter.choices] == [("3", 3)]
 
 
 def test_speech_request_has_stable_key() -> None:
@@ -380,6 +457,44 @@ def test_speech_request_has_stable_key() -> None:
             volume_scale=0.5,
         ).key
     )
+
+
+@pytest.mark.parametrize("speaker_id", (-1, 0, 1, 7, True, 2**31))
+def test_speech_request_rejects_speaker_outside_code_owned_allowlist(speaker_id: object) -> None:
+    with pytest.raises(ValueError, match="speaker_not_allowed") as caught:
+        SpeechRequest(text="voice", guild_id=1, channel_id=2, speaker_id=speaker_id)  # type: ignore[arg-type]
+
+    assert str(speaker_id) not in str(caught.value)
+
+
+def test_voicevox_wav_contract_accepts_default_24khz_and_canonicalizes_to_48khz() -> None:
+    result = canonicalize_voicevox_wav(_voicevox_wav())
+
+    assert result[:4] == b"RIFF"
+    assert result[8:12] == b"WAVE"
+    assert struct.unpack_from("<I", result, 4)[0] == len(result) - 8
+    assert struct.unpack_from("<I", result, 24)[0] == 48_000
+
+
+@pytest.mark.parametrize(
+    "payload",
+    (b"RIFF", _voicevox_wav(duration_seconds=31.0)),
+    ids=("truncated", "overlong"),
+)
+def test_voicevox_wav_contract_rejects_truncated_or_overlong_payload_content_free(payload: bytes) -> None:
+    with pytest.raises(RuntimeError, match="VOICEVOX") as caught:
+        canonicalize_voicevox_wav(payload)
+
+    assert payload not in str(caught.value).encode()
+
+
+def test_voicevox_wav_contract_rejects_extra_chunks() -> None:
+    wav = _voicevox_wav()
+    extra = wav[:36] + b"JUNK\x02\0\0\0\0\0" + wav[36:]
+    extra = extra[:4] + struct.pack("<I", len(extra) - 8) + extra[8:]
+
+    with pytest.raises(RuntimeError, match="chunks"):
+        canonicalize_voicevox_wav(extra)
 
 
 def test_speech_request_removes_url_and_discord_identifiers_before_synthesis() -> None:

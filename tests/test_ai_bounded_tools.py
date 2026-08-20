@@ -387,7 +387,7 @@ def test_production_projection_indexes_only_implemented_connected_surfaces() -> 
     snapshot = build_static_capability_snapshot(registry)
 
     assert {item.capability_id for item in snapshot.entries} == expected_ids
-    assert len(snapshot.entries) == len(expected_ids) == 180
+    assert len(snapshot.entries) == len(expected_ids) == 187
     assert "cap-can-0003" not in expected_ids
     assert StaticCapabilitySnapshot(tuple(reversed(snapshot.entries))).content_revision == snapshot.content_revision
     for intent in ("conversation", "code", "site", "music", "memory", "web_research"):

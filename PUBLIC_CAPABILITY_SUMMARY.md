@@ -5,8 +5,8 @@
 
 ## Counts
 
-- runtime-declared capabilities: **170**
-- command paths: **175**
+- runtime-declared capabilities: **177**
+- command paths: **182**
 - event paths: **14**
 - legacy unbound without planner actions: **16**
 - planner action-only capabilities within that legacy count: **9**
@@ -23,7 +23,7 @@
 | Moderation / security / permissions | 35 |
 | Scheduling / community / operations | 19 |
 | Image / video / music / media | 37 |
-| VM / Sandbox / capability execution | 1 |
+| VM / Sandbox / capability execution | 8 |
 | Memory / files / artifact delivery | 13 |
 | YonerAI Core / topology / profile | 0 |
 | Diagnostics / preview / status | 43 |
@@ -73,7 +73,7 @@
 <a id="module-intelligence-capability-forge"></a>
 ### intelligence.capability-forge
 
-- runtime capabilities: 1
+- runtime capabilities: 8
 - public availability: `integrated_offline`
 - live verified: `false`
 

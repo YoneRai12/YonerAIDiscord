@@ -7,22 +7,22 @@
 
 - schema: `yonerai.discord.capability-catalog.v1`
 - scope: `static_candidate_metadata`
-- catalog revision: `eef1974947698f5d92da3fccbd85434f0b2b6610ea3cf7158f8f71c225fad9d1`
-- source revision: `78fd09c5aa0b6bc1ecc200a0947e3aec384fa9a1a1fbf2c7d73863f41a01e46f`
+- catalog revision: `447cb7ff8a98d5bf4d95b29579aeb1da30a09710a76c3e6ac40e221524ebb758`
+- source revision: `ddbb783da6cc9d568b1a88457054e4be03299d5fc55f50a9b4a806e137bdcdf4`
 
 ## Counts
 
 | 母集団 | 件数 |
 | --- | ---: |
 | 歴史canonical | 656 |
-| runtime宣言 | 170 |
-| Registry合計 | 826 |
-| 静的projection | 180 |
+| runtime宣言 | 177 |
+| Registry合計 | 833 |
+| 静的projection | 187 |
 | projection canonical由来 | 17 |
-| projection runtime由来 | 163 |
-| surface接続unique ID | 170 |
-| command capability ID | 157 |
-| command path | 175 |
+| projection runtime由来 | 170 |
+| surface接続unique ID | 177 |
+| command capability ID | 164 |
+| command path | 182 |
 | event capability ID | 14 |
 | event path | 14 |
 | planner action capability ID | 9 |
@@ -101,6 +101,13 @@ planner action接続を含む全known bindingの残余は `unbound_ids` です�
 | cap-run-automod-status | moderation.automod | report-only AutoModの状態を表示 | moderation | moderation | medium | guild_admin | runtime_manifest |  | command:automod.status | 39f2b0785d9901bb9077de3a920f84b9f28e23fc5a2cf48772bace0c8269898e |
 | cap-run-browser-remote-interactive | web.browser-rendering | 明示opt-inしたCloudflare Browser Runの固定YouTube操作経路 | media | media | high | bot_owner | runtime_manifest |  | action:browser.interact | da6d4ba930b6802235c56e1f8f673258369a8dbfbcda9d677dca2815b85a8eb3 |
 | cap-run-browser-remote-screenshot | web.browser-rendering | 明示opt-inしたCloudflare Browser Rendering remote screenshot経路 | media | media | high | bot_owner | runtime_manifest |  | action:browser.screenshot | 62920e3d497346ac3ad3c2021d483956dc092ec7f15551bed45de5f32b2212ec |
+| cap-run-capability-forge-sandbox-cancel | intelligence.capability-forge | Execution Sandbox owner cancellation | unknown | unknown | high | bot_owner | runtime_manifest |  | command:sandbox.cancel | aeeefd6b40506f60226c58cd184222d18ff15a5a65d667281ed04ea23b7e8faf |
+| cap-run-capability-forge-sandbox-doctor | intelligence.capability-forge | Execution Sandbox owner doctor | knowledge | knowledge | low | bot_owner | runtime_manifest |  | command:sandbox.doctor | f6c62db9f83e152a6c8f0fdddd73152c700fd9ef4360ccb16e0d09f8a349f636 |
+| cap-run-capability-forge-sandbox-jobs | intelligence.capability-forge | Execution Sandbox owner job projection | unknown | unknown | medium | bot_owner | runtime_manifest |  | command:sandbox.jobs | 11b45df612a8786a2d043b65d7a9d036cc95143fa4631ee1bf113bce3526f3b8 |
+| cap-run-capability-forge-sandbox-plan | intelligence.capability-forge | Execution Sandbox owner plan | knowledge | knowledge | low | bot_owner | runtime_manifest |  | command:sandbox.plan | 5a2a9adb9cf4de487876ff33807d7c1849dc9bae9db9166e13c293c379736aac |
+| cap-run-capability-forge-sandbox-receipt | intelligence.capability-forge | Execution Sandbox owner receipt projection | unknown | unknown | medium | bot_owner | runtime_manifest |  | command:sandbox.receipt | 0c1579f76dce3e61070a2822d32a729f2ced10757e0166fe3850345a23444120 |
+| cap-run-capability-forge-sandbox-run-template | intelligence.capability-forge | Execution Sandbox owner fixed-template run | unknown | unknown | high | bot_owner | runtime_manifest |  | command:sandbox.run-template | 72acd4ad06dbbff3d8f13ba8d0ae636a737ff2de7a9076763173054089e8070c |
+| cap-run-capability-forge-sandbox-status | intelligence.capability-forge | Execution Sandbox owner status | knowledge | knowledge | low | bot_owner | runtime_manifest |  | command:sandbox.status | 2aacf12c75798e6eff26e4a75e311029baf7109fac4e716f3d426311d33c43cb |
 | cap-run-discovery-help | interaction.discord-surface | 利用できるコマンドを検索・一覧表示 | knowledge | knowledge | low | everyone | runtime_manifest |  | command:help | acd11ab2eed19560e8e8c1cc84e9125ce836ca6a491c7614fe78cc6313116de6 |
 | cap-run-earthquake-delivery | operations.earthquake | 購読済みチャンネルへ重複排除した地震・EEWを自動通知 | knowledge | knowledge, web_research | high | guild_admin | runtime_manifest |  | event:earthquake_feed_delivery | eb7edfa4b5813c95e8263a9dc7bcae64b54ad18ee25830476d5e268cc33c74ae |
 | cap-run-earthquake-latest | operations.earthquake | P2PQuake公式APIから最新の地震・EEW情報を表示 | knowledge | knowledge, web_research | medium | everyone | runtime_manifest |  | command:earthquake.latest | 33af878f7d9e86584eafb05d79a86f027f0c25aade293bbf76c4cb2314d41ded |

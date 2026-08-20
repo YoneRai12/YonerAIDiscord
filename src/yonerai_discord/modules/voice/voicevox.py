@@ -9,6 +9,10 @@ from urllib.parse import urlparse
 
 import aiohttp
 
+from yonerai_discord.modules.music_generation.artifacts import MAX_WAV_BYTES
+from yonerai_discord.modules.speech_synthesis.provider_voicevox import canonicalize_voicevox_wav
+from yonerai_discord.voice_contract import MIN_VOICEVOX_WAV_BYTES
+
 from .models import SpeechRequest, SynthesizedSpeech
 
 
@@ -47,7 +51,7 @@ class VoicevoxClient:
         self._endpoint = endpoint.rstrip("/")
         if not _loopback(self._endpoint) and not allow_remote:
             raise VoicevoxConfigurationError("remote VOICEVOX requires VOICE_ALLOW_REMOTE=true")
-        if not 1_024 <= max_response_bytes <= 50 * 1024 * 1024:
+        if not MIN_VOICEVOX_WAV_BYTES <= max_response_bytes <= 50 * 1024 * 1024:
             raise VoicevoxConfigurationError("VOICE_MAX_RESPONSE_BYTES is outside the allowed range")
         self._timeout = aiohttp.ClientTimeout(total=timeout_seconds)
         self._max_response_bytes = max_response_bytes
@@ -112,8 +116,13 @@ class VoicevoxClient:
         ) as response:
             if response.status != 200:
                 raise RuntimeError("VOICEVOX synthesis failed")
-            wav = await _read_limited(response, self._max_response_bytes)
-        return SynthesizedSpeech(wav=wav)
+            wav = await _read_limited(response, min(self._max_response_bytes, MAX_WAV_BYTES))
+        try:
+            canonical = canonicalize_voicevox_wav(wav)
+        except Exception:
+            raise RuntimeError("VOICEVOX returned an invalid WAV") from None
+        sample_rate = int.from_bytes(canonical[24:28], "little")
+        return SynthesizedSpeech(wav=canonical, sample_rate=sample_rate)
 
     async def close(self) -> None:
         if self._session is not None and not self._session.closed:

@@ -4,8 +4,8 @@
 
 ## Static implementation truth
 
-- runtime-declared capabilities: 170
-- command paths: 175
+- runtime-declared capabilities: 177
+- command paths: 182
 - event paths: 14
 - typed planner action paths: 9
 - legacy unbound count: 16

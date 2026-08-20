@@ -4,7 +4,7 @@
 
 ## 0.1.0-alpha.2 — Unreleased
 
-- 170 runtime capabilities、175 command paths、14 event pathsをcode-owned generatorから公開。
+- 177 runtime capabilities、182 command paths、14 event paths、833 registry totalをcode-owned generatorから公開。
 - direct surface未接続16件を、planner action接続9件と全known binding未接続7件へ分解。
 - private分類、非materialize control、public materialize、generated receiptの会計を分離。
 - public-safe VM/Sandboxとself-host profileをmachine-readable inventoryへ追加。

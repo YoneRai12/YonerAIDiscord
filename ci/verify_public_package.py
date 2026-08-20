@@ -29,6 +29,13 @@ _MAX_WHEEL_BYTES = 64 * 1024 * 1024
 _MAX_ENTRIES = 4096
 _MAX_EXPANDED_BYTES = 128 * 1024 * 1024
 _MAX_METADATA_BYTES = 64 * 1024
+_MAX_LICENSE_BYTES = 1024 * 1024
+_SOURCE_DATE_EPOCH = "315532800"
+_EXPECTED_LICENSE_FILES = (
+    "DEPENDENCY_LICENSES.json",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+)
 _EXPECTED_ENTRY_POINTS = frozenset(
     {
         "yonerai-discord",
@@ -60,7 +67,11 @@ def _safe_archive_name(name: str) -> bool:
     return bool(trimmed) and "//" not in name and all(part not in {"", ".", ".."} for part in trimmed.split("/"))
 
 
-def _validate_wheel(wheel: Path) -> str:
+def _validate_wheel(
+    wheel: Path,
+    *,
+    expected_license_files: Mapping[str, bytes] | None = None,
+) -> str:
     wheel = wheel.absolute()
     wheel_stat = wheel.lstat()
     if wheel.is_symlink() or not stat.S_ISREG(wheel_stat.st_mode):
@@ -113,6 +124,29 @@ def _validate_wheel(wheel: Path) -> str:
         for command in _EXPECTED_ENTRY_POINTS:
             if re.search(rf"(?m)^{re.escape(command)}\s*=", entry_points) is None:
                 raise VerificationError("entry_point_missing")
+        if expected_license_files is not None:
+            if tuple(sorted(expected_license_files)) != _EXPECTED_LICENSE_FILES:
+                raise VerificationError("license_source_invalid")
+            license_headers = metadata.get_all("License-File", [])
+            if len(license_headers) != len(_EXPECTED_LICENSE_FILES) or tuple(sorted(license_headers)) != (
+                _EXPECTED_LICENSE_FILES
+            ):
+                raise VerificationError("license_metadata_mismatch")
+            dist_info = metadata_members[0].filename.rsplit("/", maxsplit=1)[0]
+            expected_members = {f"{dist_info}/licenses/{name}": data for name, data in expected_license_files.items()}
+            actual_license_members = {
+                info.filename: info
+                for info in entries
+                if info.filename.startswith(f"{dist_info}/licenses/") and not info.filename.endswith("/")
+            }
+            if set(actual_license_members) != set(expected_members):
+                raise VerificationError("license_members_mismatch")
+            for name, expected_data in expected_members.items():
+                info = actual_license_members[name]
+                if info.file_size < 1 or info.file_size > _MAX_LICENSE_BYTES:
+                    raise VerificationError("license_member_size_invalid")
+                if archive.read(info) != expected_data:
+                    raise VerificationError("license_content_mismatch")
         return versions_found[0]
 
 
@@ -134,6 +168,7 @@ def _offline_environment(temp_root: Path) -> dict[str, str]:
         "PIP_NO_INDEX": "1",
         "PYTHONNOUSERSITE": "1",
         "PYTHONUTF8": "1",
+        "SOURCE_DATE_EPOCH": _SOURCE_DATE_EPOCH,
         "TEMP": str(temp_root),
         "TMP": str(temp_root),
     }
@@ -142,6 +177,32 @@ def _offline_environment(temp_root: Path) -> dict[str, str]:
             if value := os.environ.get(name):
                 environment[name] = value
     return environment
+
+
+def _load_expected_license_files(source: Path) -> dict[str, bytes]:
+    expected: dict[str, bytes] = {}
+    for name in _EXPECTED_LICENSE_FILES:
+        path = source / name
+        try:
+            path_stat = path.lstat()
+        except OSError:
+            raise VerificationError("license_source_invalid") from None
+        if path.is_symlink() or not stat.S_ISREG(path_stat.st_mode):
+            raise VerificationError("license_source_invalid")
+        if path_stat.st_size < 1 or path_stat.st_size > _MAX_LICENSE_BYTES:
+            raise VerificationError("license_source_invalid")
+        expected[name] = path.read_bytes()
+    try:
+        inventory = json.loads(expected["DEPENDENCY_LICENSES.json"])
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        raise VerificationError("license_source_invalid") from None
+    if (
+        not isinstance(inventory, dict)
+        or inventory.get("status") != "verified_from_locked_metadata"
+        or not isinstance(inventory.get("dependencies"), list)
+    ):
+        raise VerificationError("license_source_invalid")
+    return expected
 
 
 def _run(argv: Sequence[str], *, cwd: Path, env: Mapping[str, str]) -> None:
@@ -218,6 +279,7 @@ def verify_public_package(source: Path, wheelhouse: Path, output: Path) -> dict[
     wheelhouse = wheelhouse.resolve(strict=True)
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=True)
+    expected_license_files = _load_expected_license_files(source)
 
     with tempfile.TemporaryDirectory(prefix="yonerai-public-package-") as raw_temp:
         temp_root = Path(raw_temp).resolve()
@@ -266,7 +328,7 @@ def verify_public_package(source: Path, wheelhouse: Path, output: Path) -> dict[
         wheels = tuple(built.glob("*.whl"))
         if len(wheels) != 1:
             raise VerificationError("wheel_count_invalid")
-        version = _validate_wheel(wheels[0])
+        version = _validate_wheel(wheels[0], expected_license_files=expected_license_files)
 
         install_venv = temp_root / "install-venv"
         install_python = _create_venv(install_venv, cwd=temp_root, env=env)
@@ -308,7 +370,7 @@ def verify_public_package(source: Path, wheelhouse: Path, output: Path) -> dict[
 
         copied_wheel = output / wheels[0].name
         shutil.copyfile(wheels[0], copied_wheel)
-        _validate_wheel(copied_wheel)
+        _validate_wheel(copied_wheel, expected_license_files=expected_license_files)
         ledger, digest = _write_hash_ledger(output, copied_wheel)
 
     return {

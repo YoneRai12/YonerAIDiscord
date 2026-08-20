@@ -7,6 +7,12 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from yonerai_discord.agent_audit_projection import (
+    AgentAuditCursor,
+    AgentAuditPage,
+    AuditProjectionError,
+    AuditProjectionFailureCode,
+)
 from yonerai_discord.control_plane import RbacLevel
 from yonerai_discord.db import Database
 from yonerai_discord.discord_policy import determine_rbac_level
@@ -41,6 +47,7 @@ from yonerai_discord.v0_runtime.provider_router import (
 from .admission import AIAdmissionController
 from .action_router import NaturalActionRouter
 from .adapter import AIGroup
+from .agent_audit_port import AgentAuditReadBinding, BoundAgentAuditReadPort
 from .artifacts import ArtifactStore
 from .bounded_tools import (
     EMPTY_CAPABILITY_SNAPSHOT,
@@ -170,6 +177,9 @@ class AIPlugin:
         self._deployment_current_truth: M10CurrentTruthV1 | None = None
         self._deployment_current_truth_current: Callable[[], M10CurrentTruthV1] | None = None
         self._audit_database: Database | None = None
+        self._agent_audit_port: BoundAgentAuditReadPort | None = None
+        self._active_agent_audit_port: BoundAgentAuditReadPort | None = None
+        self._closing = True
         self.service: AIService | None = None
         self._session_owner: OpenAICompatibleProvider | None = None
         self._bot: Any | None = None
@@ -195,6 +205,10 @@ class AIPlugin:
         self._context_builder: RuntimeContextBuilder | None = None
 
     async def start(self, bot: Any) -> None:
+        # A failed or repeated start must not leave a previously issued identity usable.
+        self._closing = True
+        self._active_agent_audit_port = None
+        self._agent_audit_port = None
         settings = bot.settings
         if self._search_gateway is None:
             try:
@@ -223,6 +237,15 @@ class AIPlugin:
         self._bot = bot
         injected_database = getattr(bot, "database", None)
         self._audit_database = injected_database if isinstance(injected_database, Database) else None
+        if self._audit_database is not None and self._audit_database.is_open is True:
+            self._agent_audit_port = BoundAgentAuditReadPort(
+                self._audit_database,
+                database_current=lambda: getattr(bot, "database", None),
+                port_current=lambda: self._active_agent_audit_port,
+                closing_current=lambda: bool(
+                    self._closing is True or self._bot is not bot or getattr(bot, "is_closing", False) is not False
+                ),
+            )
         database_path = getattr(settings, "database_path", None)
         if database_path is not None:
             self._state_repository = AIStateRepository(database_path)
@@ -605,9 +628,38 @@ class AIPlugin:
         setattr(bot, "deployment_current_truth", deployment_current_truth)
         setattr(bot, "deployment_current_truth_current", deployment_current_truth_current)
 
+        if getattr(bot, "is_closing", False) is False:
+            self._closing = False
+            port = self._agent_audit_port
+            if (
+                port is not None
+                and self._bot is bot
+                and self._audit_database is not None
+                and getattr(bot, "database", None) is self._audit_database
+                and self._audit_database.is_open is True
+            ):
+                self._active_agent_audit_port = port
+        else:
+            self._closing = True
+
+    async def read_agent_audit_page(
+        self,
+        *,
+        binding: AgentAuditReadBinding,
+        cursor: AgentAuditCursor,
+    ) -> AgentAuditPage:
+        """Read the redacted audit projection through the active internal port only."""
+
+        port = self._active_agent_audit_port
+        if port is None or self._closing is True:
+            raise AuditProjectionError(AuditProjectionFailureCode.AUTHORIZATION_DENIED)
+        return await port.read_page(binding=binding, cursor=cursor)
+
     async def begin_close(self) -> None:
         """新規mention/actionを止め、stop()のdrainより先に受付を閉じる。"""
 
+        self._closing = True
+        self._active_agent_audit_port = None
         self._active_core_files_read_port = None
         listener = self._mention_listener
         ai_group = self._ai_group
@@ -824,6 +876,9 @@ class AIPlugin:
             self._execution_profile_selection = None
             self._deployment_current_truth = None
             self._deployment_current_truth_current = None
+            self._closing = True
+            self._active_agent_audit_port = None
+            self._agent_audit_port = None
             self._audit_database = None
             if self._search_gateway_owned:
                 self._search_gateway = self._injected_search_gateway

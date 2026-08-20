@@ -7,12 +7,20 @@ from typing import Any
 
 import pytest
 
+from yonerai_discord.agent_audit_projection import (
+    AgentAuditCursor,
+    AgentAuditScope,
+    AuditProjectionError,
+    AuditProjectionFailureCode,
+)
+from yonerai_discord.db import Database
 from yonerai_discord.modules.ai import (
     AIPlugin,
     AIService,
     PackagingDependencyClass,
     _memory_context_recall_allowed,
 )
+from yonerai_discord.modules.ai.agent_audit_port import AgentAuditReadBinding
 from yonerai_discord.modules.ai.orchestration_planner_adapter import AIServicePlannerPort
 from yonerai_discord.plugin import PluginManager, PluginStatus
 from yonerai_discord.runtime_manifests.ai_memory import MEMORY_CONTEXT_RECALL_CAPABILITY_ID
@@ -527,3 +535,159 @@ async def test_same_plugin_instance_does_not_reuse_stale_provider_route_after_re
     assert bot.ai_provider_is_local is None
     assert bot.ai_attachments_available is False
     await plugin.stop()
+
+
+def _agent_audit_binding() -> tuple[AgentAuditReadBinding, AgentAuditCursor]:
+    scope = AgentAuditScope(
+        guild_id=10,
+        actor_id=20,
+        request_binding="lifecycle-request",
+        session_binding="lifecycle-session",
+    )
+
+    async def fresh_authorization(_scope: AgentAuditScope) -> bool:
+        return True
+
+    return (
+        AgentAuditReadBinding(
+            scope=scope,
+            authorization_current=lambda _scope: True,
+            fresh_authorization_current=fresh_authorization,
+            runtime_binding_current=lambda: True,
+            request_binding_current=lambda: True,
+        ),
+        AgentAuditCursor.start(scope),
+    )
+
+
+@pytest.mark.asyncio
+async def test_agent_audit_port_is_not_composed_from_closed_database(tmp_path: Path) -> None:
+    database = Database(tmp_path / "closed.sqlite3")
+    bot = _planner_lifecycle_bot()
+    bot.database = database
+    plugin = AIPlugin()
+
+    await plugin.start(bot)
+
+    assert plugin._agent_audit_port is None
+    assert plugin._active_agent_audit_port is None
+    binding, cursor = _agent_audit_binding()
+    with pytest.raises(AuditProjectionError) as error:
+        await plugin.read_agent_audit_page(binding=binding, cursor=cursor)
+    assert error.value.code is AuditProjectionFailureCode.AUTHORIZATION_DENIED
+    await plugin.stop()
+
+
+@pytest.mark.asyncio
+async def test_agent_audit_port_is_internal_and_withdrawn_before_consumer_drain(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    database = Database(tmp_path / "control.sqlite3")
+    database.open()
+    database.migrate()
+    database.append_audit("agent.completed", actor_id=20, guild_id=10)
+    bot = _planner_lifecycle_bot()
+    bot.database = database
+    plugin = AIPlugin()
+    await plugin.start(bot)
+    port = plugin._agent_audit_port
+    assert port is not None
+    assert plugin._active_agent_audit_port is port
+    assert all(value is not port for value in vars(bot).values())
+    assert not any("agent_audit" in name for name in vars(bot))
+    binding, cursor = _agent_audit_binding()
+    page = await plugin.read_agent_audit_page(binding=binding, cursor=cursor)
+    assert [event.event for event in page.events] == ["agent.completed"]
+
+    admission = plugin._admission
+    assert admission is not None
+    original_begin_close = admission.begin_close
+
+    async def assert_withdrawn_before_drain() -> None:
+        assert plugin._active_agent_audit_port is None
+        await original_begin_close()
+
+    monkeypatch.setattr(admission, "begin_close", assert_withdrawn_before_drain)
+    await plugin.begin_close()
+    with pytest.raises(AuditProjectionError) as stale_error:
+        await port.read_page(binding=binding, cursor=cursor)
+    assert stale_error.value.code is AuditProjectionFailureCode.SOURCE_REPLACED
+    with pytest.raises(AuditProjectionError) as plugin_error:
+        await plugin.read_agent_audit_page(binding=binding, cursor=cursor)
+    assert plugin_error.value.code is AuditProjectionFailureCode.AUTHORIZATION_DENIED
+
+    await plugin.stop()
+    await plugin.stop()
+    assert plugin._agent_audit_port is None
+    assert plugin._active_agent_audit_port is None
+    database.close()
+
+
+@pytest.mark.asyncio
+async def test_agent_audit_port_restart_never_revives_old_identity(tmp_path: Path) -> None:
+    database = Database(tmp_path / "control.sqlite3")
+    database.open()
+    database.migrate()
+    database.append_audit("agent.completed", actor_id=20, guild_id=10)
+    bot = _planner_lifecycle_bot()
+    bot.database = database
+    plugin = AIPlugin()
+    binding, cursor = _agent_audit_binding()
+
+    await plugin.start(bot)
+    old_port = plugin._agent_audit_port
+    assert old_port is not None
+    first_page = await plugin.read_agent_audit_page(binding=binding, cursor=cursor)
+    assert [event.event for event in first_page.events] == ["agent.completed"]
+    await plugin.stop()
+    database.append_audit("agent.resumed", actor_id=20, guild_id=10)
+    await plugin.start(bot)
+    new_port = plugin._agent_audit_port
+    assert new_port is not None and new_port is not old_port
+    with pytest.raises(AuditProjectionError) as stale_error:
+        await old_port.read_page(binding=binding, cursor=cursor)
+    assert stale_error.value.code is AuditProjectionFailureCode.SOURCE_REPLACED
+    page = await plugin.read_agent_audit_page(binding=binding, cursor=first_page.next_cursor)
+    assert [event.event for event in page.events] == ["agent.resumed"]
+
+    await plugin.stop()
+    database.close()
+
+
+@pytest.mark.asyncio
+async def test_agent_audit_port_partial_start_is_withdrawn_and_cleared(tmp_path: Path) -> None:
+    database = Database(tmp_path / "control.sqlite3")
+    database.open()
+    database.migrate()
+    bot = _planner_lifecycle_bot()
+    bot.database = database
+    instances: list[AIPlugin] = []
+    stale_ports: list[object] = []
+
+    def failing_gateway(_service: AIService) -> RecordingGateway:
+        stale_ports.append(instances[0]._agent_audit_port)
+        raise RuntimeError("private partial-start failure")
+
+    def factory() -> AIPlugin:
+        plugin = AIPlugin(
+            execution_gateway_factory=failing_gateway,
+            execution_gateway_dependency_classes=(PackagingDependencyClass.PUBLIC_CODE,),
+        )
+        instances.append(plugin)
+        return plugin
+
+    manager = PluginManager()
+    manager.register("ai", factory)
+
+    assert await manager.enable("ai", bot) is False
+    plugin = instances[0]
+    assert plugin._agent_audit_port is None
+    assert plugin._active_agent_audit_port is None
+    assert stale_ports and stale_ports[0] is not None
+    binding, cursor = _agent_audit_binding()
+    with pytest.raises(AuditProjectionError) as stale_error:
+        await stale_ports[0].read_page(binding=binding, cursor=cursor)  # type: ignore[union-attr]
+    assert stale_error.value.code is AuditProjectionFailureCode.SOURCE_REPLACED
+    assert not any("agent_audit" in name for name in vars(bot))
+    database.close()

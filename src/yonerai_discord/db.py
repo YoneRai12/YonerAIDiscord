@@ -56,6 +56,21 @@ class AuditRecord:
     created_at: str
 
 
+@dataclass(frozen=True, slots=True, repr=False)
+class AgentAuditProjectionRecord:
+    """Scope-filtered audit columns that cannot carry details metadata."""
+
+    id: int
+    event: str
+    plugin: str | None
+    guild_id: int
+    actor_id: int
+    created_at: str
+
+    def __repr__(self) -> str:
+        return "AgentAuditProjectionRecord()"
+
+
 @dataclass(frozen=True, slots=True)
 class GuildAuditSummaryRecord:
     """Admin UIへ本文・detailsを渡さないguild限定監査要約。"""
@@ -835,6 +850,46 @@ class Database:
                 guild_id=row["guild_id"],
                 actor_id=row["actor_id"],
                 details=json.loads(row["details_json"]),
+                created_at=str(row["created_at"]),
+            )
+            for row in rows
+        )
+
+    def list_agent_audit_projection(
+        self,
+        *,
+        guild_id: int,
+        actor_id: int,
+        limit: int = 100,
+        after_id: int = 0,
+    ) -> tuple[AgentAuditProjectionRecord, ...]:
+        """Return only redacted rows for one exact guild/actor scope."""
+
+        normalized_guild = _normalize_guild_id(guild_id)
+        if normalized_guild == GLOBAL_GUILD_ID:
+            raise ValueError("agent audit projection requires a Discord guild")
+        normalized_actor = _normalize_actor_id(actor_id, allow_system=False)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+            raise ValueError("limit must be between 1 and 1000")
+        if isinstance(after_id, bool) or not isinstance(after_id, int) or not 0 <= after_id <= MAX_SQLITE_ID:
+            raise ValueError("after_id must be a non-negative 64-bit integer")
+        with self._lock:
+            rows = (
+                self._require_connection()
+                .execute(
+                    "SELECT id, event, plugin, guild_id, actor_id, created_at "
+                    "FROM audit_log WHERE guild_id = ? AND actor_id = ? AND id > ? ORDER BY id LIMIT ?",
+                    (normalized_guild, normalized_actor, after_id, limit),
+                )
+                .fetchall()
+            )
+        return tuple(
+            AgentAuditProjectionRecord(
+                id=int(row["id"]),
+                event=str(row["event"]),
+                plugin=row["plugin"],
+                guild_id=int(row["guild_id"]),
+                actor_id=int(row["actor_id"]),
                 created_at=str(row["created_at"]),
             )
             for row in rows

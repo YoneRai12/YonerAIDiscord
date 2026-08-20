@@ -188,3 +188,31 @@ def test_origin_path_and_redirect_validation_fail_closed() -> None:
         transport._request_url("/v1/messages", allow_redirects=True)
     with pytest.raises(CoreHttpTransportError, match="path"):
         transport._request_url("//other.example/path", allow_redirects=False)
+
+
+@pytest.mark.asyncio
+async def test_explicit_unauthenticated_mode_is_loopback_only_and_omits_authorization(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    session = _Session(_Response(_Content(b'{"run_id":"run-1"}')))
+    _patch_session(monkeypatch, session)
+    transport = AiohttpCoreHttpTransport(
+        "http://127.0.0.1:8001",
+        "",
+        allow_unauthenticated_loopback=True,
+    )
+
+    await transport.post_json("/v1/messages", body=b"{}", allow_redirects=False)
+
+    assert session.posts[0][1]["headers"] == {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+    with pytest.raises(ValueError):
+        AiohttpCoreHttpTransport(
+            "https://core.example",
+            "",
+            allow_unauthenticated_loopback=True,
+        )
+    with pytest.raises(ValueError):
+        AiohttpCoreHttpTransport("http://127.0.0.1:8001", "")

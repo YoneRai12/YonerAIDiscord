@@ -70,9 +70,15 @@ class AiohttpCoreHttpTransport:
         bearer_token: str,
         *,
         timeout_seconds: float = 20.0,
+        allow_unauthenticated_loopback: bool = False,
     ) -> None:
         self._origin = _validated_origin(origin)
-        self._authorization = _bearer_authorization(bearer_token)
+        if type(allow_unauthenticated_loopback) is not bool:
+            raise TypeError("allow_unauthenticated_loopback must be a boolean")
+        if bearer_token == "" and allow_unauthenticated_loopback and _origin_is_loopback(self._origin):
+            self._authorization: str | None = None
+        else:
+            self._authorization = _bearer_authorization(bearer_token)
         if (
             isinstance(timeout_seconds, bool)
             or not isinstance(timeout_seconds, (int, float))
@@ -105,14 +111,16 @@ class AiohttpCoreHttpTransport:
             raise CoreHttpTransportError("Core request body is invalid")
         try:
             async with aiohttp.ClientSession(timeout=self._post_timeout) as session:
+                headers = {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                }
+                if self._authorization is not None:
+                    headers["Authorization"] = self._authorization
                 async with session.post(
                     url,
                     data=body,
-                    headers={
-                        "Accept": "application/json",
-                        "Authorization": self._authorization,
-                        "Content-Type": "application/json",
-                    },
+                    headers=headers,
                     allow_redirects=False,
                 ) as response:
                     response_body = await _read_bounded_response(
@@ -140,12 +148,12 @@ class AiohttpCoreHttpTransport:
         url = self._request_url(path, allow_redirects=allow_redirects)
         session = aiohttp.ClientSession(timeout=self._stream_timeout)
         try:
+            headers = {"Accept": "text/event-stream"}
+            if self._authorization is not None:
+                headers["Authorization"] = self._authorization
             response = await session.get(
                 url,
-                headers={
-                    "Accept": "text/event-stream",
-                    "Authorization": self._authorization,
-                },
+                headers=headers,
                 allow_redirects=False,
             )
             return _AiohttpCoreEventStream(session, response)
@@ -248,6 +256,13 @@ def _validated_origin(value: object) -> str:
         if not is_loopback:
             raise ValueError("plain HTTP origin must be loopback")
     return f"{parsed.scheme}://{parsed.netloc}"
+
+
+def _origin_is_loopback(value: str) -> bool:
+    try:
+        return ipaddress.ip_address(urlsplit(value).hostname or "").is_loopback
+    except ValueError:
+        return False
 
 
 def _bearer_authorization(value: object) -> str:

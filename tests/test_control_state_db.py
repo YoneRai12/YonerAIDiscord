@@ -208,6 +208,92 @@ def test_guild_audit_summary_is_exactly_scoped_and_never_reads_details(database:
         database.list_guild_audit_summary(42, limit=51)
 
 
+def test_agent_audit_projection_query_is_scope_bound_ordered_and_never_reads_details(database: Database) -> None:
+    first_id = database.append_audit(
+        "agent.first",
+        actor_id=11,
+        guild_id=42,
+        plugin="ai",
+        details={"private": "matching-first"},
+    )
+    database.append_audit(
+        "agent.other-actor",
+        actor_id=12,
+        guild_id=42,
+        details={"private": "other-actor"},
+    )
+    database.append_audit(
+        "agent.other-guild",
+        actor_id=11,
+        guild_id=99,
+        details={"private": "other-guild"},
+    )
+    connection = database._require_connection()
+    invalid_json_id = int(
+        connection.execute(
+            "INSERT INTO audit_log(event, plugin, guild_id, actor_id, details_json) VALUES (?, ?, ?, ?, ?)",
+            ("agent.invalid-json", None, 42, 11, "private-not-json"),
+        ).lastrowid
+    )
+    final_id = database.append_audit(
+        "agent.final",
+        actor_id=11,
+        guild_id=42,
+        details={"private": "matching-final"},
+    )
+    statements: list[str] = []
+
+    def deny_details(
+        action: int,
+        table: str | None,
+        column: str | None,
+        _database: str | None,
+        _trigger: str | None,
+    ) -> int:
+        if action == sqlite3.SQLITE_READ and table == "audit_log" and column == "details_json":
+            return sqlite3.SQLITE_DENY
+        return sqlite3.SQLITE_OK
+
+    connection.set_authorizer(deny_details)
+    connection.set_trace_callback(statements.append)
+    try:
+        rows = database.list_agent_audit_projection(
+            guild_id=42,
+            actor_id=11,
+            after_id=first_id,
+            limit=2,
+        )
+    finally:
+        connection.set_trace_callback(None)
+        connection.set_authorizer(None)
+
+    assert [row.id for row in rows] == [invalid_json_id, final_id]
+    assert [row.event for row in rows] == ["agent.invalid-json", "agent.final"]
+    assert all(row.guild_id == 42 and row.actor_id == 11 for row in rows)
+    assert all(not hasattr(row, "details") for row in rows)
+    select = next(statement for statement in statements if "FROM audit_log" in statement)
+    assert "details_json" not in select
+    assert " ".join(select.split()) == (
+        "SELECT id, event, plugin, guild_id, actor_id, created_at FROM audit_log "
+        f"WHERE guild_id = 42 AND actor_id = 11 AND id > {first_id} ORDER BY id LIMIT 2"
+    )
+
+    with pytest.raises(ValueError, match="Discord guild"):
+        database.list_agent_audit_projection(guild_id=0, actor_id=11)
+    with pytest.raises(ValueError, match="actor ID"):
+        database.list_agent_audit_projection(guild_id=42, actor_id=0)
+    with pytest.raises(ValueError, match="between 1 and 1000"):
+        database.list_agent_audit_projection(guild_id=42, actor_id=11, limit=1_001)
+    with pytest.raises(ValueError, match="between 1 and 1000"):
+        database.list_agent_audit_projection(guild_id=42, actor_id=11, limit=True)  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="non-negative"):
+        database.list_agent_audit_projection(guild_id=42, actor_id=11, after_id=-1)
+    with pytest.raises(ValueError, match="non-negative"):
+        database.list_agent_audit_projection(guild_id=42, actor_id=11, after_id=True)  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="non-negative"):
+        database.list_agent_audit_projection(guild_id=42, actor_id=11, after_id=9_223_372_036_854_775_808)
+
+
 def test_proposal_ledger_stores_metadata_only_and_enforces_transitions(database: Database) -> None:
     proposal = database.create_evolution_proposal(
         "evo-abc123",

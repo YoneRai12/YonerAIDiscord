@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from enum import StrEnum
 import math
 import re
 
@@ -216,6 +217,35 @@ class MusicRuntimeStatus:
     indexed_tracks: int
     active_sessions: int
     speech_available: bool
+
+
+class MusicSpeechStatus(StrEnum):
+    QUEUED = "queued"
+
+
+@dataclass(frozen=True, slots=True)
+class MusicSpeechReceipt:
+    guild_id: int
+    source_channel_id: int
+    requester_id: int
+    voice_channel_id: int
+    queue_position: int
+    status: MusicSpeechStatus = MusicSpeechStatus.QUEUED
+
+    def __post_init__(self) -> None:
+        if any(
+            type(value) is not int or value <= 0
+            for value in (
+                self.guild_id,
+                self.source_channel_id,
+                self.requester_id,
+                self.voice_channel_id,
+                self.queue_position,
+            )
+        ):
+            raise ValueError("music speech receipt scope is invalid")
+        if self.status is not MusicSpeechStatus.QUEUED:
+            raise ValueError("music speech receipt status is invalid")
 
 
 @dataclass(frozen=True, slots=True)

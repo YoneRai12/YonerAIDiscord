@@ -79,7 +79,7 @@ def test_production_projection_matches_snapshot_counts_and_revision() -> None:
         document["counts"]["projected_total"],
         document["counts"]["projected_canonical_provenance"],
         document["counts"]["projected_runtime_provenance"],
-    ) == (180, 17, 163)
+    ) == (187, 17, 170)
 
 
 def test_rendering_is_deterministic_utf8_lf_and_path_free(tmp_path: Path) -> None:

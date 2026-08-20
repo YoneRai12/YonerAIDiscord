@@ -9,6 +9,7 @@ from yonerai_discord.execution_gateway.core_http_transport import (
     YonerAIInternalRunHttpPortV01,
 )
 from yonerai_discord.execution_gateway.core_v01 import YonerAIInternalRunGatewayV01
+from yonerai_discord.execution_gateway.ora_core_transport import OraCoreHttpTransport
 from yonerai_discord.modules.ai.core_runtime_composition import (
     DirectCoreGatewayFactory,
     DirectCoreRuntimeCompositionError,
@@ -44,8 +45,9 @@ def test_factory_builds_the_existing_strict_direct_core_stack(packaging: str) ->
     assert isinstance(surface._gateway, YonerAIInternalRunGatewayV01)
     assert isinstance(surface._gateway._port, YonerAIInternalRunHttpPortV01)
     transport = surface._gateway._port._transport
-    assert isinstance(transport, AiohttpCoreHttpTransport)
-    assert transport._origin == "https://core.example.test"
+    assert isinstance(transport, OraCoreHttpTransport)
+    assert isinstance(transport._inner, AiohttpCoreHttpTransport)
+    assert transport._inner._origin == "https://core.example.test"
     assert surface._gateway._port._stream_total_timeout_seconds == 120.0
 
 
@@ -119,3 +121,19 @@ def test_factory_and_errors_do_not_expose_origin_or_token() -> None:
         )
     assert origin not in str(caught.value)
     assert token not in str(caught.value)
+
+
+def test_loopback_core_does_not_require_remote_opt_in_or_a_token() -> None:
+    factory = build_direct_core_gateway_factory(
+        _settings(
+            yonerai_core_origin="http://127.0.0.1:8001",
+            yonerai_auth_token="",
+            yonerai_allow_remote=False,
+            yonerai_remote_status_opt_in=False,
+            ai_packaging_candidate="local_only",
+        )
+    )
+
+    surface = factory(object())
+
+    assert isinstance(surface._gateway._port._transport, OraCoreHttpTransport)

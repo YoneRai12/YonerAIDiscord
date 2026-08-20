@@ -68,8 +68,8 @@
     },
     {
       "action_paths": 0,
-      "capability_count": 1,
-      "command_paths": 0,
+      "capability_count": 8,
+      "command_paths": 7,
       "default_state": "disabled_by_manifest",
       "dependencies": [],
       "event_paths": 0,
@@ -487,5 +487,5 @@
     }
   ],
   "schema_version": "yonerai.discord.public-module-truth.v1",
-  "source_capability_revision": "509d39c9a06caaa29e295a64eff5ee24c0a1c377ee32604d4426d8035e3f79d3"
+  "source_capability_revision": "c466504b676722e350488f55429f22e5d5e2d968690819dd542765e2d7593b39"
 }

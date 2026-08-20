@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 name = "yonerai-discord-suite"
 version = "0.1.0a2"
 license = { file = "LICENSE" }
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md", "DEPENDENCY_LICENSES.json"]
 description = "Modular Discord operations suite for YonerAI"
 readme = "README.md"
 requires-python = ">=3.11"

@@ -22,6 +22,7 @@ from yonerai_discord.modules.music_generation.provider_elevenlabs import (
 )
 from yonerai_discord.modules.speech_synthesis.domain import speech_artifact_request_binding
 from yonerai_discord.modules.speech_synthesis.provider_voicevox import (
+    VoicevoxSynthesisRequest,
     VoicevoxSpeechSynthesisProviderAdapter,
 )
 from yonerai_discord.modules.speech_transcription.provider_openai import (
@@ -120,6 +121,39 @@ class _Music:
 
     async def close(self) -> None:
         self.closed = True
+
+
+def test_voicevox_provider_request_rejects_non_allowlisted_speaker_content_free() -> None:
+    secret_text = "never echo provider speech"
+    for speaker_id in (0, 7, -1, True):
+        with pytest.raises(ValueError, match="fixed contract") as caught:
+            VoicevoxSynthesisRequest(
+                request_id="request-1",
+                trace_id="trace-1",
+                actor_ref="actor-1",
+                request_binding="0" * 64,
+                text=secret_text,
+                speaker_id=speaker_id,
+            )
+
+        assert str(speaker_id) not in str(caught.value)
+        assert secret_text not in str(caught.value)
+
+
+def test_voicevox_provider_adapter_rejects_non_allowlisted_speaker_content_free(tmp_path: Path) -> None:
+    root = tmp_path / "speaker"
+    root.mkdir()
+    store = MusicArtifactStore(root)
+
+    for speaker_id in (0, 7, -1, True):
+        with pytest.raises(ValueError, match="speaker_not_allowed") as caught:
+            VoicevoxSpeechSynthesisProviderAdapter(
+                _Voicevox(),
+                store,
+                speaker_id=speaker_id,
+            )
+
+        assert str(speaker_id) not in str(caught.value)
 
 
 class _Video:

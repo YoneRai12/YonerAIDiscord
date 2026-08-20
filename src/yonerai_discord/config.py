@@ -10,6 +10,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from .secret_policy import is_loopback_endpoint, strong_safety_identifier_secret
+from .voice_contract import MIN_VOICEVOX_WAV_BYTES
 
 
 SAFE_DEFAULT_PLUGINS = frozenset(
@@ -964,7 +965,11 @@ class Settings:
             voice_allow_remote=_boolean(values, "VOICE_ALLOW_REMOTE"),
             voice_timeout_seconds=_floating(values, "VOICE_TIMEOUT_SECONDS", 15.0, 1.0, 60.0),
             voice_max_response_bytes=_integer(
-                values, "VOICE_MAX_RESPONSE_BYTES", 25 * 1024 * 1024, 1_024, 50 * 1024 * 1024
+                values,
+                "VOICE_MAX_RESPONSE_BYTES",
+                25 * 1024 * 1024,
+                MIN_VOICEVOX_WAV_BYTES,
+                50 * 1024 * 1024,
             ),
             voicevox_managed_process_enabled=_boolean(
                 values,

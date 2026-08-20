@@ -26,6 +26,7 @@ from yonerai_discord.provider_registry import (
 )
 from yonerai_discord.provider_registry.domain import utc_now
 from yonerai_discord.provider_registry.ports import ExecutionAuthorizationCheck
+from yonerai_discord.voice_contract import VOICEVOX_ALLOWED_SPEAKER_IDS, VOICEVOX_SPEAKER_ID
 
 from .domain import speech_artifact_request_binding
 
@@ -45,7 +46,7 @@ class VoicevoxSynthesisRequest:
     text: str = field(repr=False)
     voice_alias: str = "standard"
     language_code: str = "ja-jp"
-    speaker_id: int = 3
+    speaker_id: int = VOICEVOX_SPEAKER_ID
     speed_scale: float = 1.0
 
     def __post_init__(self) -> None:
@@ -57,9 +58,8 @@ class VoicevoxSynthesisRequest:
             or any(character not in "0123456789abcdef" for character in self.request_binding)
             or self.voice_alias != "standard"
             or self.language_code not in {"ja", "ja-jp"}
-            or isinstance(self.speaker_id, bool)
-            or not isinstance(self.speaker_id, int)
-            or self.speaker_id < 0
+            or type(self.speaker_id) is not int
+            or self.speaker_id not in VOICEVOX_ALLOWED_SPEAKER_IDS
             or self.speed_scale != 1.0
         ):
             raise ValueError("VOICEVOX synthesis request is outside the fixed contract")
@@ -84,7 +84,7 @@ class VoicevoxSpeechSynthesisProviderAdapter:
         client: VoicevoxSynthesisPort,
         artifact_store: MusicArtifactStore,
         *,
-        speaker_id: int = 3,
+        speaker_id: int = VOICEVOX_SPEAKER_ID,
         readiness_current: Callable[[], bool] | None = None,
         probed_model_aliases: tuple[str, ...] = VOICEVOX_MODEL_ALIASES,
     ) -> None:
@@ -92,8 +92,8 @@ class VoicevoxSpeechSynthesisProviderAdapter:
             raise TypeError("client must provide synthesize")
         if not callable(getattr(artifact_store, "put_wav", None)):
             raise TypeError("artifact_store must provide put_wav")
-        if isinstance(speaker_id, bool) or not isinstance(speaker_id, int) or speaker_id < 0:
-            raise ValueError("speaker_id must be a non-negative integer")
+        if type(speaker_id) is not int or speaker_id not in VOICEVOX_ALLOWED_SPEAKER_IDS:
+            raise ValueError("speaker_not_allowed")
         self._client = client
         self._store = artifact_store
         self._speaker_id = speaker_id
@@ -185,7 +185,7 @@ class VoicevoxSpeechSynthesisProviderAdapter:
             raise RuntimeError("VOICEVOX synthesis failed safely") from None
 
         try:
-            wav = _canonical_pcm_wav(getattr(synthesized, "wav", None))
+            wav = canonicalize_voicevox_wav(getattr(synthesized, "wav", None))
             validated = validate_wav(wav)
         except Exception:
             raise RuntimeError("VOICEVOX returned an invalid WAV") from None
@@ -241,7 +241,7 @@ def _model_aliases(values: tuple[str, ...]) -> tuple[str, ...]:
     return aliases
 
 
-def _canonical_pcm_wav(data: object) -> bytes:
+def canonicalize_voicevox_wav(data: object) -> bytes:
     """VOICEVOXのexact PCM16 fmt/dataをStage 1 canonical WAVへ変換する。"""
 
     if (
@@ -313,6 +313,7 @@ def _canonical_pcm_wav(data: object) -> bytes:
 
 __all__ = [
     "VOICEVOX_PROVIDER_MODEL",
+    "canonicalize_voicevox_wav",
     "VoicevoxSpeechSynthesisProviderAdapter",
     "VoicevoxSynthesisPort",
     "VoicevoxSynthesisRequest",

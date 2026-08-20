@@ -30,6 +30,18 @@ class SandboxRunStatus(StrEnum):
     CLEANUP_UNCONFIRMED = "cleanup_unconfirmed"
 
 
+class SandboxOperationProfile(StrEnum):
+    """Code-owned outer operation budgets; never a caller-supplied duration."""
+
+    DIRECT = "direct"
+    DISPOSABLE_VM = "disposable_vm"
+
+
+# 65s VM boot/socket accept + 60s guest wall + 60s owner cleanup + 10s
+# bounded scheduling overhead.  The guest's own wall/CPU policy is unchanged.
+DISPOSABLE_VM_OPERATION_TIMEOUT_SECONDS = 195.0
+
+
 @dataclass(frozen=True, slots=True)
 class SandboxRunOutcome:
     status: SandboxRunStatus
@@ -61,6 +73,7 @@ class ExternalSandboxService:
         port: ExternalSandboxPort | None,
         containment_current: Callable[[], bool] | None,
         policy=None,
+        operation_profile: SandboxOperationProfile = SandboxOperationProfile.DIRECT,
         handshake_timeout_seconds: float = 1,
         cleanup_timeout_seconds: float = 1,
         backend_generation: int = 1,
@@ -69,6 +82,8 @@ class ExternalSandboxService:
 
         if policy is not None and type(policy) is not SandboxPolicy:
             raise TypeError("policy must be a code-owned SandboxPolicy")
+        if type(operation_profile) is not SandboxOperationProfile:
+            raise TypeError("operation profile must be code-owned")
         if (
             isinstance(handshake_timeout_seconds, bool)
             or not isinstance(handshake_timeout_seconds, (int, float))
@@ -94,8 +109,22 @@ class ExternalSandboxService:
         self._active_runs = 0
         self._confirmed_successes: dict[int, tuple[SandboxRunOutcome, SandboxCandidate]] = {}
         self._policy = policy or SandboxPolicy()
+        self._operation_profile = operation_profile
         self._handshake_timeout_seconds = float(handshake_timeout_seconds)
         self._cleanup_timeout_seconds = float(cleanup_timeout_seconds)
+
+    @property
+    def containment_current(self) -> bool:
+        """Report whether the installed generation remains trusted and unquarantined.
+
+        This intentionally remains true while one run is active so a separately
+        authorized cancellation can still reach that run.  Capacity and trust
+        are different facts; ``run()`` continues to enforce the single-run
+        reservation itself.
+        """
+        with self._state_lock:
+            lease = self._lease
+        return lease is not None and self._is_current(lease)
 
     def register_backend_generation(
         self,
@@ -198,7 +227,7 @@ class ExternalSandboxService:
             else:
                 try:
                     result = await asyncio.wait_for(
-                        lease.port.execute(request), timeout=request.policy.max_wall_time_ms / 1000
+                        lease.port.execute(request), timeout=self._operation_timeout_seconds(request)
                     )
                 except TimeoutError:
                     reason = SandboxTerminationReason.TIMEOUT
@@ -244,6 +273,11 @@ class ExternalSandboxService:
         ):
             return SandboxRunOutcome(SandboxRunStatus.REJECTED)
         return outcome
+
+    def _operation_timeout_seconds(self, request: SandboxRequest) -> float:
+        if self._operation_profile is SandboxOperationProfile.DISPOSABLE_VM:
+            return DISPOSABLE_VM_OPERATION_TIMEOUT_SECONDS
+        return request.policy.max_wall_time_ms / 1000
 
     def _register_confirmed_success(
         self,
@@ -374,4 +408,10 @@ def _valid_termination(
     )
 
 
-__all__ = ["ExternalSandboxService", "SandboxRunOutcome", "SandboxRunStatus"]
+__all__ = [
+    "DISPOSABLE_VM_OPERATION_TIMEOUT_SECONDS",
+    "ExternalSandboxService",
+    "SandboxOperationProfile",
+    "SandboxRunOutcome",
+    "SandboxRunStatus",
+]

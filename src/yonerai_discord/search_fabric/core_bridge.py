@@ -12,6 +12,19 @@ from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass, field, replace
 from typing import Protocol
 
+from yonerai_discord.capability_forge.hyperv_disposable import (
+    HYPERV_DISPOSABLE_BACKEND_ID,
+)
+from yonerai_discord.capability_forge.sandbox_contract import (
+    SandboxCandidate,
+    SandboxResult,
+    SandboxScope,
+)
+from yonerai_discord.capability_forge.sandbox_service import (
+    ExternalSandboxService,
+    SandboxRunOutcome,
+    SandboxRunStatus,
+)
 from yonerai_discord.execution_gateway.core_contract import (
     CORE_FACTS_EXTENSION,
     CoreCancelDispositionV01,
@@ -40,9 +53,24 @@ from .receipts import SearchGatewayOutcome
 
 
 SEARCH_EVIDENCE_CAPABILITY = "web.search.evidence"
+SANDBOX_PYTHON_CAPABILITY = "sandbox.python.run"
 _IDENTIFIER = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,255}\Z")
+_EVIDENCE_REF = re.compile(r"evidence_[a-f0-9]{48}\Z")
 _MAX_RUNS = 4_096
 _MAX_SEARCH_ACTIONS_PER_RUN = 3
+_MAX_SANDBOX_ACTIONS_PER_RUN = 2
+_SANDBOX_OUTPUT_SCHEMA = "yonerai.sandbox.evidence-table.v1"
+_SANDBOX_PYTHON_SOURCE = """def main(value):
+    refs = value["refs"]
+    return {
+        "schema": "yonerai.sandbox.evidence-table.v1",
+        "columns": ["ordinal", "evidence_ref"],
+        "rows": [
+            {"ordinal": index + 1, "evidence_ref": reference}
+            for index, reference in enumerate(refs)
+        ],
+    }
+"""
 
 
 class CoreSearchBridgeError(RuntimeError):
@@ -151,6 +179,9 @@ class _RunState:
     cancel_requested: bool = False
     closed: bool = False
     search_action_ids: set[str] = field(default_factory=set)
+    sandbox_scope: SandboxScope | None = None
+    evidence_refs: set[str] = field(default_factory=set)
+    sandbox_actions: dict[str, tuple[str, CapabilityResult]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -159,6 +190,11 @@ class _SearchActionArguments:
     intent: SearchIntent
     language: str
     limit: int
+
+
+@dataclass(frozen=True, slots=True)
+class _SandboxActionArguments:
+    evidence_refs: tuple[str, ...]
 
 
 class _ReplayGuard:
@@ -186,13 +222,14 @@ class _ReplayGuard:
 
 
 class CoreSearchToolBridge:
-    """Executes only ``web.search.evidence`` through an existing v0.1 gateway."""
+    """Continue strict Search and optional networkless Python tool calls."""
 
     def __init__(
         self,
         gateway: YonerAIInternalRunGatewayV01,
         search_port: SearchEvidencePort,
         *,
+        sandbox_service: ExternalSandboxService | None = None,
         max_runs: int = _MAX_RUNS,
     ) -> None:
         for method in ("start", "events", "submit_result", "cancel"):
@@ -200,11 +237,15 @@ class CoreSearchToolBridge:
                 raise TypeError(f"gateway must expose a callable {method} method")
         if not callable(getattr(search_port, "search", None)):
             raise TypeError("search_port must expose a callable search method")
+        if sandbox_service is not None and type(sandbox_service) is not ExternalSandboxService:
+            raise TypeError("sandbox_service must be an ExternalSandboxService or None")
         if isinstance(max_runs, bool) or not isinstance(max_runs, int) or not 1 <= max_runs <= _MAX_RUNS:
             raise ValueError("max_runs is outside the allowed range")
         self._gateway = gateway
         self._gateway_identity = gateway
         self._search_port = search_port
+        self._sandbox_service = sandbox_service
+        self._sandbox_identity = sandbox_service
         self._max_runs = max_runs
         self._states: dict[str, _RunState] = {}
         self._idempotency: dict[tuple[str, str], _RunState] = {}
@@ -258,6 +299,7 @@ class CoreSearchToolBridge:
                 handle=handle,
                 binding=binding,
                 request_fingerprint=fingerprint,
+                sandbox_scope=_sandbox_scope(request, handle.binding_digest),
             )
             self._states[handle.run_id] = state
             self._idempotency[idempotency_scope] = state
@@ -287,12 +329,23 @@ class CoreSearchToolBridge:
                     self._require_gateway_identity()
                     await self._require_active_generation(state, generation)
                     if event.kind == "action_required":
-                        await self._complete_search_action(
-                            state,
-                            event,
-                            authorization,
-                            generation=generation,
-                        )
+                        tool = event.payload.get("tool")
+                        if tool == SEARCH_EVIDENCE_CAPABILITY:
+                            await self._complete_search_action(
+                                state,
+                                event,
+                                authorization,
+                                generation=generation,
+                            )
+                        elif tool == SANDBOX_PYTHON_CAPABILITY:
+                            await self._complete_sandbox_action(
+                                state,
+                                event,
+                                authorization,
+                                generation=generation,
+                            )
+                        else:
+                            raise CoreSearchBridgeError("Core requested an unavailable capability")
                     events.append(_content_free_receipt_event(event))
                     if event.terminal:
                         break
@@ -354,13 +407,15 @@ class CoreSearchToolBridge:
         generation: int,
     ) -> None:
         await self._require_active_generation(state, generation)
-        await _require_authorization(*authorization)
+        await _require_authorization(*authorization, capability=SEARCH_EVIDENCE_CAPABILITY)
         payload = dict(event.payload)
         if payload.get("tool") != SEARCH_EVIDENCE_CAPABILITY:
             raise CoreSearchBridgeError("Core requested an unavailable capability")
         tool_call_id = payload.get("tool_call_id")
         if not isinstance(tool_call_id, str) or _IDENTIFIER.fullmatch(tool_call_id) is None:
             raise CoreSearchBridgeError("Core Search tool_call_id is invalid")
+        if tool_call_id in state.sandbox_actions:
+            raise CoreSearchBridgeError("Core tool_call_id changed capability")
         if tool_call_id not in state.search_action_ids:
             if len(state.search_action_ids) >= _MAX_SEARCH_ACTIONS_PER_RUN:
                 raise CoreSearchBridgeError("Core Search action limit is exhausted")
@@ -383,10 +438,18 @@ class CoreSearchToolBridge:
                 or outcome.result.language != arguments.language
             ):
                 raise CoreSearchBridgeError("Search Fabric outcome binding is invalid")
+            output = outcome.to_mapping()
+            if self._sandbox_identity is not None:
+                evidence_refs = _issue_evidence_refs(
+                    state,
+                    tool_call_id=tool_call_id,
+                    outcome=outcome,
+                )
+                output = {**output, "evidence_refs": list(evidence_refs)}
             result = CapabilityResult(
                 result_id=tool_call_id,
                 capability=SEARCH_EVIDENCE_CAPABILITY,
-                output=outcome.to_mapping(),
+                output=output,
             )
         except asyncio.CancelledError:
             raise
@@ -405,7 +468,87 @@ class CoreSearchToolBridge:
         async with state.commit_lock:
             self._require_gateway_identity()
             await self._require_active_generation(state, generation)
-            await _require_authorization(*authorization)
+            await _require_authorization(*authorization, capability=SEARCH_EVIDENCE_CAPABILITY)
+            self._require_gateway_identity()
+            await self._require_active_generation(state, generation)
+            await self._gateway.submit_result(state.handle.run_id, result)
+
+    async def _complete_sandbox_action(
+        self,
+        state: _RunState,
+        event: RunEvent,
+        authorization: tuple[
+            Callable[[], bool],
+            Callable[[], bool | Awaitable[bool]],
+            Callable[[str], bool],
+        ],
+        *,
+        generation: int,
+    ) -> None:
+        self._require_gateway_identity()
+        self._require_sandbox_identity()
+        await self._require_active_generation(state, generation)
+        await _require_authorization(*authorization, capability=SANDBOX_PYTHON_CAPABILITY)
+        self._require_gateway_identity()
+        self._require_sandbox_identity()
+        payload = dict(event.payload)
+        if payload.get("tool") != SANDBOX_PYTHON_CAPABILITY:
+            raise CoreSearchBridgeError("Core requested an unavailable capability")
+        tool_call_id = payload.get("tool_call_id")
+        if not isinstance(tool_call_id, str) or _IDENTIFIER.fullmatch(tool_call_id) is None:
+            raise CoreSearchBridgeError("Core Sandbox tool_call_id is invalid")
+        if tool_call_id in state.search_action_ids:
+            raise CoreSearchBridgeError("Core tool_call_id changed capability")
+        arguments = _sandbox_arguments(payload.get("arguments"), issued=state.evidence_refs)
+        fingerprint = _sandbox_action_fingerprint(arguments)
+        previous = state.sandbox_actions.get(tool_call_id)
+        if previous is not None:
+            if previous[0] != fingerprint:
+                raise CoreSearchBridgeError("Core Sandbox tool_call_id changed arguments")
+            result = previous[1]
+        else:
+            if len(state.sandbox_actions) >= _MAX_SANDBOX_ACTIONS_PER_RUN:
+                raise CoreSearchBridgeError("Core Sandbox action limit is exhausted")
+            service = self._sandbox_identity
+            scope = state.sandbox_scope
+            if service is None or scope is None:
+                raise CoreSearchBridgeError("Core Sandbox capability is unavailable")
+            try:
+                candidate = SandboxCandidate(
+                    source=_SANDBOX_PYTHON_SOURCE,
+                    input_data={"refs": list(arguments.evidence_refs)},
+                )
+                outcome = await service.run(
+                    candidate=candidate,
+                    scope=scope,
+                    backend_identity=HYPERV_DISPOSABLE_BACKEND_ID,
+                )
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                raise CoreSearchBridgeError("Core Sandbox execution failed") from None
+            self._require_gateway_identity()
+            self._require_sandbox_identity()
+            await self._require_active_generation(state, generation)
+            await _require_authorization(*authorization, capability=SANDBOX_PYTHON_CAPABILITY)
+            self._require_gateway_identity()
+            self._require_sandbox_identity()
+            result = _sandbox_capability_result(
+                service,
+                outcome,
+                candidate=candidate,
+                scope=scope,
+                evidence_refs=arguments.evidence_refs,
+                tool_call_id=tool_call_id,
+            )
+            state.sandbox_actions[tool_call_id] = (fingerprint, result)
+        async with state.commit_lock:
+            self._require_gateway_identity()
+            self._require_sandbox_identity()
+            await self._require_active_generation(state, generation)
+            await _require_authorization(*authorization, capability=SANDBOX_PYTHON_CAPABILITY)
+            self._require_gateway_identity()
+            self._require_sandbox_identity()
             await self._require_active_generation(state, generation)
             await self._gateway.submit_result(state.handle.run_id, result)
 
@@ -505,6 +648,10 @@ class CoreSearchToolBridge:
         if self._gateway is not self._gateway_identity:
             raise CoreSearchBridgeError("Core Search gateway identity changed")
 
+    def _require_sandbox_identity(self) -> None:
+        if self._sandbox_service is not self._sandbox_identity:
+            raise CoreSearchBridgeError("Core Sandbox service identity changed")
+
     def _close_state_locked(self, state: _RunState) -> None:
         if not state.closed:
             state.closed = True
@@ -567,11 +714,15 @@ async def _require_authorization(
     authorization_check: Callable[[], bool],
     fresh_authorization_check: Callable[[], bool | Awaitable[bool]],
     capability_authorization_check: Callable[[str], bool],
+    *,
+    capability: str = SEARCH_EVIDENCE_CAPABILITY,
 ) -> None:
     try:
         if authorization_check() is not True:
             raise CoreSearchBridgeError("Core Search execution is not authorized")
-        if capability_authorization_check(SEARCH_EVIDENCE_CAPABILITY) is not True:
+        if capability not in {SEARCH_EVIDENCE_CAPABILITY, SANDBOX_PYTHON_CAPABILITY}:
+            raise CoreSearchBridgeError("Core capability is unavailable")
+        if capability_authorization_check(capability) is not True:
             raise CoreSearchBridgeError("Core Search capability is not authorized")
         candidate = fresh_authorization_check()
         allowed = await candidate if inspect.isawaitable(candidate) else candidate
@@ -629,6 +780,161 @@ def _search_arguments(value: object) -> _SearchActionArguments:
         language=language,
         limit=request.limit,
     )
+
+
+def _sandbox_arguments(
+    value: object,
+    *,
+    issued: set[str],
+) -> _SandboxActionArguments:
+    if not isinstance(value, Mapping):
+        raise CoreSearchBridgeError("Core Sandbox arguments are invalid")
+    copied = dict(value)
+    if set(copied) != {"evidence_refs"}:
+        raise CoreSearchBridgeError("Core Sandbox argument fields are invalid")
+    refs = copied["evidence_refs"]
+    if (
+        not isinstance(refs, (tuple, list))
+        or not 1 <= len(refs) <= 20
+        or any(not isinstance(item, str) or _EVIDENCE_REF.fullmatch(item) is None for item in refs)
+    ):
+        raise CoreSearchBridgeError("Core Sandbox evidence refs are invalid")
+    normalized = tuple(refs)
+    if len(set(normalized)) != len(normalized) or any(item not in issued for item in normalized):
+        raise CoreSearchBridgeError("Core Sandbox evidence refs are stale or foreign")
+    return _SandboxActionArguments(normalized)
+
+
+def _issue_evidence_refs(
+    state: _RunState,
+    *,
+    tool_call_id: str,
+    outcome: SearchGatewayOutcome,
+) -> tuple[str, ...]:
+    refs: list[str] = []
+    for index, evidence in enumerate(outcome.result.evidence):
+        binding = json.dumps(
+            {
+                "binding_digest": state.handle.binding_digest,
+                "content_hash": evidence.content_hash,
+                "index": index,
+                "source_id": evidence.source.source_id,
+                "tool_call_id": tool_call_id,
+            },
+            ensure_ascii=True,
+            allow_nan=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("ascii")
+        ref = f"evidence_{hashlib.sha256(binding).hexdigest()[:48]}"
+        if ref in state.evidence_refs or ref in refs:
+            raise CoreSearchBridgeError("Core Search evidence ref collided")
+        refs.append(ref)
+    state.evidence_refs.update(refs)
+    return tuple(refs)
+
+
+def _sandbox_action_fingerprint(arguments: _SandboxActionArguments) -> str:
+    rendered = json.dumps(
+        {"evidence_refs": arguments.evidence_refs},
+        ensure_ascii=True,
+        allow_nan=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("ascii")
+    return hashlib.sha256(rendered).hexdigest()
+
+
+def _sandbox_scope(request: RunInput, binding_digest: str) -> SandboxScope:
+    facts = dict(request.extensions).get(CORE_FACTS_EXTENSION)
+    if not isinstance(facts, DiscordCoreFacts):
+        raise CoreSearchBridgeError("Discord Core facts are unavailable")
+    try:
+        return SandboxScope(
+            request_id=f"core-{binding_digest.removeprefix('sha256:')[:48]}",
+            guild_id=facts.guild_id,
+            channel_id=facts.channel_id,
+            user_id=facts.user_id,
+        )
+    except (TypeError, ValueError):
+        raise CoreSearchBridgeError("Core Sandbox scope is invalid") from None
+
+
+def _sandbox_capability_result(
+    service: ExternalSandboxService,
+    outcome: SandboxRunOutcome,
+    *,
+    candidate: SandboxCandidate,
+    scope: SandboxScope,
+    evidence_refs: tuple[str, ...],
+    tool_call_id: str,
+) -> CapabilityResult:
+    if type(outcome) is not SandboxRunOutcome:
+        raise CoreSearchBridgeError("Core Sandbox returned an invalid outcome")
+    if outcome.status is SandboxRunStatus.CLEANUP_UNCONFIRMED:
+        raise CoreSearchBridgeError("Core Sandbox cleanup is unconfirmed")
+    if outcome.status is not SandboxRunStatus.SUCCEEDED:
+        return CapabilityResult(
+            result_id=tool_call_id,
+            capability=SANDBOX_PYTHON_CAPABILITY,
+            output={
+                "schema": "yonerai.sandbox.error.v1",
+                "code": f"sandbox_{outcome.status.value}",
+            },
+            is_error=True,
+        )
+    result = service.consume_cleanup_confirmed_success(outcome=outcome, candidate=candidate)
+    if (
+        type(result) is not SandboxResult
+        or result.scope != scope
+        or result.backend_identity != HYPERV_DISPOSABLE_BACKEND_ID
+        or result.artifacts != ()
+    ):
+        raise CoreSearchBridgeError("Core Sandbox result binding is invalid")
+    output = _validated_sandbox_output(result.output, evidence_refs=evidence_refs)
+    return CapabilityResult(
+        result_id=tool_call_id,
+        capability=SANDBOX_PYTHON_CAPABILITY,
+        output={
+            "schema": "yonerai.sandbox.python-result.v1",
+            "cleanup_confirmed": True,
+            "result": output,
+        },
+    )
+
+
+def _validated_sandbox_output(
+    value: object,
+    *,
+    evidence_refs: tuple[str, ...],
+) -> dict[str, object]:
+    if not isinstance(value, Mapping):
+        raise CoreSearchBridgeError("Core Sandbox output is invalid")
+    copied = dict(value)
+    if set(copied) != {"schema", "columns", "rows"} or copied["schema"] != _SANDBOX_OUTPUT_SCHEMA:
+        raise CoreSearchBridgeError("Core Sandbox output is invalid")
+    columns = copied["columns"]
+    rows = copied["rows"]
+    if not isinstance(columns, (tuple, list)) or tuple(columns) != ("ordinal", "evidence_ref"):
+        raise CoreSearchBridgeError("Core Sandbox output columns are invalid")
+    if not isinstance(rows, (tuple, list)) or len(rows) != len(evidence_refs):
+        raise CoreSearchBridgeError("Core Sandbox output rows are invalid")
+    normalized_rows: list[dict[str, object]] = []
+    for ordinal, (row, expected_ref) in enumerate(zip(rows, evidence_refs, strict=True), start=1):
+        if not isinstance(row, Mapping):
+            raise CoreSearchBridgeError("Core Sandbox output row is invalid")
+        normalized = dict(row)
+        if set(normalized) != {"ordinal", "evidence_ref"} or normalized != {
+            "ordinal": ordinal,
+            "evidence_ref": expected_ref,
+        }:
+            raise CoreSearchBridgeError("Core Sandbox output row binding is invalid")
+        normalized_rows.append(normalized)
+    return {
+        "schema": _SANDBOX_OUTPUT_SCHEMA,
+        "columns": ["ordinal", "evidence_ref"],
+        "rows": normalized_rows,
+    }
 
 
 def _binding_digest(binding: CoreSearchBinding, idempotency_key: str) -> str:
@@ -701,6 +1007,7 @@ __all__ = [
     "CoreSearchRunHandle",
     "CoreSearchRunOutcome",
     "CoreSearchToolBridge",
+    "SANDBOX_PYTHON_CAPABILITY",
     "SEARCH_EVIDENCE_CAPABILITY",
     "SearchEvidencePort",
 ]
