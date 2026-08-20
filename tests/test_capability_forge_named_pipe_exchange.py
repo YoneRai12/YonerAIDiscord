@@ -238,6 +238,7 @@ def test_cancelled_client_overlapped_io_is_reaped_before_storage_is_released(
         exchange.ctypes,
         "get_last_error",
         lambda: exchange._CtypesNamedPipeApi._ERROR_OPERATION_ABORTED,
+        raising=False,
     )
     overlapped = exchange._CtypesNamedPipeApi._Overlapped()
     overlapped.hEvent = 99
