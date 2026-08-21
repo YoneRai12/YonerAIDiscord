@@ -67,6 +67,8 @@ def _filesystem_tree_files(root: Path) -> tuple[tuple[Path, ...], tuple[Finding,
             findings.append(Finding(relative, 0, "unreadable_filesystem_entry"))
             continue
         for entry in entries:
+            if entry.name.lower() in _EXCLUDED_PARTS:
+                continue
             path = Path(entry.path)
             relative = path.relative_to(root)
             try:

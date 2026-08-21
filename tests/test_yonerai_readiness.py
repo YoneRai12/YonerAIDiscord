@@ -157,3 +157,17 @@ def test_readiness_composition_allows_local_and_requires_all_remote_gates() -> N
         ),
         AiohttpYonerAIReadinessGateway,
     )
+
+
+def test_localhost_readiness_uses_the_same_tokenless_local_contract() -> None:
+    gateway = build_yonerai_readiness_gateway(
+        SimpleNamespace(
+            yonerai_core_origin="http://localhost:8001",
+            yonerai_auth_token="",
+        ),
+        YonerAIRuntimeConfig(enabled=True),
+    )
+
+    assert isinstance(gateway, AiohttpYonerAIReadinessGateway)
+    assert gateway.local_only is True
+    assert gateway._origin == "http://localhost:8001"

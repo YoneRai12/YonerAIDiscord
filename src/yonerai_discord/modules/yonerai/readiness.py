@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import ipaddress
 import json
 import math
 from collections.abc import Mapping
@@ -10,6 +9,8 @@ from typing import Protocol
 from urllib.parse import urlsplit
 
 import aiohttp
+
+from yonerai_discord.secret_policy import is_loopback_endpoint
 
 from .config import YonerAIRuntimeConfig
 from .contract import ProbeBudget, ReadinessOutcome, RemoteReadiness
@@ -34,7 +35,7 @@ class AiohttpYonerAIReadinessGateway:
 
     @property
     def local_only(self) -> bool:
-        return _origin_is_loopback(self._origin)
+        return is_loopback_endpoint(self._origin)
 
     async def probe(self, budget: ProbeBudget) -> RemoteReadiness:
         if not isinstance(budget, ProbeBudget):
@@ -93,7 +94,7 @@ def build_yonerai_readiness_gateway(
         normalized = _validated_origin(origin)
     except (TypeError, ValueError):
         return None
-    local = _origin_is_loopback(normalized)
+    local = is_loopback_endpoint(normalized)
     if not local and (not config.remote_permitted or not config.token_configured):
         return None
     try:
@@ -117,16 +118,9 @@ def _validated_origin(value: object) -> str:
     ):
         raise ValueError("origin is invalid")
     normalized = f"{parsed.scheme}://{parsed.netloc}"
-    if parsed.scheme == "http" and not _origin_is_loopback(normalized):
+    if parsed.scheme == "http" and not is_loopback_endpoint(normalized):
         raise ValueError("plain HTTP origin must be loopback")
     return normalized
-
-
-def _origin_is_loopback(value: str) -> bool:
-    try:
-        return ipaddress.ip_address(urlsplit(value).hostname or "").is_loopback
-    except ValueError:
-        return False
 
 
 def _validated_token(value: object, *, origin: str) -> str:
@@ -134,7 +128,7 @@ def _validated_token(value: object, *, origin: str) -> str:
         raise ValueError("token is invalid")
     if any(ord(character) < 33 or ord(character) == 127 for character in value):
         raise ValueError("token is invalid")
-    if not value and not _origin_is_loopback(origin):
+    if not value and not is_loopback_endpoint(origin):
         raise ValueError("remote readiness requires authorization")
     return value
 

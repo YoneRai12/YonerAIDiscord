@@ -137,3 +137,22 @@ def test_loopback_core_does_not_require_remote_opt_in_or_a_token() -> None:
     surface = factory(object())
 
     assert isinstance(surface._gateway._port._transport, OraCoreHttpTransport)
+
+
+def test_localhost_core_uses_the_same_local_runtime_contract() -> None:
+    factory = build_direct_core_gateway_factory(
+        _settings(
+            yonerai_core_origin="http://localhost:8001",
+            yonerai_auth_token="",
+            yonerai_allow_remote=False,
+            yonerai_remote_status_opt_in=False,
+            ai_packaging_candidate="local_only",
+        )
+    )
+
+    surface = factory(object())
+    transport = surface._gateway._port._transport
+
+    assert isinstance(transport, OraCoreHttpTransport)
+    assert transport._inner._origin == "http://localhost:8001"
+    assert transport._inner._authorization is None

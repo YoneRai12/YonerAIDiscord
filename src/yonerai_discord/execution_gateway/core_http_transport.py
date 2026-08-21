@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 import asyncio
-import ipaddress
 import json
 import math
 import re
-from urllib.parse import urlsplit
 from collections.abc import AsyncIterator, Mapping
 from dataclasses import dataclass, field
 from typing import Protocol
+from urllib.parse import urlsplit
 
 import aiohttp
+
+from yonerai_discord.secret_policy import is_loopback_endpoint
 
 from .core_contract import (
     CoreCancelOutcomeV01,
@@ -75,7 +76,7 @@ class AiohttpCoreHttpTransport:
         self._origin = _validated_origin(origin)
         if type(allow_unauthenticated_loopback) is not bool:
             raise TypeError("allow_unauthenticated_loopback must be a boolean")
-        if bearer_token == "" and allow_unauthenticated_loopback and _origin_is_loopback(self._origin):
+        if bearer_token == "" and allow_unauthenticated_loopback and is_loopback_endpoint(self._origin):
             self._authorization: str | None = None
         else:
             self._authorization = _bearer_authorization(bearer_token)
@@ -248,21 +249,10 @@ def _validated_origin(value: object) -> str:
         or parsed.fragment
     ):
         raise ValueError("origin must be an absolute HTTP(S) origin")
-    if parsed.scheme == "http":
-        try:
-            is_loopback = ipaddress.ip_address(parsed.hostname or "").is_loopback
-        except ValueError:
-            is_loopback = False
-        if not is_loopback:
-            raise ValueError("plain HTTP origin must be loopback")
-    return f"{parsed.scheme}://{parsed.netloc}"
-
-
-def _origin_is_loopback(value: str) -> bool:
-    try:
-        return ipaddress.ip_address(urlsplit(value).hostname or "").is_loopback
-    except ValueError:
-        return False
+    normalized = f"{parsed.scheme}://{parsed.netloc}"
+    if parsed.scheme == "http" and not is_loopback_endpoint(normalized):
+        raise ValueError("plain HTTP origin must be loopback")
+    return normalized
 
 
 def _bearer_authorization(value: object) -> str:

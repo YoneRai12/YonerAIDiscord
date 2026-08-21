@@ -175,6 +175,7 @@ async def test_post_rejects_oversized_response_before_return(monkeypatch: pytest
 def test_origin_path_and_redirect_validation_fail_closed() -> None:
     for invalid_origin in (
         "http://core.example",
+        "http://localhost.example",
         "https://core.example/base",
         "https://user@core.example",
         "https://core.example?target=x",
@@ -188,6 +189,17 @@ def test_origin_path_and_redirect_validation_fail_closed() -> None:
         transport._request_url("/v1/messages", allow_redirects=True)
     with pytest.raises(CoreHttpTransportError, match="path"):
         transport._request_url("//other.example/path", allow_redirects=False)
+
+
+def test_exact_localhost_is_an_explicit_unauthenticated_loopback() -> None:
+    transport = AiohttpCoreHttpTransport(
+        "http://localhost:8001",
+        "",
+        allow_unauthenticated_loopback=True,
+    )
+
+    assert transport._origin == "http://localhost:8001"
+    assert transport._authorization is None
 
 
 @pytest.mark.asyncio
