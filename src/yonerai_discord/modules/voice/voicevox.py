@@ -125,7 +125,7 @@ class VoicevoxClient:
         try:
             canonical = canonicalize_voicevox_playback_wav(
                 wav,
-                max_wav_bytes=self._max_response_bytes,
+                max_input_bytes=self._max_response_bytes,
             )
         except Exception:
             raise RuntimeError("VOICEVOX returned an invalid WAV") from None

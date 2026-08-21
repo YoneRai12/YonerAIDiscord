@@ -12,6 +12,7 @@ from yonerai_discord.control_plane import RbacLevel
 from yonerai_discord.modules.music_generation.artifacts import MAX_WAV_BYTES
 from yonerai_discord.modules.speech_synthesis import provider_voicevox as voicevox_provider_module
 from yonerai_discord.modules.speech_synthesis.provider_voicevox import (
+    MAX_VOICEVOX_PLAYBACK_WAV_BYTES,
     canonicalize_voicevox_playback_wav,
     canonicalize_voicevox_wav,
 )
@@ -401,27 +402,15 @@ async def test_voicevox_direct_playback_accepts_valid_non_artifact_durations(
 
 
 @pytest.mark.asyncio
-async def test_voicevox_direct_playback_honors_configured_limit_above_artifact_cap(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    frames = (MAX_WAV_BYTES - 44) // 2 + 1
+async def test_voicevox_direct_playback_separates_download_and_converted_size_limits() -> None:
+    raw_size = 20 * 1024 * 1024
+    frames = (raw_size - 44) // 2
     payload = _voicevox_wav(duration_seconds=frames / 24_000)
     configured_limit = 25 * 1024 * 1024
     expected_output_size = 44 + (len(payload) - 44) * 2
-    assert len(payload) == MAX_WAV_BYTES + 2
-    assert expected_output_size < configured_limit
-    canonicalizer_limits: list[int] = []
-    delegate = canonicalize_voicevox_playback_wav
-
-    def tracked_canonicalizer(data: object, *, max_wav_bytes: int) -> bytes:
-        canonicalizer_limits.append(max_wav_bytes)
-        return delegate(data, max_wav_bytes=max_wav_bytes)
-
-    monkeypatch.setattr(
-        voicevox_client_module,
-        "canonicalize_voicevox_playback_wav",
-        tracked_canonicalizer,
-    )
+    assert len(payload) == raw_size
+    assert len(payload) < configured_limit < expected_output_size
+    assert expected_output_size < MAX_VOICEVOX_PLAYBACK_WAV_BYTES
     session = FakeHttpSession(
         [
             FakeHttpResponse(200, b'{"speedScale": 1.0}'),
@@ -435,9 +424,43 @@ async def test_voicevox_direct_playback_honors_configured_limit_above_artifact_c
 
     assert result.sample_rate == 48_000
     assert len(result.wav) == expected_output_size
-    assert canonicalizer_limits == [configured_limit]
     with pytest.raises(RuntimeError, match="invalid WAV"):
         canonicalize_voicevox_wav(payload)
+    await client.close()
+
+
+@pytest.mark.asyncio
+async def test_voicevox_client_propagates_configured_response_limit_to_playback_parser(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    configured_limit = MAX_WAV_BYTES + 4_096
+    limits: list[int] = []
+    delegate = canonicalize_voicevox_playback_wav
+
+    def tracked_canonicalizer(data: object, *, max_input_bytes: int) -> bytes:
+        limits.append(max_input_bytes)
+        return delegate(data, max_input_bytes=max_input_bytes)
+
+    monkeypatch.setattr(
+        voicevox_client_module,
+        "canonicalize_voicevox_playback_wav",
+        tracked_canonicalizer,
+    )
+    session = FakeHttpSession(
+        [
+            FakeHttpResponse(200, b'{"speedScale": 1.0}'),
+            FakeHttpResponse(200, _voicevox_wav()),
+        ]
+    )
+    client = VoicevoxClient(
+        endpoint="http://127.0.0.1:50021",
+        max_response_bytes=configured_limit,
+    )
+    client._session = session
+
+    await client.synthesize(SpeechRequest(text="voice", guild_id=1, channel_id=2))
+
+    assert limits == [configured_limit]
     await client.close()
 
 
@@ -500,12 +523,27 @@ async def test_voicevox_fixed_wav_cap_stops_chunked_stream_at_boundary_content_f
 
 
 @pytest.mark.asyncio
-async def test_voicevox_synthesis_rejects_configured_limit_plus_one_before_read() -> None:
-    configured_limit = MAX_WAV_BYTES + 4_096
+async def test_voicevox_synthesis_rejects_raw_configured_limit_plus_one_before_conversion(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    configured_limit = MIN_VOICEVOX_WAV_BYTES + 1
+    frames = (configured_limit + 1 - 44) // 2
+    payload = _voicevox_wav(duration_seconds=frames / 24_000)
+    conversion_started: list[str] = []
+
+    def unexpected_conversion(*_args: object, **_kwargs: object) -> bytes:
+        conversion_started.append("started")
+        raise AssertionError("WAV conversion started after the configured response limit")
+
+    monkeypatch.setattr(
+        voicevox_client_module,
+        "canonicalize_voicevox_playback_wav",
+        unexpected_conversion,
+    )
     session = FakeHttpSession(
         [
             FakeHttpResponse(200, b'{"speedScale": 1.0}'),
-            FakeHttpResponse(200, b"not-read", declared_content_length=configured_limit + 1),
+            FakeHttpResponse(200, payload),
         ]
     )
     client = VoicevoxClient(
@@ -517,6 +555,8 @@ async def test_voicevox_synthesis_rejects_configured_limit_plus_one_before_read(
     with pytest.raises(RuntimeError, match="exceeds"):
         await client.synthesize(SpeechRequest(text="voice", guild_id=1, channel_id=2))
 
+    assert len(payload) == configured_limit + 1
+    assert conversion_started == []
     assert len(session.calls) == 2
     await client.close()
 
@@ -594,11 +634,31 @@ def test_voicevox_wav_contract_accepts_default_24khz_and_canonicalizes_to_48khz(
     assert struct.unpack_from("<I", result, 24)[0] == 48_000
 
 
+def test_voicevox_playback_preserves_valid_48khz_wav() -> None:
+    payload = _voicevox_wav(sample_rate=48_000)
+
+    result = canonicalize_voicevox_playback_wav(
+        payload,
+        max_input_bytes=MAX_VOICEVOX_PLAYBACK_WAV_BYTES,
+    )
+
+    assert result == payload
+
+
 def test_voicevox_playback_rejects_24khz_expansion_before_conversion(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    frames = (MAX_WAV_BYTES - 44) // 4 + 1
-    payload = _voicevox_wav(duration_seconds=frames / 24_000)
+    pcm_size = (MAX_VOICEVOX_PLAYBACK_WAV_BYTES - 44) // 2 + 2
+    pcm = b"\0" * pcm_size
+    payload = (
+        b"RIFF"
+        + struct.pack("<I", 36 + len(pcm))
+        + b"WAVEfmt "
+        + struct.pack("<IHHIIHH", 16, 1, 1, 24_000, 48_000, 2, 16)
+        + b"data"
+        + struct.pack("<I", len(pcm))
+        + pcm
+    )
     conversion_started: list[str] = []
 
     def unexpected_conversion(*_args: object, **_kwargs: object) -> bytes:
@@ -606,35 +666,31 @@ def test_voicevox_playback_rejects_24khz_expansion_before_conversion(
         raise AssertionError("24 kHz conversion started before expanded-size validation")
 
     monkeypatch.setattr(voicevox_provider_module, "_upsample_24khz_pcm16", unexpected_conversion, raising=False)
-    monkeypatch.setattr(voicevox_provider_module, "range", unexpected_conversion, raising=False)
-
-    assert len(payload) < MAX_WAV_BYTES
-    assert 44 + (len(payload) - 44) * 2 > MAX_WAV_BYTES
-    with pytest.raises(RuntimeError, match="exceeds the fixed size limit"):
-        canonicalize_voicevox_playback_wav(payload)
-    assert conversion_started == []
-
-
-def test_voicevox_playback_rejects_configured_24khz_expansion_before_allocation(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    configured_limit = MAX_WAV_BYTES + 4_096
-    frames = (configured_limit - 44) // 4 + 1
-    payload = _voicevox_wav(duration_seconds=frames / 24_000)
-    conversion_started: list[str] = []
-
-    def unexpected_conversion(*_args: object, **_kwargs: object) -> bytes:
-        conversion_started.append("started")
-        raise AssertionError("24 kHz conversion started before configured expanded-size validation")
-
-    monkeypatch.setattr(voicevox_provider_module, "_upsample_24khz_pcm16", unexpected_conversion)
     monkeypatch.setattr(voicevox_provider_module, "bytearray", unexpected_conversion, raising=False)
 
-    assert len(payload) < configured_limit
-    assert 44 + (len(payload) - 44) * 2 > configured_limit
+    assert len(payload) < MAX_VOICEVOX_PLAYBACK_WAV_BYTES
+    assert 44 + (len(payload) - 44) * 2 > MAX_VOICEVOX_PLAYBACK_WAV_BYTES
     with pytest.raises(RuntimeError, match="exceeds the fixed size limit"):
-        canonicalize_voicevox_playback_wav(payload, max_wav_bytes=configured_limit)
+        canonicalize_voicevox_playback_wav(
+            payload,
+            max_input_bytes=MAX_VOICEVOX_PLAYBACK_WAV_BYTES,
+        )
     assert conversion_started == []
+
+
+def test_voicevox_playback_accepts_24khz_expansion_above_input_limit() -> None:
+    configured_limit = MAX_WAV_BYTES + 4_096
+    frames = (configured_limit - 44) // 2
+    payload = _voicevox_wav(duration_seconds=frames / 24_000)
+    expected_output_size = 44 + (len(payload) - 44) * 2
+
+    assert len(payload) <= configured_limit < expected_output_size
+    result = canonicalize_voicevox_playback_wav(
+        payload,
+        max_input_bytes=configured_limit,
+    )
+
+    assert len(result) == expected_output_size
 
 
 @pytest.mark.parametrize(
@@ -645,13 +701,21 @@ def test_voicevox_playback_rejects_arbitrary_size_limit_content_free(maximum: ob
     with pytest.raises(RuntimeError, match="size limit") as caught:
         canonicalize_voicevox_playback_wav(
             _voicevox_wav(),
-            max_wav_bytes=maximum,  # type: ignore[arg-type]
+            max_input_bytes=maximum,  # type: ignore[arg-type]
         )
     assert str(maximum) not in str(caught.value)
 
 
+def test_voicevox_playback_output_limit_is_not_caller_configurable() -> None:
+    with pytest.raises(TypeError, match="max_wav_bytes"):
+        canonicalize_voicevox_playback_wav(
+            _voicevox_wav(),
+            max_wav_bytes=MAX_VOICEVOX_PLAYBACK_WAV_BYTES,  # type: ignore[call-arg]
+        )
+
+
 def test_voicevox_playback_upsamples_near_cap_24khz_exactly() -> None:
-    frames = (MAX_WAV_BYTES - 44) // 4
+    frames = (MAX_VOICEVOX_PLAYBACK_WAV_BYTES - 44) // 4
     pairs, tail = divmod(frames, 2)
     pcm = b"\x01\x02\x03\x04" * pairs + b"\x01\x02" * tail
     payload = (
@@ -664,10 +728,15 @@ def test_voicevox_playback_upsamples_near_cap_24khz_exactly() -> None:
         + pcm
     )
 
-    result = canonicalize_voicevox_playback_wav(payload)
+    result = canonicalize_voicevox_playback_wav(
+        payload,
+        max_input_bytes=MAX_VOICEVOX_PLAYBACK_WAV_BYTES,
+    )
 
-    assert len(result) == MAX_WAV_BYTES
+    assert len(result) == MAX_VOICEVOX_PLAYBACK_WAV_BYTES
+    assert struct.unpack_from("<I", result, 4)[0] == len(result) - 8
     assert struct.unpack_from("<I", result, 24)[0] == 48_000
+    assert struct.unpack_from("<I", result, 40)[0] == len(result) - 44
     assert result[44:60] == b"\x01\x02\x01\x02\x03\x04\x03\x04" * 2
     assert result[-8:] == (b"\x03\x04\x03\x04\x01\x02\x01\x02" if tail else b"\x01\x02\x01\x02\x03\x04\x03\x04")
 
@@ -684,7 +753,10 @@ def test_voicevox_playback_upsamples_stereo_frames_without_channel_reordering() 
         + pcm
     )
 
-    result = canonicalize_voicevox_playback_wav(payload)
+    result = canonicalize_voicevox_playback_wav(
+        payload,
+        max_input_bytes=MAX_VOICEVOX_PLAYBACK_WAV_BYTES,
+    )
 
     assert struct.unpack_from("<I", result, 24)[0] == 48_000
     assert result[44:] == b"\x01\x02\x03\x04" * 2 + b"\x05\x06\x07\x08" * 2
@@ -773,7 +845,10 @@ def test_voicevox_24khz_canonicalizer_calls_bounded_upsample_once(
         tracked_upsample,
     )
 
-    result = canonicalize_voicevox_playback_wav(payload)
+    result = canonicalize_voicevox_playback_wav(
+        payload,
+        max_input_bytes=MAX_VOICEVOX_PLAYBACK_WAV_BYTES,
+    )
 
     assert calls == [(source_size, expected_block_align)]
     assert len(result) == 44 + source_size * 2

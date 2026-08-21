@@ -256,21 +256,23 @@ def canonicalize_voicevox_wav(data: object) -> bytes:
     return _canonicalize_voicevox_wav(
         data,
         enforce_artifact_duration=True,
-        max_wav_bytes=MAX_WAV_BYTES,
+        max_input_bytes=MAX_WAV_BYTES,
+        max_output_bytes=MAX_WAV_BYTES,
     )
 
 
 def canonicalize_voicevox_playback_wav(
     data: object,
     *,
-    max_wav_bytes: int = MAX_WAV_BYTES,
+    max_input_bytes: int,
 ) -> bytes:
     """VOICEVOXのexact PCM16 fmt/dataをbounded direct-playback WAVへ変換する。"""
 
     return _canonicalize_voicevox_wav(
         data,
         enforce_artifact_duration=False,
-        max_wav_bytes=max_wav_bytes,
+        max_input_bytes=max_input_bytes,
+        max_output_bytes=MAX_VOICEVOX_PLAYBACK_WAV_BYTES,
     )
 
 
@@ -290,16 +292,22 @@ def _canonicalize_voicevox_wav(
     data: object,
     *,
     enforce_artifact_duration: bool,
-    max_wav_bytes: int,
+    max_input_bytes: int,
+    max_output_bytes: int,
 ) -> bytes:
     """構造・format・sizeを共有し、artifact固有のdurationだけを分離する。"""
 
-    if type(max_wav_bytes) is not int or not MIN_VOICEVOX_WAV_BYTES <= max_wav_bytes <= MAX_VOICEVOX_PLAYBACK_WAV_BYTES:
+    if (
+        type(max_input_bytes) is not int
+        or not MIN_VOICEVOX_WAV_BYTES <= max_input_bytes <= MAX_VOICEVOX_PLAYBACK_WAV_BYTES
+        or type(max_output_bytes) is not int
+        or not MIN_VOICEVOX_WAV_BYTES <= max_output_bytes <= MAX_VOICEVOX_PLAYBACK_WAV_BYTES
+    ):
         raise RuntimeError("VOICEVOX WAV size limit is invalid")
     if (
         not isinstance(data, bytes)
         or len(data) < 44
-        or len(data) > max_wav_bytes
+        or len(data) > max_input_bytes
         or data[:4] != b"RIFF"
         or data[8:12] != b"WAVE"
         or struct.unpack_from("<I", data, 4)[0] != len(data) - 8
@@ -346,7 +354,7 @@ def _canonicalize_voicevox_wav(
         raise RuntimeError("VOICEVOX WAV duration is outside the fixed contract")
     if sample_rate == 24_000:
         expanded_pcm_size = len(pcm) * 2
-        if expanded_pcm_size > _UINT32_MAX or 44 + expanded_pcm_size > max_wav_bytes:
+        if expanded_pcm_size > _UINT32_MAX or 44 + expanded_pcm_size > max_output_bytes:
             raise RuntimeError("VOICEVOX WAV exceeds the fixed size limit")
         pcm = _upsample_24khz_pcm16(pcm, block_align=block_align)
         if len(pcm) != expanded_pcm_size:
@@ -355,7 +363,7 @@ def _canonicalize_voicevox_wav(
     byte_rate = sample_rate * block_align
     canonical_size = 44 + len(pcm)
     riff_size = canonical_size - 8
-    if canonical_size > max_wav_bytes or len(pcm) > _UINT32_MAX or riff_size > _UINT32_MAX:
+    if canonical_size > max_output_bytes or len(pcm) > _UINT32_MAX or riff_size > _UINT32_MAX:
         raise RuntimeError("VOICEVOX WAV exceeds the fixed size limit")
     return (
         b"RIFF"
