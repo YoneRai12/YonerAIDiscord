@@ -26,13 +26,19 @@ from yonerai_discord.provider_registry import (
 )
 from yonerai_discord.provider_registry.domain import utc_now
 from yonerai_discord.provider_registry.ports import ExecutionAuthorizationCheck
-from yonerai_discord.voice_contract import VOICEVOX_ALLOWED_SPEAKER_IDS, VOICEVOX_SPEAKER_ID
+from yonerai_discord.voice_contract import (
+    MIN_VOICEVOX_WAV_BYTES,
+    VOICEVOX_ALLOWED_SPEAKER_IDS,
+    VOICEVOX_SPEAKER_ID,
+)
 
 from .domain import speech_artifact_request_binding
 
 
 VOICEVOX_PROVIDER_MODEL = "voicevox-engine"
 VOICEVOX_MODEL_ALIASES = ("tts.fast", "tts.balanced", "tts.quality")
+MAX_VOICEVOX_PLAYBACK_WAV_BYTES = 50 * 1024 * 1024
+_UINT32_MAX = 2**32 - 1
 
 
 @dataclass(frozen=True, slots=True)
@@ -247,13 +253,25 @@ def _model_aliases(values: tuple[str, ...]) -> tuple[str, ...]:
 def canonicalize_voicevox_wav(data: object) -> bytes:
     """VOICEVOXのexact PCM16 fmt/dataを1–30秒のartifact WAVへ変換する。"""
 
-    return _canonicalize_voicevox_wav(data, enforce_artifact_duration=True)
+    return _canonicalize_voicevox_wav(
+        data,
+        enforce_artifact_duration=True,
+        max_wav_bytes=MAX_WAV_BYTES,
+    )
 
 
-def canonicalize_voicevox_playback_wav(data: object) -> bytes:
+def canonicalize_voicevox_playback_wav(
+    data: object,
+    *,
+    max_wav_bytes: int = MAX_WAV_BYTES,
+) -> bytes:
     """VOICEVOXのexact PCM16 fmt/dataをbounded direct-playback WAVへ変換する。"""
 
-    return _canonicalize_voicevox_wav(data, enforce_artifact_duration=False)
+    return _canonicalize_voicevox_wav(
+        data,
+        enforce_artifact_duration=False,
+        max_wav_bytes=max_wav_bytes,
+    )
 
 
 def _upsample_24khz_pcm16(pcm: bytes, *, block_align: int) -> bytes:
@@ -268,13 +286,20 @@ def _upsample_24khz_pcm16(pcm: bytes, *, block_align: int) -> bytes:
     return bytes(expanded)
 
 
-def _canonicalize_voicevox_wav(data: object, *, enforce_artifact_duration: bool) -> bytes:
+def _canonicalize_voicevox_wav(
+    data: object,
+    *,
+    enforce_artifact_duration: bool,
+    max_wav_bytes: int,
+) -> bytes:
     """構造・format・sizeを共有し、artifact固有のdurationだけを分離する。"""
 
+    if type(max_wav_bytes) is not int or not MIN_VOICEVOX_WAV_BYTES <= max_wav_bytes <= MAX_VOICEVOX_PLAYBACK_WAV_BYTES:
+        raise RuntimeError("VOICEVOX WAV size limit is invalid")
     if (
         not isinstance(data, bytes)
         or len(data) < 44
-        or len(data) > MAX_WAV_BYTES
+        or len(data) > max_wav_bytes
         or data[:4] != b"RIFF"
         or data[8:12] != b"WAVE"
         or struct.unpack_from("<I", data, 4)[0] != len(data) - 8
@@ -320,12 +345,17 @@ def _canonicalize_voicevox_wav(data: object, *, enforce_artifact_duration: bool)
     if enforce_artifact_duration and not 1.0 <= duration <= 30.0:
         raise RuntimeError("VOICEVOX WAV duration is outside the fixed contract")
     if sample_rate == 24_000:
-        if 44 + len(pcm) * 2 > MAX_WAV_BYTES:
+        expanded_pcm_size = len(pcm) * 2
+        if expanded_pcm_size > _UINT32_MAX or 44 + expanded_pcm_size > max_wav_bytes:
             raise RuntimeError("VOICEVOX WAV exceeds the fixed size limit")
         pcm = _upsample_24khz_pcm16(pcm, block_align=block_align)
+        if len(pcm) != expanded_pcm_size:
+            raise RuntimeError("VOICEVOX WAV conversion failed safely")
         sample_rate = 48_000
     byte_rate = sample_rate * block_align
-    if 44 + len(pcm) > MAX_WAV_BYTES:
+    canonical_size = 44 + len(pcm)
+    riff_size = canonical_size - 8
+    if canonical_size > max_wav_bytes or len(pcm) > _UINT32_MAX or riff_size > _UINT32_MAX:
         raise RuntimeError("VOICEVOX WAV exceeds the fixed size limit")
     return (
         b"RIFF"
@@ -339,6 +369,7 @@ def _canonicalize_voicevox_wav(data: object, *, enforce_artifact_duration: bool)
 
 
 __all__ = [
+    "MAX_VOICEVOX_PLAYBACK_WAV_BYTES",
     "VOICEVOX_PROVIDER_MODEL",
     "canonicalize_voicevox_playback_wav",
     "canonicalize_voicevox_wav",
