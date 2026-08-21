@@ -235,7 +235,7 @@
     {
       "classification": "generated_public_audit",
       "path": "PUBLIC_EXCLUSION_MATRIX.json",
-      "sha256": "3bbae5a04466e510503c247f9e5873c0e7443b20131195a74db7076b1b421835",
+      "sha256": "278ce95e29e48933acccadd133015c981708ca99b9a75e8c317dea814a0e70d6",
       "size": 194315,
       "source_blob_sha256": null,
       "source_path": null,
@@ -244,7 +244,7 @@
     {
       "classification": "generated_public_audit",
       "path": "PUBLIC_EXPORT_COVERAGE.md",
-      "sha256": "ea3afa33e1f07dcb028da00ac8b4fc5b1b8ca861ec801dd2d46b1f4053908431",
+      "sha256": "78a6f87de014e16ce62e8928a0bf2d56961ac586e054a0d04e864a4dba6adb58",
       "size": 1903,
       "source_blob_sha256": null,
       "source_path": null,
@@ -280,7 +280,7 @@
     {
       "classification": "public_generated",
       "path": "PUBLIC_SOURCE_PROVENANCE.json",
-      "sha256": "806c8c21cfd7d9faa7cf12cc4b6df467b16c42c68d9c951f3d899cf77ccdabfa",
+      "sha256": "78cee06aef6699f3659033057ca7ac5f4e6394908174aa80b1452e68ad03eebb",
       "size": 8659,
       "source_blob_sha256": "3b944ceaa74a0ec08953eb9e5971c8e1224b785fa552cc11636e43c673941fb8",
       "source_path": "public_release/templates/PUBLIC_SOURCE_PROVENANCE.json",
@@ -1153,9 +1153,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/capability_forge/sandbox_service.py",
-      "sha256": "223495bc3979a0c384b93198031b6e20bcfd23478b4b77f0fa21594a87c1a9db",
-      "size": 16521,
-      "source_blob_sha256": "223495bc3979a0c384b93198031b6e20bcfd23478b4b77f0fa21594a87c1a9db",
+      "sha256": "ee188acafe57d343f718f9e7c2e15c9e04e492bdcc7864174caf8bd90169aa1f",
+      "size": 16527,
+      "source_blob_sha256": "ee188acafe57d343f718f9e7c2e15c9e04e492bdcc7864174caf8bd90169aa1f",
       "source_path": "src/yonerai_discord/capability_forge/sandbox_service.py",
       "transformation": "verbatim"
     },
@@ -6578,6 +6578,6 @@
   "public_classified_source_count": 728,
   "public_file_count": 727,
   "schema_version": 1,
-  "source_commit": "2527907e7fdbdfa23e78edcec9b4870053cd720f",
+  "source_commit": "fe3a65259cb8412c2d522583d9109400355b09ea",
   "tracked_file_count": 1067
 }

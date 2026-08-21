@@ -367,9 +367,9 @@ async def _terminate_shielded(
                 await asyncio.shield(cleanup)
             except asyncio.CancelledError:
                 continue
-        if not cleanup.cancelled():
-            cleanup.exception()
-        return None, True
+        if cleanup.cancelled():
+            return None, True
+        return cleanup.result(), True
 
 
 def _same_binding(request: SandboxRequest, value: object) -> bool:
