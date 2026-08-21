@@ -7,6 +7,7 @@ import pytest
 from nacl.signing import SigningKey
 
 from yonerai_discord.capability_forge.execution_sandbox_signing import (
+    MAX_CLOCK_SKEW_SECONDS,
     MAX_ENVELOPE_BYTES,
     JobPayload,
     JobVerificationContext,
@@ -35,8 +36,26 @@ class Ledger:
         self.accepted = accepted
         self.calls: list[dict[str, object]] = []
 
-    def accept(self, *, key_id: str, job_id: str, nonce: str, expires_at: int) -> bool:
-        self.calls.append({"key_id": key_id, "job_id": job_id, "nonce": nonce, "expires_at": expires_at})
+    def accept(
+        self,
+        *,
+        key_id: str,
+        job_id: str,
+        nonce: str,
+        expires_at: int,
+        now: int,
+        max_clock_skew_seconds: int,
+    ) -> bool:
+        self.calls.append(
+            {
+                "key_id": key_id,
+                "job_id": job_id,
+                "nonce": nonce,
+                "expires_at": expires_at,
+                "now": now,
+                "max_clock_skew_seconds": max_clock_skew_seconds,
+            }
+        )
         return self.accepted
 
 
@@ -178,6 +197,8 @@ def test_job_round_trip_is_canonical_signed_and_replay_is_delegated() -> None:
             "job_id": job.job_id,
             "nonce": job.nonce,
             "expires_at": job.expires_at,
+            "now": NOW,
+            "max_clock_skew_seconds": MAX_CLOCK_SKEW_SECONDS,
         }
     ]
     visible = repr(signed)
@@ -280,6 +301,26 @@ def test_job_verification_rejects_forgery_wrong_key_expiry_skew_and_replay() -> 
             now=NOW,
             replay_ledger=Ledger(accepted=False),
         )
+
+
+def test_job_expiry_skew_boundary_is_delegated_exactly_to_replay_ledger() -> None:
+    key = _key()
+    job = _job(expires_at=NOW)
+    ledger = Ledger()
+
+    assert (
+        verify_job_envelope(
+            sign_job_envelope(job, key),
+            key.verify_key,
+            expected=_expected(job),
+            now=NOW + 7,
+            replay_ledger=ledger,
+            max_clock_skew_seconds=7,
+        )
+        == job
+    )
+    assert ledger.calls[0]["now"] == NOW + 7
+    assert ledger.calls[0]["max_clock_skew_seconds"] == 7
 
 
 def test_only_injected_pynacl_key_objects_are_accepted() -> None:

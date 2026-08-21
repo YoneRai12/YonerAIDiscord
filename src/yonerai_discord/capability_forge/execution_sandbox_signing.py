@@ -252,7 +252,16 @@ class SignedReceiptEnvelope:
 
 
 class ReplayLedger(Protocol):
-    def accept(self, *, key_id: str, job_id: str, nonce: str, expires_at: int) -> bool: ...
+    def accept(
+        self,
+        *,
+        key_id: str,
+        job_id: str,
+        nonce: str,
+        expires_at: int,
+        now: int,
+        max_clock_skew_seconds: int,
+    ) -> bool: ...
 
 
 def sign_job_envelope(payload: JobPayload, signing_key: SigningKey) -> SignedJobEnvelope:
@@ -324,7 +333,12 @@ def verify_job_envelope(
         raise SigningProtocolError("job_expired")
     try:
         accepted = replay_ledger.accept(
-            key_id=job.broker_key_id, job_id=job.job_id, nonce=job.nonce, expires_at=job.expires_at
+            key_id=job.broker_key_id,
+            job_id=job.job_id,
+            nonce=job.nonce,
+            expires_at=job.expires_at,
+            now=now,
+            max_clock_skew_seconds=max_clock_skew_seconds,
         )
     except Exception:
         raise SigningProtocolError("replay_ledger_failed") from None
