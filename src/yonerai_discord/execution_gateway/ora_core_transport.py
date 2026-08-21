@@ -222,12 +222,33 @@ def _message_receipt(response: CoreHttpResponse) -> CoreHttpResponse:
 
 
 def _result_receipt(response: CoreHttpResponse) -> CoreHttpResponse:
-    if response.status_code == 204 and response.body == b"" and response.content_type in {"", "application/json"}:
-        return response
+    if (
+        isinstance(response, CoreHttpResponse)
+        and not isinstance(response.status_code, bool)
+        and isinstance(response.status_code, int)
+        and response.status_code == 204
+    ):
+        if (
+            isinstance(response.body, bytes)
+            and response.body == b""
+            and isinstance(response.content_type, str)
+            and (response.content_type == "" or _json_content_type(response.content_type))
+        ):
+            return CoreHttpResponse(
+                204,
+                "" if response.content_type == "" else "application/json",
+                b"",
+            )
+        raise CoreHttpTransportError("ORA Core result response is invalid")
     payload = _response_object(response, label="result response")
-    if payload == {"accepted": True}:
+    if set(payload) == {"accepted"} and payload["accepted"] is True:
         return response
-    if payload != {"status": "ok", "accepted": True, "continuation_only": True}:
+    if not (
+        set(payload) == {"status", "accepted", "continuation_only"}
+        and payload["status"] == "ok"
+        and payload["accepted"] is True
+        and payload["continuation_only"] is True
+    ):
         raise CoreHttpTransportError("ORA Core result response is invalid")
     return CoreHttpResponse(response.status_code, "application/json", b'{"accepted":true}')
 

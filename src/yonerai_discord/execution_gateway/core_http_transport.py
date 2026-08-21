@@ -535,14 +535,21 @@ def _validate_v01_result_response(response: object) -> None:
         body = response.body
     except Exception:
         raise CoreHttpTransportError("Core v0.1 result response is invalid") from None
-    if status_code == 204 and content_type in {"", "application/json"} and body == b"":
-        return
+    if _successful_status(status_code) and status_code == 204:
+        if (
+            isinstance(content_type, str)
+            and (content_type == "" or _content_type_is(content_type, "application/json"))
+            and isinstance(body, bytes)
+            and body == b""
+        ):
+            return
+        raise CoreHttpTransportError("Core v0.1 result response is invalid")
     if not _successful_status(status_code) or not _content_type_is(content_type, "application/json"):
         raise CoreHttpTransportError("Core v0.1 result response is invalid")
     if not isinstance(body, bytes) or len(body) > MAX_CORE_RUN_RESPONSE_BYTES:
         raise CoreHttpTransportError("Core v0.1 result response is invalid")
     payload = _strict_json_object(body)
-    if payload != {"accepted": True}:
+    if set(payload) != {"accepted"} or payload["accepted"] is not True:
         raise CoreHttpTransportError("Core v0.1 result response is invalid")
 
 
