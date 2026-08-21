@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+import ast
 import hashlib
+import io
+import ipaddress
 import json
 import re
+import tokenize
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from enum import StrEnum
@@ -12,7 +16,7 @@ from types import MappingProxyType
 from typing import Protocol
 
 
-SANDBOX_POLICY_REVISION = "1"
+SANDBOX_POLICY_REVISION = "2"
 MAX_SOURCE_BYTES = 32_768
 MAX_JSON_BYTES = 16_384
 MAX_OUTPUT_BYTES = 16_384
@@ -22,6 +26,9 @@ MAX_CPU_TIME_MS = 30_000
 MAX_MEMORY_MIB = 512
 MAX_PROCESSES = 0
 MAX_FILES = 8
+_MAX_STATIC_TEXT_FRAGMENTS = 512
+_MAX_STATIC_TEXT_NODES = 2_048
+_MAX_STATIC_TEXT_DEPTH = 64
 
 _IDENTIFIER = re.compile(r"[a-z][a-z0-9_-]{0,63}\Z")
 _NONCE = re.compile(r"[a-f0-9]{32}\Z")
@@ -41,6 +48,14 @@ _HOST_PATH = re.compile(
     r"|\b(?:glob|import|open|exec|eval|compile|__import__|os|pathlib|shutil|socket|requests|urllib|subprocess|powershell|cmd\.exe)\b)"
 )
 _PRIVATE_KEY_MARKER = re.compile(r"(?i)-----BEGIN(?: [A-Z0-9]+)* PRIVATE KEY-----")
+_NETWORK_LOCATOR = re.compile(
+    r"(?i)(?:\b(?:https?|ftp|ws|wss)://"
+    r"|\b(?:localhost|ip6-localhost|ip6-loopback)\b)"
+)
+_IP_LITERAL = re.compile(
+    r"(?<![0-9A-Fa-f:])(?:[0-9A-Fa-f]{0,4}:){2,}[0-9A-Fa-f]{0,4}(?![0-9A-Fa-f:])"
+    r"|(?<!\d)(?:\d{1,3}\.){3}\d{1,3}(?!\d)"
+)
 _HOST_CONTROL_KEY_FRAGMENTS = frozenset(
     {
         "args",
@@ -209,7 +224,7 @@ class SandboxCandidate:
     def __post_init__(self) -> None:
         if self.entrypoint is not SandboxEntrypoint.PYTHON_PURE:
             raise SandboxContractError("entrypoint is not allowed")
-        _safe_text(self.source, MAX_SOURCE_BYTES)
+        _safe_text(self.source, MAX_SOURCE_BYTES, python_source=True)
         frozen = _freeze_json(self.input_data, MAX_JSON_BYTES)
         object.__setattr__(self, "input_data", frozen)
 
@@ -417,7 +432,7 @@ def _optional_id(value: object) -> None:
         _positive_id(value)
 
 
-def _safe_text(value: object, maximum_bytes: int) -> None:
+def _safe_text(value: object, maximum_bytes: int, *, python_source: bool = False) -> None:
     if (
         not isinstance(value, str)
         or not value
@@ -429,13 +444,150 @@ def _safe_text(value: object, maximum_bytes: int) -> None:
         encoded = value.encode("utf-8", "strict")
     except UnicodeEncodeError as exc:
         raise SandboxContractError("text is not UTF-8") from exc
-    if (
-        len(encoded) > maximum_bytes
-        or _SECRET.search(value)
-        or _HOST_PATH.search(value)
-        or _PRIVATE_KEY_MARKER.search(value)
+    if len(encoded) > maximum_bytes:
+        raise SandboxContractError("text is outside sandbox contract")
+    if _contains_forbidden_text(value, include_ip=not python_source) or (
+        python_source and _contains_python_static_forbidden_text(value)
     ):
         raise SandboxContractError("text is outside sandbox contract")
+
+
+def _contains_ip_literal(value: str) -> bool:
+    for candidate in _IP_LITERAL.finditer(value):
+        try:
+            ipaddress.ip_address(candidate.group(0))
+        except ValueError:
+            continue
+        return True
+    return False
+
+
+def _contains_forbidden_text(value: str, *, include_ip: bool = True) -> bool:
+    return bool(
+        _SECRET.search(value)
+        or _HOST_PATH.search(value)
+        or _PRIVATE_KEY_MARKER.search(value)
+        or _NETWORK_LOCATOR.search(value)
+        or (include_ip and _contains_ip_literal(value))
+    )
+
+
+def _contains_python_static_forbidden_text(value: str) -> bool:
+    """Apply bounded literal-only hygiene without interpreting runtime reconstruction."""
+
+    try:
+        tree = ast.parse(value, mode="exec")
+        _validate_python_ast_bounds(tree, depth=0, nodes=[0])
+        fragments: list[str] = []
+        _collect_static_text_fragments(tree, fragments, depth=0, nodes=[0], fragment_count=[0])
+        if any(_contains_forbidden_text(fragment) for fragment in fragments):
+            return True
+        tokens = tokenize.generate_tokens(io.StringIO(value).readline)
+        return any(token.type == tokenize.COMMENT and _contains_forbidden_text(token.string) for token in tokens)
+    except (IndentationError, RecursionError, SyntaxError, tokenize.TokenError, ValueError):
+        return True
+
+
+def _validate_python_ast_bounds(node: ast.AST, *, depth: int, nodes: list[int]) -> None:
+    if depth > _MAX_STATIC_TEXT_DEPTH or nodes[0] >= _MAX_STATIC_TEXT_NODES:
+        raise ValueError("Python source is too complex")
+    nodes[0] += 1
+    for child in ast.iter_child_nodes(node):
+        _validate_python_ast_bounds(child, depth=depth + 1, nodes=nodes)
+
+
+def _collect_static_text_fragments(
+    node: ast.AST,
+    fragments: list[str],
+    *,
+    depth: int,
+    nodes: list[int],
+    fragment_count: list[int],
+) -> None:
+    if depth > _MAX_STATIC_TEXT_DEPTH or nodes[0] >= _MAX_STATIC_TEXT_NODES:
+        raise ValueError("Python source is too complex")
+    nodes[0] += 1
+    if isinstance(node, ast.expr) and not isinstance(node, ast.Constant):
+        folded = _literal_text_value(node)
+        if folded is not None:
+            fragment_count[0] += folded[2]
+            fragments.append(folded[1])
+            if fragment_count[0] > _MAX_STATIC_TEXT_FRAGMENTS or sum(map(len, fragments)) > MAX_SOURCE_BYTES:
+                raise ValueError("Python static text is too large")
+            return
+    if isinstance(node, ast.Constant) and isinstance(node.value, (bytes, str)):
+        literal = node.value.decode("ascii", "ignore") if isinstance(node.value, bytes) else node.value
+        fragment_count[0] += 1
+        fragments.append(literal)
+        if fragment_count[0] > _MAX_STATIC_TEXT_FRAGMENTS or sum(len(item) for item in fragments) > MAX_SOURCE_BYTES:
+            raise ValueError("Python static text is too large")
+        return
+    for child in ast.iter_child_nodes(node):
+        _collect_static_text_fragments(
+            child,
+            fragments,
+            depth=depth + 1,
+            nodes=nodes,
+            fragment_count=fragment_count,
+        )
+
+
+_LiteralText = tuple[str, str, int]
+
+
+def _literal_text_value(
+    node: ast.expr,
+    *,
+    depth: int = 0,
+    nodes: list[int] | None = None,
+) -> _LiteralText | None:
+    if nodes is None:
+        nodes = [0]
+    if depth > _MAX_STATIC_TEXT_DEPTH or nodes[0] >= _MAX_STATIC_TEXT_NODES:
+        raise ValueError("Python static expression is too complex")
+    nodes[0] += 1
+    if isinstance(node, ast.Constant) and isinstance(node.value, (bytes, str)):
+        if isinstance(node.value, bytes):
+            literal = node.value.decode("ascii", "ignore")
+            kind = "bytes"
+        else:
+            literal = node.value
+            kind = "str"
+        if _contains_forbidden_text(literal):
+            raise ValueError("Python literal is outside sandbox contract")
+        return (kind, literal, 1)
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        left = _literal_text_value(node.left, depth=depth + 1, nodes=nodes)
+        right = _literal_text_value(node.right, depth=depth + 1, nodes=nodes)
+        if left is None or right is None or left[0] != right[0]:
+            return None
+        return _combine_literal_text(left, right)
+    if isinstance(node, ast.JoinedStr):
+        combined: _LiteralText = ("str", "", 0)
+        for item in node.values:
+            if isinstance(item, ast.Constant) and isinstance(item.value, str):
+                part: _LiteralText | None = ("str", item.value, 1)
+            elif (
+                isinstance(item, ast.FormattedValue) and item.conversion in {-1, ord("s")} and item.format_spec is None
+            ):
+                part = _literal_text_value(item.value, depth=depth + 1, nodes=nodes)
+                if part is not None and part[0] == "bytes":
+                    return None
+            else:
+                return None
+            if part is None:
+                return None
+            combined = _combine_literal_text(combined, part)
+        return combined
+    return None
+
+
+def _combine_literal_text(left: _LiteralText, right: _LiteralText) -> _LiteralText:
+    fragments = left[2] + right[2]
+    text = left[1] + right[1]
+    if fragments > _MAX_STATIC_TEXT_FRAGMENTS or len(text.encode("utf-8", "strict")) > MAX_SOURCE_BYTES:
+        raise ValueError("Python static text is too large")
+    return (left[0], text, fragments)
 
 
 def _freeze_json(value: object, maximum_bytes: int) -> object:

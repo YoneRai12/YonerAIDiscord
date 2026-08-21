@@ -31,6 +31,7 @@ from yonerai_discord.modules.voice.read_aloud import (
     ReadAloudRoute,
 )
 from yonerai_discord.modules.voice.service import SpeechUnavailableError
+from yonerai_discord.voice_contract import VOICEVOX_SPEAKER_ID
 
 from .authorization import MusicFreshCheck, build_music_commit_check
 from .links import youtube_search_url
@@ -40,6 +41,8 @@ from .models import (
     MusicError,
     MusicSeekUnsupportedError,
     MusicSessionError,
+    MusicSpeechReceipt,
+    MusicSpeechStatus,
     MusicUnavailableError,
     PlaylistError,
 )
@@ -572,7 +575,15 @@ class MusicGroup(app_commands.Group):
 
     @app_commands.command(name="speak", description="曲を止めずVOICEVOX TTSを重ね、音楽を自動duckingします")
     @app_commands.describe(text="500文字以内", speaker_id="VOICEVOX話者ID")
-    async def speak(self, interaction: discord.Interaction, text: str, speaker_id: int = 3) -> None:
+    @app_commands.choices(
+        speaker_id=[app_commands.Choice(name="3", value=VOICEVOX_SPEAKER_ID)],
+    )
+    async def speak(
+        self,
+        interaction: discord.Interaction,
+        text: str,
+        speaker_id: int = VOICEVOX_SPEAKER_ID,
+    ) -> None:
         await _defer(interaction)
         try:
             if not self.service.available:
@@ -586,28 +597,43 @@ class MusicGroup(app_commands.Group):
             commit_check = await _capability_commit_check(self.bot, interaction, "music speak")
             if commit_check is None:
                 raise MusicAuthorizationError("capability policy changed")
+            source_channel_id = int(interaction.channel_id)
+            actor = _actor(interaction)
             speech = await speech_queue.synthesize(
                 SpeechRequest(
                     text=text,
                     guild_id=guild_id,
-                    channel_id=int(interaction.channel_id),
+                    channel_id=source_channel_id,
                     speaker_id=speaker_id,
                 ),
                 current_policy=commit_check,
             )
-            position = await self.service.add_speech_wav(
+            receipt = await self.service.add_speech_wav(
                 guild_id,
-                _actor(interaction),
+                actor,
                 speech.wav,
                 commit_check=commit_check,
+                receipt_source_channel_id=source_channel_id,
             )
+            if (
+                not isinstance(receipt, MusicSpeechReceipt)
+                or receipt.guild_id != guild_id
+                or receipt.source_channel_id != source_channel_id
+                or receipt.requester_id != actor.user_id
+                or receipt.voice_channel_id != actor.voice_channel_id
+                or receipt.status is not MusicSpeechStatus.QUEUED
+            ):
+                raise MusicSessionError("speech receipt is invalid")
         except (MusicError, SpeechUnavailableError, ValueError) as exc:
             await _error(interaction, exc)
             return
         except Exception:
             await _respond(interaction, "TTSを追加できませんでした。")
             return
-        await _respond(interaction, f"TTS queue {position}番へ追加しました。曲は停止せず自動duckingします。")
+        await _respond(
+            interaction,
+            f"TTS status: queued / queue {receipt.queue_position}。曲は停止せず自動duckingします。",
+        )
 
     @app_commands.command(name="search-youtube", description="YouTube公式検索ページURLだけを返します")
     @app_commands.describe(query="検索語。音声抽出には使いません")

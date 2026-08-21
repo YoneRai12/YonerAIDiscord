@@ -26,12 +26,19 @@ from yonerai_discord.provider_registry import (
 )
 from yonerai_discord.provider_registry.domain import utc_now
 from yonerai_discord.provider_registry.ports import ExecutionAuthorizationCheck
+from yonerai_discord.voice_contract import (
+    MIN_VOICEVOX_WAV_BYTES,
+    VOICEVOX_ALLOWED_SPEAKER_IDS,
+    VOICEVOX_SPEAKER_ID,
+)
 
 from .domain import speech_artifact_request_binding
 
 
 VOICEVOX_PROVIDER_MODEL = "voicevox-engine"
 VOICEVOX_MODEL_ALIASES = ("tts.fast", "tts.balanced", "tts.quality")
+MAX_VOICEVOX_PLAYBACK_WAV_BYTES = 50 * 1024 * 1024
+_UINT32_MAX = 2**32 - 1
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,8 +52,9 @@ class VoicevoxSynthesisRequest:
     text: str = field(repr=False)
     voice_alias: str = "standard"
     language_code: str = "ja-jp"
-    speaker_id: int = 3
+    speaker_id: int = VOICEVOX_SPEAKER_ID
     speed_scale: float = 1.0
+    volume_scale: float = 1.0
 
     def __post_init__(self) -> None:
         if (
@@ -57,10 +65,11 @@ class VoicevoxSynthesisRequest:
             or any(character not in "0123456789abcdef" for character in self.request_binding)
             or self.voice_alias != "standard"
             or self.language_code not in {"ja", "ja-jp"}
-            or isinstance(self.speaker_id, bool)
-            or not isinstance(self.speaker_id, int)
-            or self.speaker_id < 0
+            or type(self.speaker_id) is not int
+            or self.speaker_id not in VOICEVOX_ALLOWED_SPEAKER_IDS
             or self.speed_scale != 1.0
+            or type(self.volume_scale) is not float
+            or self.volume_scale != 1.0
         ):
             raise ValueError("VOICEVOX synthesis request is outside the fixed contract")
 
@@ -84,7 +93,7 @@ class VoicevoxSpeechSynthesisProviderAdapter:
         client: VoicevoxSynthesisPort,
         artifact_store: MusicArtifactStore,
         *,
-        speaker_id: int = 3,
+        speaker_id: int = VOICEVOX_SPEAKER_ID,
         readiness_current: Callable[[], bool] | None = None,
         probed_model_aliases: tuple[str, ...] = VOICEVOX_MODEL_ALIASES,
     ) -> None:
@@ -92,8 +101,8 @@ class VoicevoxSpeechSynthesisProviderAdapter:
             raise TypeError("client must provide synthesize")
         if not callable(getattr(artifact_store, "put_wav", None)):
             raise TypeError("artifact_store must provide put_wav")
-        if isinstance(speaker_id, bool) or not isinstance(speaker_id, int) or speaker_id < 0:
-            raise ValueError("speaker_id must be a non-negative integer")
+        if type(speaker_id) is not int or speaker_id not in VOICEVOX_ALLOWED_SPEAKER_IDS:
+            raise ValueError("speaker_not_allowed")
         self._client = client
         self._store = artifact_store
         self._speaker_id = speaker_id
@@ -185,7 +194,7 @@ class VoicevoxSpeechSynthesisProviderAdapter:
             raise RuntimeError("VOICEVOX synthesis failed safely") from None
 
         try:
-            wav = _canonical_pcm_wav(getattr(synthesized, "wav", None))
+            wav = canonicalize_voicevox_wav(getattr(synthesized, "wav", None))
             validated = validate_wav(wav)
         except Exception:
             raise RuntimeError("VOICEVOX returned an invalid WAV") from None
@@ -241,13 +250,64 @@ def _model_aliases(values: tuple[str, ...]) -> tuple[str, ...]:
     return aliases
 
 
-def _canonical_pcm_wav(data: object) -> bytes:
-    """VOICEVOXのexact PCM16 fmt/dataをStage 1 canonical WAVへ変換する。"""
+def canonicalize_voicevox_wav(data: object) -> bytes:
+    """VOICEVOXのexact PCM16 fmt/dataを1–30秒のartifact WAVへ変換する。"""
 
+    return _canonicalize_voicevox_wav(
+        data,
+        enforce_artifact_duration=True,
+        max_input_bytes=MAX_WAV_BYTES,
+        max_output_bytes=MAX_WAV_BYTES,
+    )
+
+
+def canonicalize_voicevox_playback_wav(
+    data: object,
+    *,
+    max_input_bytes: int,
+) -> bytes:
+    """VOICEVOXのexact PCM16 fmt/dataをbounded direct-playback WAVへ変換する。"""
+
+    return _canonicalize_voicevox_wav(
+        data,
+        enforce_artifact_duration=False,
+        max_input_bytes=max_input_bytes,
+        max_output_bytes=MAX_VOICEVOX_PLAYBACK_WAV_BYTES,
+    )
+
+
+def _upsample_24khz_pcm16(pcm: bytes, *, block_align: int) -> bytes:
+    """1個の上限付き出力へ、frame順を保ってPCM列を複製する。"""
+
+    expanded = bytearray(len(pcm) * 2)
+    output_stride = block_align * 2
+    for byte_offset in range(block_align):
+        column = pcm[byte_offset::block_align]
+        expanded[byte_offset::output_stride] = column
+        expanded[byte_offset + block_align :: output_stride] = column
+    return bytes(expanded)
+
+
+def _canonicalize_voicevox_wav(
+    data: object,
+    *,
+    enforce_artifact_duration: bool,
+    max_input_bytes: int,
+    max_output_bytes: int,
+) -> bytes:
+    """構造・format・sizeを共有し、artifact固有のdurationだけを分離する。"""
+
+    if (
+        type(max_input_bytes) is not int
+        or not MIN_VOICEVOX_WAV_BYTES <= max_input_bytes <= MAX_VOICEVOX_PLAYBACK_WAV_BYTES
+        or type(max_output_bytes) is not int
+        or not MIN_VOICEVOX_WAV_BYTES <= max_output_bytes <= MAX_VOICEVOX_PLAYBACK_WAV_BYTES
+    ):
+        raise RuntimeError("VOICEVOX WAV size limit is invalid")
     if (
         not isinstance(data, bytes)
         or len(data) < 44
-        or len(data) > MAX_WAV_BYTES
+        or len(data) > max_input_bytes
         or data[:4] != b"RIFF"
         or data[8:12] != b"WAVE"
         or struct.unpack_from("<I", data, 4)[0] != len(data) - 8
@@ -290,15 +350,20 @@ def _canonical_pcm_wav(data: object) -> bytes:
         raise RuntimeError("VOICEVOX WAV format is unsupported")
     frames = len(pcm) // block_align
     duration = frames / sample_rate
-    if not 1.0 <= duration <= 30.0:
+    if enforce_artifact_duration and not 1.0 <= duration <= 30.0:
         raise RuntimeError("VOICEVOX WAV duration is outside the fixed contract")
     if sample_rate == 24_000:
-        pcm = b"".join(
-            frame for index in range(0, len(pcm), block_align) for frame in (pcm[index : index + block_align],) * 2
-        )
+        expanded_pcm_size = len(pcm) * 2
+        if expanded_pcm_size > _UINT32_MAX or 44 + expanded_pcm_size > max_output_bytes:
+            raise RuntimeError("VOICEVOX WAV exceeds the fixed size limit")
+        pcm = _upsample_24khz_pcm16(pcm, block_align=block_align)
+        if len(pcm) != expanded_pcm_size:
+            raise RuntimeError("VOICEVOX WAV conversion failed safely")
         sample_rate = 48_000
     byte_rate = sample_rate * block_align
-    if 44 + len(pcm) > MAX_WAV_BYTES:
+    canonical_size = 44 + len(pcm)
+    riff_size = canonical_size - 8
+    if canonical_size > max_output_bytes or len(pcm) > _UINT32_MAX or riff_size > _UINT32_MAX:
         raise RuntimeError("VOICEVOX WAV exceeds the fixed size limit")
     return (
         b"RIFF"
@@ -312,7 +377,10 @@ def _canonical_pcm_wav(data: object) -> bytes:
 
 
 __all__ = [
+    "MAX_VOICEVOX_PLAYBACK_WAV_BYTES",
     "VOICEVOX_PROVIDER_MODEL",
+    "canonicalize_voicevox_playback_wav",
+    "canonicalize_voicevox_wav",
     "VoicevoxSpeechSynthesisProviderAdapter",
     "VoicevoxSynthesisPort",
     "VoicevoxSynthesisRequest",

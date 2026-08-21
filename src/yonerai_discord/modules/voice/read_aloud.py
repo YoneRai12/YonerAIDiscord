@@ -15,12 +15,13 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Iterator
 
+from yonerai_discord.voice_contract import VOICEVOX_SPEAKER_ID
+
 from .models import SpeechRequest, SynthesizedSpeech, normalize_speech_text
 from .presets import ResolvedVoicePreset
 
 
 _SCHEMA_VERSION = 2
-_FIXED_SPEAKER_ID = 3
 _MAX_DISCORD_ID = 9_223_372_036_854_775_807
 _MAX_POLICY_ITEMS = 64
 _MAX_POLICY_TEXT_LENGTH = 64
@@ -100,7 +101,7 @@ class ReadAloudRoute:
     source_channel_id: int
     destination_voice_channel_id: int
     enabled: bool
-    speaker_id: int = _FIXED_SPEAKER_ID
+    speaker_id: int = VOICEVOX_SPEAKER_ID
     revision: int = 1
 
     def __post_init__(self) -> None:
@@ -109,7 +110,7 @@ class ReadAloudRoute:
         _discord_id(self.destination_voice_channel_id, "destination_voice_channel_id")
         if not isinstance(self.enabled, bool):
             raise TypeError("enabled must be bool")
-        if self.speaker_id != _FIXED_SPEAKER_ID:
+        if self.speaker_id != VOICEVOX_SPEAKER_ID:
             raise ValueError("speaker_id is fixed")
         if isinstance(self.revision, bool) or self.revision < 1:
             raise ValueError("revision must be positive")
@@ -1085,7 +1086,7 @@ class ReadAloudBurstCoordinator:
             text=text,
             guild_id=route.guild_id,
             channel_id=route.source_channel_id,
-            speaker_id=_FIXED_SPEAKER_ID,
+            speaker_id=VOICEVOX_SPEAKER_ID,
             speed_scale=batch.presets[0].values.speed_scale,
             volume_scale=batch.presets[0].values.volume_scale,
         )

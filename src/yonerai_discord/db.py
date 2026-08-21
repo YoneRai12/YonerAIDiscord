@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import math
+import os
 import sqlite3
 import threading
 from collections.abc import Iterable, Mapping
@@ -12,6 +14,7 @@ from typing import Any, Literal
 
 MAX_SQLITE_ID = 9_223_372_036_854_775_807
 GLOBAL_GUILD_ID = 0
+_AGENT_AUDIT_STORE_BINDING_VERSION = b"yonerai.agent-audit-store.v1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -54,6 +57,21 @@ class AuditRecord:
     actor_id: int | None
     details: Mapping[str, Any]
     created_at: str
+
+
+@dataclass(frozen=True, slots=True, repr=False)
+class AgentAuditProjectionRecord:
+    """Scope-filtered audit columns that cannot carry details metadata."""
+
+    id: int
+    event: str
+    plugin: str | None
+    guild_id: int
+    actor_id: int
+    created_at: str
+
+    def __repr__(self) -> str:
+        return "AgentAuditProjectionRecord()"
 
 
 @dataclass(frozen=True, slots=True)
@@ -346,25 +364,51 @@ class Database:
     """
 
     def __init__(self, path: Path) -> None:
-        self.path = path
+        canonical_path = Path(path).expanduser().resolve(strict=False)
+        self.path = canonical_path
         self._connection: sqlite3.Connection | None = None
+        self._connection_generation = 0
+        self._agent_audit_store_binding_digest = _agent_audit_store_binding_digest(canonical_path)
         self._lock = threading.RLock()
 
     @property
     def is_open(self) -> bool:
         return self._connection is not None
 
+    @property
+    def connection_generation(self) -> int:
+        """Return the successful closed-to-open transition generation."""
+
+        with self._lock:
+            return self._connection_generation
+
+    @property
+    def agent_audit_store_binding_digest(self) -> str:
+        """Return the content-free durable identity for agent-audit cursors."""
+
+        return self._agent_audit_store_binding_digest
+
     def open(self) -> None:
         with self._lock:
             if self._connection is not None:
                 return
             self.path.parent.mkdir(parents=True, exist_ok=True)
-            connection = sqlite3.connect(self.path, timeout=5, check_same_thread=False)
-            connection.row_factory = sqlite3.Row
-            connection.execute("PRAGMA foreign_keys = ON")
-            connection.execute("PRAGMA busy_timeout = 5000")
-            connection.execute("PRAGMA journal_mode = WAL")
+            connection: sqlite3.Connection | None = None
+            try:
+                connection = sqlite3.connect(self.path, timeout=5, check_same_thread=False)
+                connection.row_factory = sqlite3.Row
+                connection.execute("PRAGMA foreign_keys = ON")
+                connection.execute("PRAGMA busy_timeout = 5000")
+                connection.execute("PRAGMA journal_mode = WAL")
+            except BaseException:
+                if connection is not None:
+                    try:
+                        connection.close()
+                    except Exception:
+                        pass
+                raise
             self._connection = connection
+            self._connection_generation += 1
 
     def migrate(self, migrations: Iterable[Migration] = MIGRATIONS) -> int:
         with self._lock:
@@ -840,6 +884,46 @@ class Database:
             for row in rows
         )
 
+    def list_agent_audit_projection(
+        self,
+        *,
+        guild_id: int,
+        actor_id: int,
+        limit: int = 100,
+        after_id: int = 0,
+    ) -> tuple[AgentAuditProjectionRecord, ...]:
+        """Return only redacted rows for one exact guild/actor scope."""
+
+        normalized_guild = _normalize_guild_id(guild_id)
+        if normalized_guild == GLOBAL_GUILD_ID:
+            raise ValueError("agent audit projection requires a Discord guild")
+        normalized_actor = _normalize_actor_id(actor_id, allow_system=False)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+            raise ValueError("limit must be between 1 and 1000")
+        if isinstance(after_id, bool) or not isinstance(after_id, int) or not 0 <= after_id <= MAX_SQLITE_ID:
+            raise ValueError("after_id must be a non-negative 64-bit integer")
+        with self._lock:
+            rows = (
+                self._require_connection()
+                .execute(
+                    "SELECT id, event, plugin, guild_id, actor_id, created_at "
+                    "FROM audit_log WHERE guild_id = ? AND actor_id = ? AND id > ? ORDER BY id LIMIT ?",
+                    (normalized_guild, normalized_actor, after_id, limit),
+                )
+                .fetchall()
+            )
+        return tuple(
+            AgentAuditProjectionRecord(
+                id=int(row["id"]),
+                event=str(row["event"]),
+                plugin=row["plugin"],
+                guild_id=int(row["guild_id"]),
+                actor_id=int(row["actor_id"]),
+                created_at=str(row["created_at"]),
+            )
+            for row in rows
+        )
+
     def list_recent_audit(self, *, limit: int = 100) -> tuple[AuditRecord, ...]:
         """管理画面向けに、監査イベントを新しい順で取得する。"""
 
@@ -1174,6 +1258,12 @@ def _normalize_subject_id(value: str, label: str) -> str:
     if any(not (character.isascii() and (character.isalnum() or character in "._-")) for character in normalized):
         raise ValueError(f"{label} contains an invalid character")
     return normalized
+
+
+def _agent_audit_store_binding_digest(path: Path) -> str:
+    canonical_path = os.path.normcase(str(Path(path).expanduser().resolve(strict=False)))
+    payload = _AGENT_AUDIT_STORE_BINDING_VERSION + b"\0" + canonical_path.encode("utf-8", errors="strict")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def _normalize_guild_id(value: int | str | None) -> int:

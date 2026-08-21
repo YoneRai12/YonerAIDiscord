@@ -6,6 +6,8 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 
+from yonerai_discord.voice_contract import VOICEVOX_ALLOWED_SPEAKER_IDS, VOICEVOX_SPEAKER_ID
+
 
 _URL = re.compile(r"https?://[^\s<>\u3000]+", re.IGNORECASE)
 _MENTION = re.compile(r"<(?:@!?|@&|#)[1-9][0-9]*>")
@@ -44,7 +46,7 @@ class SpeechRequest:
     text: str = field(repr=False)
     guild_id: int
     channel_id: int
-    speaker_id: int = 3
+    speaker_id: int = VOICEVOX_SPEAKER_ID
     speed_scale: float = 1.0
     volume_scale: float = 1.0
 
@@ -53,12 +55,12 @@ class SpeechRequest:
         if (
             type(self.guild_id) is not int
             or type(self.channel_id) is not int
-            or type(self.speaker_id) is not int
             or self.guild_id <= 0
             or self.channel_id <= 0
-            or self.speaker_id < 0
         ):
             raise ValueError("IDs must be valid")
+        if type(self.speaker_id) is not int or self.speaker_id not in VOICEVOX_ALLOWED_SPEAKER_IDS:
+            raise ValueError("speaker_not_allowed")
         _scale(self.speed_scale, "speed_scale", minimum=0.5, maximum=2.0)
         _scale(self.volume_scale, "volume_scale", minimum=0.0, maximum=2.0)
 

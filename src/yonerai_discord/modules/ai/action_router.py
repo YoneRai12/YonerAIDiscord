@@ -36,6 +36,7 @@ from yonerai_discord.discord_policy import determine_rbac_level
 from yonerai_discord.modules.discovery.domain import MAX_QUERY_LENGTH
 from yonerai_discord.modules.discovery.service import DiscoveryService
 from yonerai_discord.modules.media_pipeline.domain import ArtifactKind, ArtifactRef, ArtifactScope
+from yonerai_discord.voice_contract import VOICEVOX_SPEAKER_ID
 from yonerai_discord.modules.media_pipeline.discord_asset_inspection import (
     DiscordAssetInspectionError,
     DiscordAssetKind,
@@ -2697,7 +2698,7 @@ class NaturalActionRouter:
                     text=parameters["text"],
                     guild_id=guild_id,
                     channel_id=int(context.message.channel.id),
-                    speaker_id=3,
+                    speaker_id=VOICEVOX_SPEAKER_ID,
                 ),
                 current_policy=current_policy,
             )

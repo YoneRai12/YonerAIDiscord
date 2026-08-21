@@ -7,26 +7,63 @@
 
 - schema: `yonerai.discord.capability-catalog.v1`
 - scope: `static_candidate_metadata`
-- catalog revision: `a53b95fb8eeb47f375d1d82c8fa22deef4e24496ccbc0dca12cf679eef257063`
-- source revision: `9ec1d6b242c82258a268abfd3071921b33c87bb3f3b81b1f20b1636d34f38d5e`
+- catalog revision: `447cb7ff8a98d5bf4d95b29579aeb1da30a09710a76c3e6ac40e221524ebb758`
+- source revision: `ddbb783da6cc9d568b1a88457054e4be03299d5fc55f50a9b4a806e137bdcdf4`
 
 ## Counts
 
 | 母集団 | 件数 |
 | --- | ---: |
 | 歴史canonical | 656 |
-| runtime宣言 | 170 |
-| Registry合計 | 826 |
-| 静的projection | 171 |
+| runtime宣言 | 177 |
+| Registry合計 | 833 |
+| 静的projection | 187 |
 | projection canonical由来 | 17 |
-| projection runtime由来 | 154 |
-| surface接続unique ID | 170 |
-| command capability ID | 157 |
-| command path | 175 |
+| projection runtime由来 | 170 |
+| surface接続unique ID | 177 |
+| command capability ID | 164 |
+| command path | 182 |
 | event capability ID | 14 |
 | event path | 14 |
+| planner action capability ID | 9 |
+| planner action path | 9 |
 | model-tool binding | 1 |
-| surface/model-tool未接続runtime | 16 |
+| command/event/model-tool未接続runtime | 16 |
+| 既知binding未接続runtime | 7 |
+
+## Runtime binding gaps
+
+`direct_surface_unbound_ids` はcommand/event/model-toolへ直接接続していないruntime宣言です。
+planner action接続を含む全known bindingの残余は `unbound_ids` です。
+
+### Direct surface unbound IDs
+
+- `cap-run-admin-ui-read`
+- `cap-run-ai-attachment-understand`
+- `cap-run-audio-ducking-core`
+- `cap-run-browser-remote-interactive`
+- `cap-run-browser-remote-screenshot`
+- `cap-run-capability-forge-owner-notification`
+- `cap-run-image-edit`
+- `cap-run-media-compose-grid`
+- `cap-run-media-discord-asset-inspect`
+- `cap-run-media-place-on-canvas`
+- `cap-run-media-qr-encode`
+- `cap-run-media-quote-card`
+- `cap-run-media-url-inspection`
+- `cap-run-memory-context-recall`
+- `cap-run-speech-synthesize`
+- `cap-run-speech-transcribe`
+
+### All-known-binding unbound IDs
+
+- `cap-run-admin-ui-read`
+- `cap-run-ai-attachment-understand`
+- `cap-run-audio-ducking-core`
+- `cap-run-capability-forge-owner-notification`
+- `cap-run-memory-context-recall`
+- `cap-run-speech-synthesize`
+- `cap-run-speech-transcribe`
 
 ## Entries
 
@@ -62,6 +99,15 @@
 | cap-run-automod-message-edit | moderation.automod | message editを本文非保存でreport-only再検査 | moderation | moderation | high | guild_admin | runtime_manifest |  | event:automod_message_edit | 2d010cf2836e83389cecd74b2ca663d6f9cff98977b607964e6e2e729c5f24e3 |
 | cap-run-automod-policy | moderation.automod | 確認文字列付きでreport-only policyをON/OFF | moderation | moderation | high | guild_admin | runtime_manifest |  | command:automod.policy | d7c7374b6db30b4ae36ad362b80857b9d4cf058c02ae7dbaaae1f6db0a7efd7b |
 | cap-run-automod-status | moderation.automod | report-only AutoModの状態を表示 | moderation | moderation | medium | guild_admin | runtime_manifest |  | command:automod.status | 39f2b0785d9901bb9077de3a920f84b9f28e23fc5a2cf48772bace0c8269898e |
+| cap-run-browser-remote-interactive | web.browser-rendering | 明示opt-inしたCloudflare Browser Runの固定YouTube操作経路 | media | media | high | bot_owner | runtime_manifest |  | action:browser.interact | da6d4ba930b6802235c56e1f8f673258369a8dbfbcda9d677dca2815b85a8eb3 |
+| cap-run-browser-remote-screenshot | web.browser-rendering | 明示opt-inしたCloudflare Browser Rendering remote screenshot経路 | media | media | high | bot_owner | runtime_manifest |  | action:browser.screenshot | 62920e3d497346ac3ad3c2021d483956dc092ec7f15551bed45de5f32b2212ec |
+| cap-run-capability-forge-sandbox-cancel | intelligence.capability-forge | Execution Sandbox owner cancellation | unknown | unknown | high | bot_owner | runtime_manifest |  | command:sandbox.cancel | aeeefd6b40506f60226c58cd184222d18ff15a5a65d667281ed04ea23b7e8faf |
+| cap-run-capability-forge-sandbox-doctor | intelligence.capability-forge | Execution Sandbox owner doctor | knowledge | knowledge | low | bot_owner | runtime_manifest |  | command:sandbox.doctor | f6c62db9f83e152a6c8f0fdddd73152c700fd9ef4360ccb16e0d09f8a349f636 |
+| cap-run-capability-forge-sandbox-jobs | intelligence.capability-forge | Execution Sandbox owner job projection | unknown | unknown | medium | bot_owner | runtime_manifest |  | command:sandbox.jobs | 11b45df612a8786a2d043b65d7a9d036cc95143fa4631ee1bf113bce3526f3b8 |
+| cap-run-capability-forge-sandbox-plan | intelligence.capability-forge | Execution Sandbox owner plan | knowledge | knowledge | low | bot_owner | runtime_manifest |  | command:sandbox.plan | 5a2a9adb9cf4de487876ff33807d7c1849dc9bae9db9166e13c293c379736aac |
+| cap-run-capability-forge-sandbox-receipt | intelligence.capability-forge | Execution Sandbox owner receipt projection | unknown | unknown | medium | bot_owner | runtime_manifest |  | command:sandbox.receipt | 0c1579f76dce3e61070a2822d32a729f2ced10757e0166fe3850345a23444120 |
+| cap-run-capability-forge-sandbox-run-template | intelligence.capability-forge | Execution Sandbox owner fixed-template run | unknown | unknown | high | bot_owner | runtime_manifest |  | command:sandbox.run-template | 72acd4ad06dbbff3d8f13ba8d0ae636a737ff2de7a9076763173054089e8070c |
+| cap-run-capability-forge-sandbox-status | intelligence.capability-forge | Execution Sandbox owner status | knowledge | knowledge | low | bot_owner | runtime_manifest |  | command:sandbox.status | 2aacf12c75798e6eff26e4a75e311029baf7109fac4e716f3d426311d33c43cb |
 | cap-run-discovery-help | interaction.discord-surface | 利用できるコマンドを検索・一覧表示 | knowledge | knowledge | low | everyone | runtime_manifest |  | command:help | acd11ab2eed19560e8e8c1cc84e9125ce836ca6a491c7614fe78cc6313116de6 |
 | cap-run-earthquake-delivery | operations.earthquake | 購読済みチャンネルへ重複排除した地震・EEWを自動通知 | knowledge | knowledge, web_research | high | guild_admin | runtime_manifest |  | event:earthquake_feed_delivery | eb7edfa4b5813c95e8263a9dc7bcae64b54ad18ee25830476d5e268cc33c74ae |
 | cap-run-earthquake-latest | operations.earthquake | P2PQuake公式APIから最新の地震・EEW情報を表示 | knowledge | knowledge, web_research | medium | everyone | runtime_manifest |  | command:earthquake.latest | 33af878f7d9e86584eafb05d79a86f027f0c25aade293bbf76c4cb2314d41ded |
@@ -76,7 +122,8 @@
 | cap-run-evolution-status | intelligence.ai-runtime | 自己進化review基盤の状態を表示 | self_evolution | code, self_evolution | low | bot_owner | runtime_manifest |  | command:evolution.status | 99f37f779b4dbf85d0933488cb11714a5854764728ece264297612b8586f4731 |
 | cap-run-holiday-next | operations.public-information | 内閣府の公式掲載範囲から次の祝日・休日を表示 | knowledge | knowledge, web_research | low | everyone | runtime_manifest |  | command:holiday.next | 99f904a6b63e2b12aed9e36c6ce85a11011e72e46b08b8c7a67b2f1c2abb136e |
 | cap-run-holiday-year | operations.public-information | 内閣府の公式掲載範囲から指定年の祝日・休日を表示 | knowledge | knowledge, web_research | low | everyone | runtime_manifest |  | command:holiday.year | 68e327cf53077b811d2b62e64d08b9fb6d935ece21f72ee481436ce4b25f3187 |
-| cap-run-image-generate | media.image-generation | 明示promptから検証済みPNG画像を生成 | unknown | unknown | high | trusted | runtime_manifest |  | command:image.generate | 865fe2a35d2e70d19a0683fdfe0dfc3c4c345cf4fe3214c621c8b9d4164e8b20 |
+| cap-run-image-edit | media.image-editing | 検証済みPNGを別IDのcanonical PNGへ編集 | media | media | high | trusted | runtime_manifest |  | action:image.edit | e3339b9c4255dc8b74f8d894e6011a4c277a57d4927f98d573a841c2dab0b80c |
+| cap-run-image-generate | media.image-generation | 明示promptから検証済みPNG画像を生成 | media | media | high | trusted | runtime_manifest |  | command:image.generate | ec8d9eb282d231028c8466542c891a6ba822b467e02fa64cb88d096ff8c216a9 |
 | cap-run-info-avatar | utility.general | avatar URLを表示 | knowledge | knowledge | low | everyone | runtime_manifest |  | command:info.avatar | 1c743e6879487ea072a824780b4d44b79b0c3d8648a8498d658f3b8270273d2f |
 | cap-run-info-channel | utility.general | channel情報を表示 | knowledge | knowledge | low | everyone | runtime_manifest |  | command:info.channel | 9c3796f55d5b4172a2d306cba0d0280d7a6322c27f487e531b162bf7861d8a18 |
 | cap-run-info-permissions | utility.general | member権限を表示 | knowledge | knowledge | low | everyone | runtime_manifest |  | command:info.permissions | bcd68d1aabdbe761141dce6cb445bda26699fa153d29509767f49f1e480d5897 |
@@ -88,6 +135,12 @@
 | cap-run-jobs-list | operations.execution | payloadを隠してdurable job一覧を表示 | unknown | unknown | medium | guild_admin | runtime_manifest |  | command:jobs.list | 503af6e790299d22c29477474f674c8f6656bc7b34e7b3ab5b181ad66d34aea8 |
 | cap-run-jobs-retry | operations.execution | terminal jobを監査付きで再queue | unknown | unknown | high | guild_admin | runtime_manifest |  | command:jobs.retry | 178f9bcfb6fbf72def17a4618ee3bc87d870d106375e7d20adeb580edee50c40 |
 | cap-run-jobs-status | operations.execution | durable job workerとqueue状態を表示 | unknown | unknown | medium | guild_admin | runtime_manifest |  | command:jobs.status | 72c999263c16d159a89d76fc2f6ca9ed4fa3c4573a9b8cc6893d491e03f6afa2 |
+| cap-run-media-compose-grid | media.pipeline | 同一scopeの1〜8画像artifactをローカルgridへ合成 | media | media | high | trusted | runtime_manifest |  | action:media.compose-grid | fff92d5b8879726339257d7acee54a30fb49039ce5ba40ea26dbf3fcfcdd1ea8 |
+| cap-run-media-discord-asset-inspect | media.pipeline | 明示されたDiscord絵文字またはスタンプを読み取り専用で検査 | media | media | medium | trusted | runtime_manifest |  | action:media.discord-asset-inspect | 25901b5834ce22570f7e696313cfe7f512475ea395cd3fbea7e1292793ba235b |
+| cap-run-media-place-on-canvas | media.pipeline | 同一scopeの画像artifactをローカルcanvasへ配置 | media | media | high | trusted | runtime_manifest |  | action:media.place-on-canvas | 99a887b48ff815da19a8ce3cc552aef309687a6654a8775cfe295b026e8b7195 |
+| cap-run-media-qr-encode | media.pipeline | 制限付きテキストからローカルQR画像artifactを生成 | media | media | high | trusted | runtime_manifest |  | action:media.qr-encode | b99d17c34f519c8de6638a47f881794a6292a5a325ba0cbccb92bf4aec31ca85 |
+| cap-run-media-quote-card | media.pipeline | 本文と実行者情報からローカル引用カードartifactを生成 | media | media | medium | trusted | runtime_manifest |  | action:media.quote-card | f3ee72a14801237fa3bd06bcfae32d57581624f9c54d8d391ca072ba5c05d240 |
+| cap-run-media-url-inspection | media.url-inspection | 明示された公開YouTube URLを隔離Hyper-V VMまたは明示remote providerで解析 | media | media | high | bot_owner | runtime_manifest |  | action:media.url-inspect | 5f816c63724a50a9e17a67dbf74b1c9432f31f07f7cc7493d5495bcd5f34e8ad |
 | cap-run-memory-clear | intelligence.personal-memory | 本人の個人AIメモリを確認付きで全削除 | memory | memory | critical | everyone | runtime_manifest |  | command:memory.clear | 34220c5958f3926b827deb12eac116082a38f6eb02e8b26dae18e21651e00e0a |
 | cap-run-memory-disable | intelligence.personal-memory | 本人の個人AIメモリ記録と利用を停止 | memory | memory | low | everyone | runtime_manifest |  | command:memory.disable | 1ddbd9d77ad7cae1d757c4577624c4b3bbd320c8468f2f1b19defa53da79ff03 |
 | cap-run-memory-enable | intelligence.personal-memory | 本人の明示同意で個人AIメモリを有効化 | memory | memory | medium | everyone | runtime_manifest |  | command:memory.enable | 3c384e686d352e8dffac21a336c8e8dea1b33909e5ecf9f78bae162cecf3dd05 |

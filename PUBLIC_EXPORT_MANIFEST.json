@@ -1,26 +1,27 @@
 {
   "classification_counts": {
-    "official_private": 63,
-    "private_internal": 172,
-    "public_generated": 31,
-    "public_shared": 663
+    "official_private": 153,
+    "private_internal": 186,
+    "public_generated": 40,
+    "public_shared": 688
   },
+  "export_tracked_file_count": 730,
   "files": [
     {
       "classification": "public_shared",
       "path": ".env.example",
-      "sha256": "ed902b83489e300d83e23f6780b7cc72ac3b170d0ee2720ed9057d1d9ae8cdad",
-      "size": 12924,
-      "source_blob_sha256": "ed902b83489e300d83e23f6780b7cc72ac3b170d0ee2720ed9057d1d9ae8cdad",
+      "sha256": "9638f943bfd9f25468861fee9ea86b77257b921c02ae9d6b5a7a2a2f52bd7386",
+      "size": 12969,
+      "source_blob_sha256": "9638f943bfd9f25468861fee9ea86b77257b921c02ae9d6b5a7a2a2f52bd7386",
       "source_path": ".env.example",
       "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
       "path": ".gitattributes",
-      "sha256": "1263dea0108b7aed1bbddf94741cc9d98779b10c480fbd5fea1cd91d4e61aecc",
-      "size": 216,
-      "source_blob_sha256": "1263dea0108b7aed1bbddf94741cc9d98779b10c480fbd5fea1cd91d4e61aecc",
+      "sha256": "a95c621e926e15f41934736804821be896a7bf1603ec84c1203754975b58538e",
+      "size": 235,
+      "source_blob_sha256": "a95c621e926e15f41934736804821be896a7bf1603ec84c1203754975b58538e",
       "source_path": ".gitattributes",
       "transformation": "verbatim"
     },
@@ -81,9 +82,9 @@
     {
       "classification": "public_generated",
       "path": ".github/workflows/ci.yml",
-      "sha256": "1bf90a5a8725ed4567f7e3ba896709134fa77240b8c4a8d7cf62003cc6b00b0b",
-      "size": 2295,
-      "source_blob_sha256": "1bf90a5a8725ed4567f7e3ba896709134fa77240b8c4a8d7cf62003cc6b00b0b",
+      "sha256": "72f85ce6b348618ea7d267079b7a3bde9690f10fd891f3ae9183e1ad6a71a0b0",
+      "size": 2383,
+      "source_blob_sha256": "72f85ce6b348618ea7d267079b7a3bde9690f10fd891f3ae9183e1ad6a71a0b0",
       "source_path": "public_release/templates/.github/workflows/ci.yml",
       "transformation": "public_generated"
     },
@@ -99,9 +100,9 @@
     {
       "classification": "public_generated",
       "path": ".github/workflows/release-build.yml",
-      "sha256": "9c9680412958b456d7e753368200eef3ef89c60ef5ad4a4d7b856c710f8aa28a",
-      "size": 1550,
-      "source_blob_sha256": "9c9680412958b456d7e753368200eef3ef89c60ef5ad4a4d7b856c710f8aa28a",
+      "sha256": "8629121d1e968eebc36430b0b89d79a2358d1d9be846b12bb2ba3ecb416c9760",
+      "size": 3574,
+      "source_blob_sha256": "8629121d1e968eebc36430b0b89d79a2358d1d9be846b12bb2ba3ecb416c9760",
       "source_path": "public_release/templates/.github/workflows/release-build.yml",
       "transformation": "public_generated"
     },
@@ -117,27 +118,27 @@
     {
       "classification": "public_generated",
       "path": "ARCHITECTURE.md",
-      "sha256": "6af2af1ab6a1eeac3a590f275eb79bf007272ee579c46448ca5ebb5b7a9b2b76",
-      "size": 748,
-      "source_blob_sha256": "6af2af1ab6a1eeac3a590f275eb79bf007272ee579c46448ca5ebb5b7a9b2b76",
+      "sha256": "d0e5dd7918f8bf4e648526caa219d1f6ea7271761a1e7b9389a1d5a00f305545",
+      "size": 6378,
+      "source_blob_sha256": "d0e5dd7918f8bf4e648526caa219d1f6ea7271761a1e7b9389a1d5a00f305545",
       "source_path": "public_release/templates/ARCHITECTURE.md",
       "transformation": "public_generated"
     },
     {
       "classification": "public_generated",
       "path": "CHANGELOG.md",
-      "sha256": "59f23921f4145a89829a2b276aaebbfea704490a03b4c29ae8574ecc6bc697f0",
-      "size": 584,
-      "source_blob_sha256": "59f23921f4145a89829a2b276aaebbfea704490a03b4c29ae8574ecc6bc697f0",
+      "sha256": "0ffa5ebdad900eff19af781a69f0f6a9a69710670e2229b6c6b62fadc767a410",
+      "size": 1474,
+      "source_blob_sha256": "0ffa5ebdad900eff19af781a69f0f6a9a69710670e2229b6c6b62fadc767a410",
       "source_path": "public_release/templates/CHANGELOG.md",
       "transformation": "public_generated"
     },
     {
       "classification": "public_generated",
       "path": "CITATION.cff",
-      "sha256": "b42403f090b3f2a434d0c53949372442ed71117e4a14b3e517087870b3e22ca7",
+      "sha256": "51dc3a331149b82e2b98340445a8b1326e0729f1125eefc53a950143edb34639",
       "size": 416,
-      "source_blob_sha256": "b42403f090b3f2a434d0c53949372442ed71117e4a14b3e517087870b3e22ca7",
+      "source_blob_sha256": "51dc3a331149b82e2b98340445a8b1326e0729f1125eefc53a950143edb34639",
       "source_path": "public_release/templates/CITATION.cff",
       "transformation": "public_generated"
     },
@@ -197,12 +198,57 @@
     },
     {
       "classification": "public_generated",
+      "path": "PUBLIC_CAPABILITY_MATRIX.json",
+      "sha256": "d42a08235531165c4b3dd86c26820e239961bd87f365038eabbc20a0d1ab3f3c",
+      "size": 220648,
+      "source_blob_sha256": "d42a08235531165c4b3dd86c26820e239961bd87f365038eabbc20a0d1ab3f3c",
+      "source_path": "public_release/templates/PUBLIC_CAPABILITY_MATRIX.json",
+      "transformation": "public_generated"
+    },
+    {
+      "classification": "public_generated",
+      "path": "PUBLIC_CAPABILITY_SUMMARY.md",
+      "sha256": "45d25c92ff75c5bc4d9336d481ed7e7e9cfa504fff9c2cfca5004ba94333ce86",
+      "size": 6472,
+      "source_blob_sha256": "45d25c92ff75c5bc4d9336d481ed7e7e9cfa504fff9c2cfca5004ba94333ce86",
+      "source_path": "public_release/templates/PUBLIC_CAPABILITY_SUMMARY.md",
+      "transformation": "public_generated"
+    },
+    {
+      "classification": "public_generated",
+      "path": "PUBLIC_COMMAND_INDEX.md",
+      "sha256": "05675890c20eb15ae898f8be0d9775c198139a778cdd05a3ef4f8635a47538cb",
+      "size": 25356,
+      "source_blob_sha256": "05675890c20eb15ae898f8be0d9775c198139a778cdd05a3ef4f8635a47538cb",
+      "source_path": "public_release/templates/PUBLIC_COMMAND_INDEX.md",
+      "transformation": "public_generated"
+    },
+    {
+      "classification": "public_generated",
       "path": "PUBLIC_CURRENT_STATUS.md",
-      "sha256": "3fc1d84d75df1be4f68d45fb49d7849ae1b4f30419bddd06351876300eb3d7cc",
-      "size": 766,
-      "source_blob_sha256": "3fc1d84d75df1be4f68d45fb49d7849ae1b4f30419bddd06351876300eb3d7cc",
+      "sha256": "3ed38ad81025e37a40d1532110c4156f0881fef08dae55dba9d94ae108c014ad",
+      "size": 1130,
+      "source_blob_sha256": "3ed38ad81025e37a40d1532110c4156f0881fef08dae55dba9d94ae108c014ad",
       "source_path": "public_release/templates/PUBLIC_CURRENT_STATUS.md",
       "transformation": "public_generated"
+    },
+    {
+      "classification": "generated_public_audit",
+      "path": "PUBLIC_EXCLUSION_MATRIX.json",
+      "sha256": "c1f756f263179e6fc836fe26d40a51c0aa012d10aba782bfb7eeed6a06a33b0b",
+      "size": 194315,
+      "source_blob_sha256": null,
+      "source_path": null,
+      "transformation": "content_free_public_export_audit"
+    },
+    {
+      "classification": "generated_public_audit",
+      "path": "PUBLIC_EXPORT_COVERAGE.md",
+      "sha256": "7021b182891a043ba943fe6b500fa3c4bb210fe5a5eb03cf3b1805727e34e2b8",
+      "size": 1903,
+      "source_blob_sha256": null,
+      "source_path": null,
+      "transformation": "content_free_public_export_audit"
     },
     {
       "classification": "public_generated",
@@ -215,9 +261,27 @@
     },
     {
       "classification": "public_generated",
+      "path": "PUBLIC_MODULE_MATRIX.json",
+      "sha256": "e7c6553ae3cf256c42b682b6c3c76ebc2e938e76f8a0ea0901c537b816981444",
+      "size": 15215,
+      "source_blob_sha256": "e7c6553ae3cf256c42b682b6c3c76ebc2e938e76f8a0ea0901c537b816981444",
+      "source_path": "public_release/templates/PUBLIC_MODULE_MATRIX.json",
+      "transformation": "public_generated"
+    },
+    {
+      "classification": "public_generated",
+      "path": "PUBLIC_SELF_HOST_PROFILES.json",
+      "sha256": "e96e68c44343e2af4185518891688ca9666f35c4f4d44d70e3e1415e8f93c50b",
+      "size": 12283,
+      "source_blob_sha256": "e96e68c44343e2af4185518891688ca9666f35c4f4d44d70e3e1415e8f93c50b",
+      "source_path": "public_release/templates/PUBLIC_SELF_HOST_PROFILES.json",
+      "transformation": "public_generated"
+    },
+    {
+      "classification": "public_generated",
       "path": "PUBLIC_SOURCE_PROVENANCE.json",
-      "sha256": "a96f1560280bb7bf4063a9865c33561e2250ab597ec05ce04c6daf3b409151a3",
-      "size": 6921,
+      "sha256": "fb246ee45f0d86973cbbe3a61dd37b7a0ea649451c200e4e01902fe357b9dfb8",
+      "size": 8659,
       "source_blob_sha256": "3b944ceaa74a0ec08953eb9e5971c8e1224b785fa552cc11636e43c673941fb8",
       "source_path": "public_release/templates/PUBLIC_SOURCE_PROVENANCE.json",
       "transformation": "public_provenance"
@@ -225,9 +289,9 @@
     {
       "classification": "public_generated",
       "path": "README.md",
-      "sha256": "f21f2ce0ee7d28fc975479637328477a67a98efc067bd2bd886793781515b6b2",
-      "size": 3662,
-      "source_blob_sha256": "f21f2ce0ee7d28fc975479637328477a67a98efc067bd2bd886793781515b6b2",
+      "sha256": "72e7212344e4c8f50fac7672bcc985e21996b5d1f012d027756801e7c1ec04c7",
+      "size": 7650,
+      "source_blob_sha256": "72e7212344e4c8f50fac7672bcc985e21996b5d1f012d027756801e7c1ec04c7",
       "source_path": "public_release/templates/README.md",
       "transformation": "public_generated"
     },
@@ -279,9 +343,9 @@
     {
       "classification": "public_generated",
       "path": "ci/verify_public_package.py",
-      "sha256": "ab3989e7c19a549b5990d58e943f71ad5c24dfc7bc1c8cca3fbcd8e5e471d82d",
-      "size": 12750,
-      "source_blob_sha256": "ab3989e7c19a549b5990d58e943f71ad5c24dfc7bc1c8cca3fbcd8e5e471d82d",
+      "sha256": "66860dc3c575cc70ec2c32453dc5a37379105edf31cedff87e84703b0e95b101",
+      "size": 15746,
+      "source_blob_sha256": "66860dc3c575cc70ec2c32453dc5a37379105edf31cedff87e84703b0e95b101",
       "source_path": "public_release/ci/verify_public_package.py",
       "transformation": "public_generated"
     },
@@ -394,6 +458,15 @@
       "transformation": "verbatim"
     },
     {
+      "classification": "public_generated",
+      "path": "docs/MEDIA_SANDBOX.md",
+      "sha256": "7a15f0dbd89a91c900f610724dc09b58f3432dfff60399552f45ee709d2668d3",
+      "size": 1942,
+      "source_blob_sha256": "7a15f0dbd89a91c900f610724dc09b58f3432dfff60399552f45ee709d2668d3",
+      "source_path": "public_release/templates/docs/MEDIA_SANDBOX.md",
+      "transformation": "public_generated"
+    },
+    {
       "classification": "public_shared",
       "path": "docs/MODEL_CATALOG_RECOMMENDATIONS_20260722.md",
       "sha256": "1d14b37482c3654aa059900d857bfa2809ab7516ff3a6134d67222d955ce0fc8",
@@ -412,20 +485,47 @@
       "transformation": "public_generated"
     },
     {
+      "classification": "public_generated",
+      "path": "docs/SEARCH_SANDBOX.md",
+      "sha256": "2dd2782c5c6b8decbecdba3cba6aaa610c2ec74c7c30cf4c1c605dacab75920e",
+      "size": 1976,
+      "source_blob_sha256": "2dd2782c5c6b8decbecdba3cba6aaa610c2ec74c7c30cf4c1c605dacab75920e",
+      "source_path": "public_release/templates/docs/SEARCH_SANDBOX.md",
+      "transformation": "public_generated"
+    },
+    {
+      "classification": "public_generated",
+      "path": "docs/SELF_HOST_PROFILES.md",
+      "sha256": "cefe86d35efc037d72f9c350fa0105e712773f80ecb4002f1b6d0e0d155c86bd",
+      "size": 2887,
+      "source_blob_sha256": "cefe86d35efc037d72f9c350fa0105e712773f80ecb4002f1b6d0e0d155c86bd",
+      "source_path": "public_release/templates/docs/SELF_HOST_PROFILES.md",
+      "transformation": "public_generated"
+    },
+    {
+      "classification": "public_generated",
+      "path": "docs/VM_AND_SANDBOX.md",
+      "sha256": "faab6319a3253eb1fbef6a760708df200598588c3420b0b69020a9ba2b5fc218",
+      "size": 2822,
+      "source_blob_sha256": "faab6319a3253eb1fbef6a760708df200598588c3420b0b69020a9ba2b5fc218",
+      "source_path": "public_release/templates/docs/VM_AND_SANDBOX.md",
+      "transformation": "public_generated"
+    },
+    {
       "classification": "public_shared",
       "path": "docs/generated/capability-catalog/README.md",
-      "sha256": "a864ec5cce44ad58d184878a95c75884c8f8449e939bd7553b4e48f759c0f8e1",
-      "size": 45117,
-      "source_blob_sha256": "f2519632d7a78aaf242b3f7b7d945ec031b14bf18de96f6688d131226b2f0916",
+      "sha256": "a4818fe9017d4e015e30bfc97361c1b6155329b355fc5c07c16c9a8795b466f3",
+      "size": 50638,
+      "source_blob_sha256": "c1685015ba3703bec098685e1715e46943c19ba2d510cd6a25e1b22c49ae23cc",
       "source_path": "docs/generated/capability-catalog/README.md",
       "transformation": "public_catalog_projection"
     },
     {
       "classification": "public_shared",
       "path": "docs/generated/capability-catalog/catalog.json",
-      "sha256": "0a6433ac86cb31d2edf98a6e97699a40a99cf5fdc18742e92134bc10f24a7762",
-      "size": 101936,
-      "source_blob_sha256": "85718c17f3da6d6496802a8f45b0f03f129b2c88edea5fdd9af06b48e4c04eff",
+      "sha256": "80146119bec4f06086be85f4e9d2151b398a3a1736eec081eaa0ef16c733be4c",
+      "size": 112030,
+      "source_blob_sha256": "a09cad2c3152796e7936ff0ccd0a0fc91e1791f79c173b66a7ea07f723d29d96",
       "source_path": "docs/generated/capability-catalog/catalog.json",
       "transformation": "public_catalog_projection"
     },
@@ -576,8 +676,8 @@
     {
       "classification": "public_shared",
       "path": "pyproject.toml",
-      "sha256": "2c5a2009953e099679c0a4b3a807371b530c90733451b9a0ac85fc2ec89eaa90",
-      "size": 1248,
+      "sha256": "df6edd4129c60a697268e39faf93ca63e395f1469e0c5696b0a6b7be209a9b59",
+      "size": 1330,
       "source_blob_sha256": "ce86fca15f05d9c657ceefed3bc605f3816e6a242906cfbf38ff56083f44fa0e",
       "source_path": "pyproject.toml",
       "transformation": "public_identity"
@@ -630,19 +730,19 @@
     {
       "classification": "public_shared",
       "path": "scripts/generate_capability_catalog.py",
-      "sha256": "54555061940bc05025b3f03c9557d0d05af00ffac9e1775b75cea471bed54fc6",
-      "size": 14785,
-      "source_blob_sha256": "54555061940bc05025b3f03c9557d0d05af00ffac9e1775b75cea471bed54fc6",
+      "sha256": "c273cc9d65fa9c16236a3640290b381b6fd3e5bbead86d127be0f8056083ca42",
+      "size": 16660,
+      "source_blob_sha256": "c273cc9d65fa9c16236a3640290b381b6fd3e5bbead86d127be0f8056083ca42",
       "source_path": "scripts/generate_capability_catalog.py",
       "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
-      "path": "scripts/run_bot_from_src.py",
-      "sha256": "9601c3702fe1cd3c6a65ec941115d6ddcc8ba68019c2c08c30979abde9bcde38",
-      "size": 851,
-      "source_blob_sha256": "9601c3702fe1cd3c6a65ec941115d6ddcc8ba68019c2c08c30979abde9bcde38",
-      "source_path": "scripts/run_bot_from_src.py",
+      "path": "scripts/generate_public_capability_truth.py",
+      "sha256": "08673e38f85096a2e0f6ed7aed5480279a45c30ebceebcc8f570bbb2f4cc9ceb",
+      "size": 25540,
+      "source_blob_sha256": "08673e38f85096a2e0f6ed7aed5480279a45c30ebceebcc8f570bbb2f4cc9ceb",
+      "source_path": "scripts/generate_public_capability_truth.py",
       "transformation": "verbatim"
     },
     {
@@ -666,9 +766,9 @@
     {
       "classification": "public_shared",
       "path": "scripts/security_preflight.py",
-      "sha256": "57a54aa7fc6e02db6a2cdaa4b22f53cd3f0795c8986f7773ebf4d7d97a7c1333",
-      "size": 3140,
-      "source_blob_sha256": "57a54aa7fc6e02db6a2cdaa4b22f53cd3f0795c8986f7773ebf4d7d97a7c1333",
+      "sha256": "bf5c67fa741ee7f18557887d87441c2841c385e81728c40d025932c1a9f44563",
+      "size": 5487,
+      "source_blob_sha256": "bf5c67fa741ee7f18557887d87441c2841c385e81728c40d025932c1a9f44563",
       "source_path": "scripts/security_preflight.py",
       "transformation": "verbatim"
     },
@@ -702,11 +802,20 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/__init__.py",
-      "sha256": "d84071a263cf050b63d2eb6990638180835145596b3ca3c794f684c5c9a7515f",
+      "sha256": "0bc9a92b231c8539b1d6edd2a6316e3f07e1caa7665abac85d65e0b341aebef7",
       "size": 67,
       "source_blob_sha256": "118f1c674f98606457d698a02e63d9840dc759cc33ebd079f0ef82d6232fa18f",
       "source_path": "src/yonerai_discord/__init__.py",
       "transformation": "public_version"
+    },
+    {
+      "classification": "public_shared",
+      "path": "src/yonerai_discord/agent_audit_projection.py",
+      "sha256": "28e585e69fdaca390e1f137fcba9f5d533674954e4cc9737156ea2b8fbc9ea55",
+      "size": 13719,
+      "source_blob_sha256": "28e585e69fdaca390e1f137fcba9f5d533674954e4cc9737156ea2b8fbc9ea55",
+      "source_path": "src/yonerai_discord/agent_audit_projection.py",
+      "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
@@ -855,9 +964,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/capabilities.py",
-      "sha256": "aabd9857a9f5d6a90f188aa748623238252d39c9cf35baeddd55bfeb5f9258d6",
-      "size": 13317,
-      "source_blob_sha256": "aabd9857a9f5d6a90f188aa748623238252d39c9cf35baeddd55bfeb5f9258d6",
+      "sha256": "d426e70d386c7d0282dd45d2d95e449bf99c20504494104564a0e446c8186bea",
+      "size": 13898,
+      "source_blob_sha256": "d426e70d386c7d0282dd45d2d95e449bf99c20504494104564a0e446c8186bea",
       "source_path": "src/yonerai_discord/capabilities.py",
       "transformation": "verbatim"
     },
@@ -935,11 +1044,56 @@
     },
     {
       "classification": "public_shared",
+      "path": "src/yonerai_discord/capability_forge/execution_sandbox_replay.py",
+      "sha256": "8a908b6032c87fb723f53b6c151ad3f2d9646721ad7f68834f97196fbb765b37",
+      "size": 8140,
+      "source_blob_sha256": "8a908b6032c87fb723f53b6c151ad3f2d9646721ad7f68834f97196fbb765b37",
+      "source_path": "src/yonerai_discord/capability_forge/execution_sandbox_replay.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "src/yonerai_discord/capability_forge/execution_sandbox_signing.py",
+      "sha256": "e3ca3582111dfa881ea5298740e6b110f4c9b263154572b5897f56651817110a",
+      "size": 23431,
+      "source_blob_sha256": "e3ca3582111dfa881ea5298740e6b110f4c9b263154572b5897f56651817110a",
+      "source_path": "src/yonerai_discord/capability_forge/execution_sandbox_signing.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "src/yonerai_discord/capability_forge/hyperv_disposable.py",
+      "sha256": "15b6c2a7f687bea1ecba5a3cbd4a488230c93f6debb41b5ec91aa36f0a07995c",
+      "size": 37029,
+      "source_blob_sha256": "15b6c2a7f687bea1ecba5a3cbd4a488230c93f6debb41b5ec91aa36f0a07995c",
+      "source_path": "src/yonerai_discord/capability_forge/hyperv_disposable.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "src/yonerai_discord/capability_forge/hyperv_socket_transport.py",
+      "sha256": "b591ae93cfe33acee0b44caf8bcafd699929e7a540f0f71a4b0ce152495da446",
+      "size": 26301,
+      "source_blob_sha256": "b591ae93cfe33acee0b44caf8bcafd699929e7a540f0f71a4b0ce152495da446",
+      "source_path": "src/yonerai_discord/capability_forge/hyperv_socket_transport.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
       "path": "src/yonerai_discord/capability_forge/lifecycle.py",
       "sha256": "439fb106b38de1cfb030a9b7e09dbd0de2a3e228cf4bf2ab744b367626977873",
       "size": 34099,
       "source_blob_sha256": "439fb106b38de1cfb030a9b7e09dbd0de2a3e228cf4bf2ab744b367626977873",
       "source_path": "src/yonerai_discord/capability_forge/lifecycle.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "src/yonerai_discord/capability_forge/named_pipe_exchange.py",
+      "sha256": "d6e0d6704b45b7a1c81fe1936ab8ffdeaa96e22cf3fe267e1c5a0f3466ca12ed",
+      "size": 21015,
+      "source_blob_sha256": "d6e0d6704b45b7a1c81fe1936ab8ffdeaa96e22cf3fe267e1c5a0f3466ca12ed",
+      "source_path": "src/yonerai_discord/capability_forge/named_pipe_exchange.py",
       "transformation": "verbatim"
     },
     {
@@ -972,27 +1126,36 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/capability_forge/sandbox_contract.py",
-      "sha256": "a8d09d40d8cc50e04db5b5e52ff8dbb4200ec835d33eba5733001ce17c4aacd6",
-      "size": 18057,
-      "source_blob_sha256": "a8d09d40d8cc50e04db5b5e52ff8dbb4200ec835d33eba5733001ce17c4aacd6",
+      "sha256": "353aca6426b2f53c11e9cc02f6cf9f4b486ea2a64f72bd75db428f8e2e2ead40",
+      "size": 24119,
+      "source_blob_sha256": "353aca6426b2f53c11e9cc02f6cf9f4b486ea2a64f72bd75db428f8e2e2ead40",
       "source_path": "src/yonerai_discord/capability_forge/sandbox_contract.py",
       "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/capability_forge/sandbox_lifecycle.py",
-      "sha256": "427053b35ed9e5aab7b9d7f86d08cbe2a46d2718278a7d244d3d725492c65f0e",
-      "size": 3622,
-      "source_blob_sha256": "427053b35ed9e5aab7b9d7f86d08cbe2a46d2718278a7d244d3d725492c65f0e",
+      "sha256": "bedd17b55870148d694d2641b9df7baa4c53ec6f89daf258cbd9170d2bedaaa0",
+      "size": 3793,
+      "source_blob_sha256": "bedd17b55870148d694d2641b9df7baa4c53ec6f89daf258cbd9170d2bedaaa0",
       "source_path": "src/yonerai_discord/capability_forge/sandbox_lifecycle.py",
       "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
+      "path": "src/yonerai_discord/capability_forge/sandbox_runtime.py",
+      "sha256": "570b63f4e3feec1649abe1ad136c1a30aa78085e13ee617d2b9b2e86503a151b",
+      "size": 33713,
+      "source_blob_sha256": "570b63f4e3feec1649abe1ad136c1a30aa78085e13ee617d2b9b2e86503a151b",
+      "source_path": "src/yonerai_discord/capability_forge/sandbox_runtime.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
       "path": "src/yonerai_discord/capability_forge/sandbox_service.py",
-      "sha256": "0ba3f27ccb71d80e21d6ef46393cf4c93af4c3cbbc10220905527e780a551569",
-      "size": 13914,
-      "source_blob_sha256": "0ba3f27ccb71d80e21d6ef46393cf4c93af4c3cbbc10220905527e780a551569",
+      "sha256": "ee188acafe57d343f718f9e7c2e15c9e04e492bdcc7864174caf8bd90169aa1f",
+      "size": 16527,
+      "source_blob_sha256": "ee188acafe57d343f718f9e7c2e15c9e04e492bdcc7864174caf8bd90169aa1f",
       "source_path": "src/yonerai_discord/capability_forge/sandbox_service.py",
       "transformation": "verbatim"
     },
@@ -1017,9 +1180,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/config.py",
-      "sha256": "ca498bd88b8ce5ee803ce349d3e06d5de4ed6a820d5aa246922d2d9d6df45b3e",
-      "size": 50183,
-      "source_blob_sha256": "ca498bd88b8ce5ee803ce349d3e06d5de4ed6a820d5aa246922d2d9d6df45b3e",
+      "sha256": "9c49e6373ce7f143d9ae0e21787ff1ee5af63008997dfb65723737230f0dc505",
+      "size": 50316,
+      "source_blob_sha256": "9c49e6373ce7f143d9ae0e21787ff1ee5af63008997dfb65723737230f0dc505",
       "source_path": "src/yonerai_discord/config.py",
       "transformation": "verbatim"
     },
@@ -1080,9 +1243,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/db.py",
-      "sha256": "d0eefa02ac4be48fb797cb70c738ea55e9a2b87f75a01e12fc0a08b21ed1171d",
-      "size": 54512,
-      "source_blob_sha256": "d0eefa02ac4be48fb797cb70c738ea55e9a2b87f75a01e12fc0a08b21ed1171d",
+      "sha256": "7d237cdcf6a4f692d0d1bc7653cfc840631c809d7003bcd597ab5bc35519189a",
+      "size": 57959,
+      "source_blob_sha256": "7d237cdcf6a4f692d0d1bc7653cfc840631c809d7003bcd597ab5bc35519189a",
       "source_path": "src/yonerai_discord/db.py",
       "transformation": "verbatim"
     },
@@ -1179,9 +1342,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/execution_gateway/core_http_transport.py",
-      "sha256": "b680a9c8614597aa99a9d391d2ee3cf0d1185e391d91edc49dd2775406c346e2",
-      "size": 33953,
-      "source_blob_sha256": "b680a9c8614597aa99a9d391d2ee3cf0d1185e391d91edc49dd2775406c346e2",
+      "sha256": "fe732edade78e97523497d894bdeff221261724983a41a5e8b72d2fb8254b975",
+      "size": 34690,
+      "source_blob_sha256": "fe732edade78e97523497d894bdeff221261724983a41a5e8b72d2fb8254b975",
       "source_path": "src/yonerai_discord/execution_gateway/core_http_transport.py",
       "transformation": "verbatim"
     },
@@ -1214,6 +1377,15 @@
     },
     {
       "classification": "public_shared",
+      "path": "src/yonerai_discord/execution_gateway/ora_core_transport.py",
+      "sha256": "5ccdbe79457fed409d97c9ebbd8b7130d7b5854ad072e66b6a99db811dbcccae",
+      "size": 11939,
+      "source_blob_sha256": "5ccdbe79457fed409d97c9ebbd8b7130d7b5854ad072e66b6a99db811dbcccae",
+      "source_path": "src/yonerai_discord/execution_gateway/ora_core_transport.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
       "path": "src/yonerai_discord/execution_gateway/protocol.py",
       "sha256": "6b3903e6e67ec66484d0b87465bb6b6216e09537a3248e03ebd4fcabac1b7700",
       "size": 590,
@@ -1233,9 +1405,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/main.py",
-      "sha256": "8c0210c4388a9755d72ad4038f88019dd19faf489e97f2ef177e79b308284e44",
-      "size": 2030,
-      "source_blob_sha256": "8c0210c4388a9755d72ad4038f88019dd19faf489e97f2ef177e79b308284e44",
+      "sha256": "bd8df96f8bc21147d60839d523a7ff36e07f0a873f91a04b1eaaf97b2fb81c76",
+      "size": 4708,
+      "source_blob_sha256": "bd8df96f8bc21147d60839d523a7ff36e07f0a873f91a04b1eaaf97b2fb81c76",
       "source_path": "src/yonerai_discord/main.py",
       "transformation": "verbatim"
     },
@@ -1287,18 +1459,18 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/ai/__init__.py",
-      "sha256": "72897c06a9eb4aab99502085bbada5bfeb7402f3790272e281ee2bacfef5c1cd",
-      "size": 60277,
-      "source_blob_sha256": "72897c06a9eb4aab99502085bbada5bfeb7402f3790272e281ee2bacfef5c1cd",
+      "sha256": "1283692d7aa71d8717d47c5a62800de96227c85c94942e84d5fc35e605b2cf79",
+      "size": 62627,
+      "source_blob_sha256": "1283692d7aa71d8717d47c5a62800de96227c85c94942e84d5fc35e605b2cf79",
       "source_path": "src/yonerai_discord/modules/ai/__init__.py",
       "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/ai/action_router.py",
-      "sha256": "32b2b78e86fcfd56f4f50d8a1c5c6189030ea0f60206a5513d0f8cb77345e379",
-      "size": 228068,
-      "source_blob_sha256": "32b2b78e86fcfd56f4f50d8a1c5c6189030ea0f60206a5513d0f8cb77345e379",
+      "sha256": "cb8621bd60b5b75b50e3ff8d48371664f649afc298ba848358c2802986f76d1f",
+      "size": 228149,
+      "source_blob_sha256": "cb8621bd60b5b75b50e3ff8d48371664f649afc298ba848358c2802986f76d1f",
       "source_path": "src/yonerai_discord/modules/ai/action_router.py",
       "transformation": "verbatim"
     },
@@ -1322,6 +1494,15 @@
     },
     {
       "classification": "public_shared",
+      "path": "src/yonerai_discord/modules/ai/agent_audit_port.py",
+      "sha256": "55635e4c5f2311dade2b1ea93e1e9bc6f380caca302cb1c9a91f68b5211b1ca0",
+      "size": 12373,
+      "source_blob_sha256": "55635e4c5f2311dade2b1ea93e1e9bc6f380caca302cb1c9a91f68b5211b1ca0",
+      "source_path": "src/yonerai_discord/modules/ai/agent_audit_port.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
       "path": "src/yonerai_discord/modules/ai/artifacts.py",
       "sha256": "7249d86665e9eb3645457af8c40123fa8546b65a8cb7d24b798c8904f4078f45",
       "size": 5594,
@@ -1332,9 +1513,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/ai/bounded_tools.py",
-      "sha256": "a0b6105ae082ebc735729fb58e30b42ebc5a955f1efbf8613c9b2adc9714caf7",
-      "size": 43054,
-      "source_blob_sha256": "a0b6105ae082ebc735729fb58e30b42ebc5a955f1efbf8613c9b2adc9714caf7",
+      "sha256": "24dad4ae87f2ce8f18b2b90e9c38c861cee213c200df6077b24dbe4d405fa409",
+      "size": 43391,
+      "source_blob_sha256": "24dad4ae87f2ce8f18b2b90e9c38c861cee213c200df6077b24dbe4d405fa409",
       "source_path": "src/yonerai_discord/modules/ai/bounded_tools.py",
       "transformation": "verbatim"
     },
@@ -1377,9 +1558,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/ai/core_runtime_composition.py",
-      "sha256": "d0f5be99c846bccce9b987d0ab9fbbb4247724dcd097f087b88a1961b25f4441",
-      "size": 4255,
-      "source_blob_sha256": "d0f5be99c846bccce9b987d0ab9fbbb4247724dcd097f087b88a1961b25f4441",
+      "sha256": "1e5275451903cfd7281d734d49af5e7af13a96ca452e273d975a7fce1758beed",
+      "size": 4562,
+      "source_blob_sha256": "1e5275451903cfd7281d734d49af5e7af13a96ca452e273d975a7fce1758beed",
       "source_path": "src/yonerai_discord/modules/ai/core_runtime_composition.py",
       "transformation": "verbatim"
     },
@@ -1440,9 +1621,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/ai/mention.py",
-      "sha256": "88c543f9a4e511699cd5a956bf96f4a74a2bbb00a6208731810cd69bfb73405b",
-      "size": 250570,
-      "source_blob_sha256": "88c543f9a4e511699cd5a956bf96f4a74a2bbb00a6208731810cd69bfb73405b",
+      "sha256": "62245e9a08ab423251b712b0f4a981188c7608b955fa39563b48e53c4e5f3566",
+      "size": 251645,
+      "source_blob_sha256": "62245e9a08ab423251b712b0f4a981188c7608b955fa39563b48e53c4e5f3566",
       "source_path": "src/yonerai_discord/modules/ai/mention.py",
       "transformation": "verbatim"
     },
@@ -1782,10 +1963,19 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/capability_forge/__init__.py",
-      "sha256": "e29a7c570978f5dee82d0e30d9ba0e9adcb75a6dc0326f70bfe12d66ace9995c",
-      "size": 10266,
-      "source_blob_sha256": "e29a7c570978f5dee82d0e30d9ba0e9adcb75a6dc0326f70bfe12d66ace9995c",
+      "sha256": "7cad45f7756a9efbf969ecd8dc0f6ef498ea86d62aa0c395f119778989058e16",
+      "size": 20279,
+      "source_blob_sha256": "7cad45f7756a9efbf969ecd8dc0f6ef498ea86d62aa0c395f119778989058e16",
       "source_path": "src/yonerai_discord/modules/capability_forge/__init__.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "src/yonerai_discord/modules/capability_forge/sandbox_adapter.py",
+      "sha256": "3ba2472bb2f169d0d06687272077c2b9eb8991696c5f335e687c72b834eae4fc",
+      "size": 13043,
+      "source_blob_sha256": "3ba2472bb2f169d0d06687272077c2b9eb8991696c5f335e687c72b834eae4fc",
+      "source_path": "src/yonerai_discord/modules/capability_forge/sandbox_adapter.py",
       "transformation": "verbatim"
     },
     {
@@ -2718,9 +2908,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/music/adapter.py",
-      "sha256": "c7dffee0dfa1b39a498bd1c18b00c67682f1c8e0c8b8cfe7a1e29f14502a6066",
-      "size": 82868,
-      "source_blob_sha256": "c7dffee0dfa1b39a498bd1c18b00c67682f1c8e0c8b8cfe7a1e29f14502a6066",
+      "sha256": "c4ea8b995f16a20baa428991bbc523b9a2d0b61447f1a0170236ff28a60331ba",
+      "size": 83793,
+      "source_blob_sha256": "c4ea8b995f16a20baa428991bbc523b9a2d0b61447f1a0170236ff28a60331ba",
       "source_path": "src/yonerai_discord/modules/music/adapter.py",
       "transformation": "verbatim"
     },
@@ -2763,9 +2953,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/music/models.py",
-      "sha256": "c8187437194ee1865524977730a0bbafa227f6002ef9ddb7e9bc3eb657fad735",
-      "size": 8440,
-      "source_blob_sha256": "c8187437194ee1865524977730a0bbafa227f6002ef9ddb7e9bc3eb657fad735",
+      "sha256": "cff966773bef08b9a9f0e29c03e6573b87a6a4c03be68234cd4ff1cc570b8a80",
+      "size": 9295,
+      "source_blob_sha256": "cff966773bef08b9a9f0e29c03e6573b87a6a4c03be68234cd4ff1cc570b8a80",
       "source_path": "src/yonerai_discord/modules/music/models.py",
       "transformation": "verbatim"
     },
@@ -2781,9 +2971,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/music/read_aloud_adapter.py",
-      "sha256": "696fb49a3dd73923d0387e4c65e387eee89afe8a27c871733a791e5d1c1f0668",
-      "size": 33886,
-      "source_blob_sha256": "696fb49a3dd73923d0387e4c65e387eee89afe8a27c871733a791e5d1c1f0668",
+      "sha256": "143144f07f42be10d7fe72733354e395b02b60d8bf58ab1e2e9c8f033043f387",
+      "size": 33967,
+      "source_blob_sha256": "143144f07f42be10d7fe72733354e395b02b60d8bf58ab1e2e9c8f033043f387",
       "source_path": "src/yonerai_discord/modules/music/read_aloud_adapter.py",
       "transformation": "verbatim"
     },
@@ -2799,9 +2989,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/music/service.py",
-      "sha256": "8b7fed8a7a3364f11aeffd419e24a0ccced5a62d05d965776533bfcf94e819fc",
-      "size": 97136,
-      "source_blob_sha256": "8b7fed8a7a3364f11aeffd419e24a0ccced5a62d05d965776533bfcf94e819fc",
+      "sha256": "02342f98ba8fdc91b2ef1f9a5bd6964ce0c3c0b6dd5e03774a958149a4426f9c",
+      "size": 99092,
+      "source_blob_sha256": "02342f98ba8fdc91b2ef1f9a5bd6964ce0c3c0b6dd5e03774a958149a4426f9c",
       "source_path": "src/yonerai_discord/modules/music/service.py",
       "transformation": "verbatim"
     },
@@ -3006,9 +3196,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/personal_memory/adapter.py",
-      "sha256": "6ebdc100a70ebd46e875db1d3521fa54405b1a721fe7237471141d84cc3b2210",
-      "size": 14581,
-      "source_blob_sha256": "6ebdc100a70ebd46e875db1d3521fa54405b1a721fe7237471141d84cc3b2210",
+      "sha256": "e31855abe5fb40896f49f0e0bba50f4a37f5da05f479e9aa7eb3715383a4abc4",
+      "size": 17391,
+      "source_blob_sha256": "e31855abe5fb40896f49f0e0bba50f4a37f5da05f479e9aa7eb3715383a4abc4",
       "source_path": "src/yonerai_discord/modules/personal_memory/adapter.py",
       "transformation": "verbatim"
     },
@@ -3258,9 +3448,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/speech_synthesis/provider_voicevox.py",
-      "sha256": "693d6fbc0fd0e1ee2456bfda0727659509c48dc7e100a6c06eadc97330c9077b",
-      "size": 11641,
-      "source_blob_sha256": "693d6fbc0fd0e1ee2456bfda0727659509c48dc7e100a6c06eadc97330c9077b",
+      "sha256": "ddf1bec61dfa14e74dfcf4c8f0ed946d3a3f6760c6aef3037e0085b00c55676b",
+      "size": 14145,
+      "source_blob_sha256": "ddf1bec61dfa14e74dfcf4c8f0ed946d3a3f6760c6aef3037e0085b00c55676b",
       "source_path": "src/yonerai_discord/modules/speech_synthesis/provider_voicevox.py",
       "transformation": "verbatim"
     },
@@ -3456,18 +3646,18 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/voice/adapter.py",
-      "sha256": "fe8ec155945fa6f6ac115892ab3c6bcfd10c2318435ca17f731e2a69bc8247bb",
-      "size": 5322,
-      "source_blob_sha256": "fe8ec155945fa6f6ac115892ab3c6bcfd10c2318435ca17f731e2a69bc8247bb",
+      "sha256": "41a1638d54f174c77f9f8dd05786e1fdff8d62a47906baf35a3554951836bf60",
+      "size": 5554,
+      "source_blob_sha256": "41a1638d54f174c77f9f8dd05786e1fdff8d62a47906baf35a3554951836bf60",
       "source_path": "src/yonerai_discord/modules/voice/adapter.py",
       "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/voice/models.py",
-      "sha256": "e28418706488f4bcc57c0751255e4c75e6928bbd4a944e9af690ae6d7ffaecb3",
-      "size": 3062,
-      "source_blob_sha256": "e28418706488f4bcc57c0751255e4c75e6928bbd4a944e9af690ae6d7ffaecb3",
+      "sha256": "4d679d2c0c93cc637ebfbf204e2b37b335d07b72519be7113e264658f898b48d",
+      "size": 3243,
+      "source_blob_sha256": "4d679d2c0c93cc637ebfbf204e2b37b335d07b72519be7113e264658f898b48d",
       "source_path": "src/yonerai_discord/modules/voice/models.py",
       "transformation": "verbatim"
     },
@@ -3501,9 +3691,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/voice/read_aloud.py",
-      "sha256": "6c5f1dbd04f13308e5302a267d452e0bf62ac51b75ca01194c3aa86db625cf1e",
-      "size": 56563,
-      "source_blob_sha256": "6c5f1dbd04f13308e5302a267d452e0bf62ac51b75ca01194c3aa86db625cf1e",
+      "sha256": "7629e7a00bb239bdb43d15ff6ad2a63ac1f584c06511f419cf3eee5eea41fd57",
+      "size": 56611,
+      "source_blob_sha256": "7629e7a00bb239bdb43d15ff6ad2a63ac1f584c06511f419cf3eee5eea41fd57",
       "source_path": "src/yonerai_discord/modules/voice/read_aloud.py",
       "transformation": "verbatim"
     },
@@ -3519,9 +3709,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/voice/voicevox.py",
-      "sha256": "b5cb8b83b57a58f74d85d9f01ce5d3ab1221bdd097452032aa2fae5fbb524d10",
-      "size": 5681,
-      "source_blob_sha256": "b5cb8b83b57a58f74d85d9f01ce5d3ab1221bdd097452032aa2fae5fbb524d10",
+      "sha256": "66676c308dd5f4c14b84303cd910529060eac98ee1cabd132b812e56da52d54b",
+      "size": 6521,
+      "source_blob_sha256": "66676c308dd5f4c14b84303cd910529060eac98ee1cabd132b812e56da52d54b",
       "source_path": "src/yonerai_discord/modules/voice/voicevox.py",
       "transformation": "verbatim"
     },
@@ -3564,9 +3754,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/modules/yonerai/__init__.py",
-      "sha256": "9f623029593ca03f5d895f9b29ae1eb5ee6a47c7caaa29787cc91f8371f4211c",
-      "size": 2098,
-      "source_blob_sha256": "9f623029593ca03f5d895f9b29ae1eb5ee6a47c7caaa29787cc91f8371f4211c",
+      "sha256": "b17d22d5f75ac6e9a8c0b8915effde1350cc5971fa5580ef25d12f6059a39d24",
+      "size": 2334,
+      "source_blob_sha256": "b17d22d5f75ac6e9a8c0b8915effde1350cc5971fa5580ef25d12f6059a39d24",
       "source_path": "src/yonerai_discord/modules/yonerai/__init__.py",
       "transformation": "verbatim"
     },
@@ -3599,10 +3789,19 @@
     },
     {
       "classification": "public_shared",
+      "path": "src/yonerai_discord/modules/yonerai/readiness.py",
+      "sha256": "470a4938f566883423e3093dcf9d147b79fe367e347bdc548a98b4fd2a52b8ed",
+      "size": 7849,
+      "source_blob_sha256": "470a4938f566883423e3093dcf9d147b79fe367e347bdc548a98b4fd2a52b8ed",
+      "source_path": "src/yonerai_discord/modules/yonerai/readiness.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
       "path": "src/yonerai_discord/modules/yonerai/service.py",
-      "sha256": "454fb1b1a240a4c71c2cc23aca112df6d66ef1bca3201791e05862c78e3069cb",
-      "size": 2931,
-      "source_blob_sha256": "454fb1b1a240a4c71c2cc23aca112df6d66ef1bca3201791e05862c78e3069cb",
+      "sha256": "a96923780807c5605560ae75a5f94f64285537be8ab66e37674a5ade42859038",
+      "size": 3098,
+      "source_blob_sha256": "a96923780807c5605560ae75a5f94f64285537be8ab66e37674a5ade42859038",
       "source_path": "src/yonerai_discord/modules/yonerai/service.py",
       "transformation": "verbatim"
     },
@@ -3780,9 +3979,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/runtime_manifests/capability_forge.py",
-      "sha256": "8c3f55c0fac6b99cddedf7e2a3ada30e6130b648d72d7becb45123a89d3154a1",
-      "size": 670,
-      "source_blob_sha256": "8c3f55c0fac6b99cddedf7e2a3ada30e6130b648d72d7becb45123a89d3154a1",
+      "sha256": "28a492c13993f6a101bd4dac5cbabae1b25586f09447b6835f35030809b4651d",
+      "size": 4174,
+      "source_blob_sha256": "28a492c13993f6a101bd4dac5cbabae1b25586f09447b6835f35030809b4651d",
       "source_path": "src/yonerai_discord/runtime_manifests/capability_forge.py",
       "transformation": "verbatim"
     },
@@ -3987,10 +4186,19 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/sandbox_doctor.py",
-      "sha256": "aee4f710bd410c211b18563112a83fdf1ad40c95b21565ab59cf5fbd54dc1c7c",
-      "size": 10584,
-      "source_blob_sha256": "aee4f710bd410c211b18563112a83fdf1ad40c95b21565ab59cf5fbd54dc1c7c",
+      "sha256": "7d51791dbafc11732703a0c8ab32854f56932d7ec48c97d4f9d1f30539b5d6c1",
+      "size": 12731,
+      "source_blob_sha256": "7d51791dbafc11732703a0c8ab32854f56932d7ec48c97d4f9d1f30539b5d6c1",
       "source_path": "src/yonerai_discord/sandbox_doctor.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "src/yonerai_discord/sandbox_operator_cli.py",
+      "sha256": "7847e780acb15f714c3c7aeac3f6e771921f62d35a73e64c7e50c0143c44b7ae",
+      "size": 20806,
+      "source_blob_sha256": "7847e780acb15f714c3c7aeac3f6e771921f62d35a73e64c7e50c0143c44b7ae",
+      "source_path": "src/yonerai_discord/sandbox_operator_cli.py",
       "transformation": "verbatim"
     },
     {
@@ -4077,9 +4285,9 @@
     {
       "classification": "public_shared",
       "path": "src/yonerai_discord/search_fabric/core_bridge.py",
-      "sha256": "5056c9509cd8d4ffea62e3bd869ac15b776e4305b3273c45bc7633c573e2562d",
-      "size": 28335,
-      "source_blob_sha256": "5056c9509cd8d4ffea62e3bd869ac15b776e4305b3273c45bc7633c573e2562d",
+      "sha256": "117762668b11ae6d94b210b62e4dcf781c6a96da8e337c0cff960038b777a608",
+      "size": 41361,
+      "source_blob_sha256": "117762668b11ae6d94b210b62e4dcf781c6a96da8e337c0cff960038b777a608",
       "source_path": "src/yonerai_discord/search_fabric/core_bridge.py",
       "transformation": "verbatim"
     },
@@ -4301,6 +4509,15 @@
     },
     {
       "classification": "public_shared",
+      "path": "src/yonerai_discord/voice_contract.py",
+      "sha256": "eef716f3ad046d6fc44265ae27196109f408fdff9490c5750c820041fd27e200",
+      "size": 266,
+      "source_blob_sha256": "eef716f3ad046d6fc44265ae27196109f408fdff9490c5750c820041fd27e200",
+      "source_path": "src/yonerai_discord/voice_contract.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
       "path": "src/yonerai_discord/web_doctor.py",
       "sha256": "28f987f43cb29db8554a1ce06ab8fd1b7e5194503ce485354cfdfc9e6d294436",
       "size": 10794,
@@ -4324,6 +4541,15 @@
       "size": 20336,
       "source_blob_sha256": "202da2214c0e12c7d04fb27a753f3017a3ffa888677692640d0c3c280b4aeebb",
       "source_path": "tests/test_admin_ui_stage1.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "tests/test_agent_audit_projection.py",
+      "sha256": "a315e2e844be06959b272e2bafa7c03584811f723fdc676f3a409d4b0ff15619",
+      "size": 12655,
+      "source_blob_sha256": "a315e2e844be06959b272e2bafa7c03584811f723fdc676f3a409d4b0ff15619",
+      "source_path": "tests/test_agent_audit_projection.py",
       "transformation": "verbatim"
     },
     {
@@ -4355,6 +4581,15 @@
     },
     {
       "classification": "public_shared",
+      "path": "tests/test_ai_agent_audit_port.py",
+      "sha256": "e3ca666dab54d69821757479cc9fa9b3a77b138844771fdfdeb97a9f60d5fa0f",
+      "size": 34718,
+      "source_blob_sha256": "e3ca666dab54d69821757479cc9fa9b3a77b138844771fdfdeb97a9f60d5fa0f",
+      "source_path": "tests/test_ai_agent_audit_port.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
       "path": "tests/test_ai_artifacts.py",
       "sha256": "65218ebe3e8a31d8d93b2c8d18afdd1277c0c34fbd621eb968d18020e13ea003",
       "size": 1977,
@@ -4365,9 +4600,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_ai_bounded_tools.py",
-      "sha256": "c8ae352d1e376e7993041d1c2caf57bd79dc0b7bb8013542fcacb739c00e3d2b",
-      "size": 22873,
-      "source_blob_sha256": "c8ae352d1e376e7993041d1c2caf57bd79dc0b7bb8013542fcacb739c00e3d2b",
+      "sha256": "e17afe722ad4a943cef40f2da6cccdb94c2a2592355787f2a6f5341d83d761fe",
+      "size": 24271,
+      "source_blob_sha256": "e17afe722ad4a943cef40f2da6cccdb94c2a2592355787f2a6f5341d83d761fe",
       "source_path": "tests/test_ai_bounded_tools.py",
       "transformation": "verbatim"
     },
@@ -4446,9 +4681,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_ai_core_runtime_composition.py",
-      "sha256": "bdce375835fd6196e74b83c0efdc22f4e7c3e1342836e609d9c21ad32dbde63b",
-      "size": 4725,
-      "source_blob_sha256": "bdce375835fd6196e74b83c0efdc22f4e7c3e1342836e609d9c21ad32dbde63b",
+      "sha256": "122967cf421221c184b366a0775939d3deb70cd2b3e57df242634835ee08fc6c",
+      "size": 6024,
+      "source_blob_sha256": "122967cf421221c184b366a0775939d3deb70cd2b3e57df242634835ee08fc6c",
       "source_path": "tests/test_ai_core_runtime_composition.py",
       "transformation": "verbatim"
     },
@@ -4500,9 +4735,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_ai_mention.py",
-      "sha256": "07208f5f74c6a0dffc006b4b48db23706e4ab957b8721f18a7b23eae46b1da22",
-      "size": 297982,
-      "source_blob_sha256": "07208f5f74c6a0dffc006b4b48db23706e4ab957b8721f18a7b23eae46b1da22",
+      "sha256": "09e0c3097c747fef8f22cc7886f8833639240e064eea0b0b7a0905bb56902954",
+      "size": 299888,
+      "source_blob_sha256": "09e0c3097c747fef8f22cc7886f8833639240e064eea0b0b7a0905bb56902954",
       "source_path": "tests/test_ai_mention.py",
       "transformation": "verbatim"
     },
@@ -4536,9 +4771,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_ai_plugin_lifecycle.py",
-      "sha256": "03f14ca8ad474acef3a9878bdb644a219c5b9935e26b9c0008863f156b5ca337",
-      "size": 19585,
-      "source_blob_sha256": "03f14ca8ad474acef3a9878bdb644a219c5b9935e26b9c0008863f156b5ca337",
+      "sha256": "d5593533064e2ae8492950c6cd01c0375d72bdb6f3e17991d10e343e0ab3c455",
+      "size": 25848,
+      "source_blob_sha256": "d5593533064e2ae8492950c6cd01c0375d72bdb6f3e17991d10e343e0ab3c455",
       "source_path": "tests/test_ai_plugin_lifecycle.py",
       "transformation": "verbatim"
     },
@@ -4644,9 +4879,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_audio_video_provider_adapters.py",
-      "sha256": "4c66a93114ddda0391db2e511d0c90dd8d7ace0115911770da2d6317ddba40c9",
-      "size": 45069,
-      "source_blob_sha256": "4c66a93114ddda0391db2e511d0c90dd8d7ace0115911770da2d6317ddba40c9",
+      "sha256": "0bc5f837ea4a8e976bfff975ceb24113055a64d93b3503784792a04362eb1173",
+      "size": 46269,
+      "source_blob_sha256": "0bc5f837ea4a8e976bfff975ceb24113055a64d93b3503784792a04362eb1173",
       "source_path": "tests/test_audio_video_provider_adapters.py",
       "transformation": "verbatim"
     },
@@ -4743,18 +4978,18 @@
     {
       "classification": "public_shared",
       "path": "tests/test_browser_subprocess_transport.py",
-      "sha256": "c0b5da365b3f0fa709cb97253cd0804ce466ab51e19cd54584dcbe4aac07ca64",
-      "size": 13934,
-      "source_blob_sha256": "c0b5da365b3f0fa709cb97253cd0804ce466ab51e19cd54584dcbe4aac07ca64",
+      "sha256": "9d8305a4766a00b3658e4347439ade8cf14db2cf6f099b513e7df08a577c38c6",
+      "size": 14800,
+      "source_blob_sha256": "9d8305a4766a00b3658e4347439ade8cf14db2cf6f099b513e7df08a577c38c6",
       "source_path": "tests/test_browser_subprocess_transport.py",
       "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
       "path": "tests/test_capabilities_manifest.py",
-      "sha256": "bd56bb372166ada29bc3a556d20c28f93140a6319b7fdb936629a3e19e4fe134",
-      "size": 17415,
-      "source_blob_sha256": "bd56bb372166ada29bc3a556d20c28f93140a6319b7fdb936629a3e19e4fe134",
+      "sha256": "134290e90ba256bc6ee804f1ed737899e3a47781032520618e1d5f444ec9dc1a",
+      "size": 18354,
+      "source_blob_sha256": "134290e90ba256bc6ee804f1ed737899e3a47781032520618e1d5f444ec9dc1a",
       "source_path": "tests/test_capabilities_manifest.py",
       "transformation": "verbatim"
     },
@@ -4779,10 +5014,46 @@
     {
       "classification": "public_shared",
       "path": "tests/test_capability_forge_discord_adapter.py",
-      "sha256": "413527b9e4e465845be5d0b3d1586322c4807451a4a1863167398d045ee8badf",
-      "size": 18773,
-      "source_blob_sha256": "413527b9e4e465845be5d0b3d1586322c4807451a4a1863167398d045ee8badf",
+      "sha256": "47121e64370d5173a40d6265cb4b5615b23e2de8532e411d285220722f72b343",
+      "size": 19384,
+      "source_blob_sha256": "47121e64370d5173a40d6265cb4b5615b23e2de8532e411d285220722f72b343",
       "source_path": "tests/test_capability_forge_discord_adapter.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "tests/test_capability_forge_execution_sandbox_replay.py",
+      "sha256": "04b6e1e6aa629edc27dd544447cf72095e1c2c4477ab6efb9f55a9643e8864fc",
+      "size": 11904,
+      "source_blob_sha256": "04b6e1e6aa629edc27dd544447cf72095e1c2c4477ab6efb9f55a9643e8864fc",
+      "source_path": "tests/test_capability_forge_execution_sandbox_replay.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "tests/test_capability_forge_execution_sandbox_signing.py",
+      "sha256": "615f848ebfa6f1d18c1ceeb9ef9a3fce62e76b666714705b9b2b72b49c3d4516",
+      "size": 16415,
+      "source_blob_sha256": "615f848ebfa6f1d18c1ceeb9ef9a3fce62e76b666714705b9b2b72b49c3d4516",
+      "source_path": "tests/test_capability_forge_execution_sandbox_signing.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "tests/test_capability_forge_hyperv_socket_transport.py",
+      "sha256": "e273e075bd2ae314496f3748de4df299a7afda12f9407d100986a7277c45b1ee",
+      "size": 19705,
+      "source_blob_sha256": "e273e075bd2ae314496f3748de4df299a7afda12f9407d100986a7277c45b1ee",
+      "source_path": "tests/test_capability_forge_hyperv_socket_transport.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "tests/test_capability_forge_named_pipe_exchange.py",
+      "sha256": "9149f29de9da3314f5f9de97cf2322aaf691ae66bc0a0878ef4a9e600b509d91",
+      "size": 10114,
+      "source_blob_sha256": "9149f29de9da3314f5f9de97cf2322aaf691ae66bc0a0878ef4a9e600b509d91",
+      "source_path": "tests/test_capability_forge_named_pipe_exchange.py",
       "transformation": "verbatim"
     },
     {
@@ -4796,11 +5067,29 @@
     },
     {
       "classification": "public_shared",
+      "path": "tests/test_capability_forge_sandbox_discord.py",
+      "sha256": "7a692cacaed9aba8a71c1868787afbed2e60083357db88c24d6fbfc69b14b39c",
+      "size": 18428,
+      "source_blob_sha256": "7a692cacaed9aba8a71c1868787afbed2e60083357db88c24d6fbfc69b14b39c",
+      "source_path": "tests/test_capability_forge_sandbox_discord.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
       "path": "tests/test_capability_forge_sandbox_lifecycle.py",
-      "sha256": "2552579ddbc576e42403c978ed27ddf8d2867445525211d14d87883cb49ca348",
-      "size": 14086,
-      "source_blob_sha256": "2552579ddbc576e42403c978ed27ddf8d2867445525211d14d87883cb49ca348",
+      "sha256": "47158417ee6e45fa4cbed7fdbb76970fc8b429cac075c905b4687f7818e4f8e5",
+      "size": 14558,
+      "source_blob_sha256": "47158417ee6e45fa4cbed7fdbb76970fc8b429cac075c905b4687f7818e4f8e5",
       "source_path": "tests/test_capability_forge_sandbox_lifecycle.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "tests/test_capability_forge_sandbox_runtime.py",
+      "sha256": "a3bb0c2d4f775dc6f760dd4f2fab3abd4ad443c9200fcff7de0eb3f9575bd586",
+      "size": 32812,
+      "source_blob_sha256": "a3bb0c2d4f775dc6f760dd4f2fab3abd4ad443c9200fcff7de0eb3f9575bd586",
+      "source_path": "tests/test_capability_forge_sandbox_runtime.py",
       "transformation": "verbatim"
     },
     {
@@ -4878,18 +5167,18 @@
     {
       "classification": "public_shared",
       "path": "tests/test_control_state_db.py",
-      "sha256": "a5d74161ce3cca78eb2faca9a835fab0c0d548d2abec7db651e5b6f3c390e9b4",
-      "size": 11483,
-      "source_blob_sha256": "a5d74161ce3cca78eb2faca9a835fab0c0d548d2abec7db651e5b6f3c390e9b4",
+      "sha256": "eeba33462ef183c5b71123fa2206444bf4c830eecc372b43c6ac003389fce4d7",
+      "size": 17528,
+      "source_blob_sha256": "eeba33462ef183c5b71123fa2206444bf4c830eecc372b43c6ac003389fce4d7",
       "source_path": "tests/test_control_state_db.py",
       "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
       "path": "tests/test_core_aiohttp_transport.py",
-      "sha256": "82b9597797cfe1af62ad54c0c4d11f49ace256654879dd3ad9a29b21180725df",
-      "size": 6509,
-      "source_blob_sha256": "82b9597797cfe1af62ad54c0c4d11f49ace256654879dd3ad9a29b21180725df",
+      "sha256": "95617ce26ef6489cd0f6826c21a183c19657b050f3edf12c10caa04bf874bed3",
+      "size": 7763,
+      "source_blob_sha256": "95617ce26ef6489cd0f6826c21a183c19657b050f3edf12c10caa04bf874bed3",
       "source_path": "tests/test_core_aiohttp_transport.py",
       "transformation": "verbatim"
     },
@@ -5094,18 +5383,27 @@
     {
       "classification": "public_shared",
       "path": "tests/test_execution_gateway_core_v01_http.py",
-      "sha256": "568964e0892ad1c53b6c7341bf9700c26dd4a1b39c109056da6b90a52e0148ec",
-      "size": 5920,
-      "source_blob_sha256": "568964e0892ad1c53b6c7341bf9700c26dd4a1b39c109056da6b90a52e0148ec",
+      "sha256": "61744fdabfd1053f43fc1e17cba89259f7b2ebc6df91cfd724abad4c55cccb7e",
+      "size": 8062,
+      "source_blob_sha256": "61744fdabfd1053f43fc1e17cba89259f7b2ebc6df91cfd724abad4c55cccb7e",
       "source_path": "tests/test_execution_gateway_core_v01_http.py",
       "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
+      "path": "tests/test_execution_gateway_ora_core_transport.py",
+      "sha256": "26299512bf5e607026b6d1647ad152025ca5a9193b530ac9098b43c2a15a8f06",
+      "size": 10657,
+      "source_blob_sha256": "26299512bf5e607026b6d1647ad152025ca5a9193b530ac9098b43c2a15a8f06",
+      "source_path": "tests/test_execution_gateway_ora_core_transport.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
       "path": "tests/test_generate_capability_catalog.py",
-      "sha256": "efdb62ba0961055a44e4d5e8cc46101be4dc574e609b081aebeb295cebe6af84",
-      "size": 7547,
-      "source_blob_sha256": "efdb62ba0961055a44e4d5e8cc46101be4dc574e609b081aebeb295cebe6af84",
+      "sha256": "b5959a1bafd1c0b6fbc750957e5465c3be11fe1a476614be1bba65c504f1639c",
+      "size": 8414,
+      "source_blob_sha256": "b5959a1bafd1c0b6fbc750957e5465c3be11fe1a476614be1bba65c504f1639c",
       "source_path": "tests/test_generate_capability_catalog.py",
       "transformation": "verbatim"
     },
@@ -5130,9 +5428,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_identity_http.py",
-      "sha256": "0d05b0f7f8b7a9f5e510b8db5934c45ab1f60df531c87c21e05c83a4ee70dc50",
-      "size": 5287,
-      "source_blob_sha256": "0d05b0f7f8b7a9f5e510b8db5934c45ab1f60df531c87c21e05c83a4ee70dc50",
+      "sha256": "e4f9d4509d9c7ea204bfabf476dd2f401d2a27b7ffcaeeafe98c95d5c9a08ba1",
+      "size": 5473,
+      "source_blob_sha256": "e4f9d4509d9c7ea204bfabf476dd2f401d2a27b7ffcaeeafe98c95d5c9a08ba1",
       "source_path": "tests/test_identity_http.py",
       "transformation": "verbatim"
     },
@@ -5175,9 +5473,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_identity_web_adapter.py",
-      "sha256": "6766c083d641b3f2704ed1c114a92652acb9df8bad042f9563f2f6b0e69634ff",
-      "size": 5169,
-      "source_blob_sha256": "6766c083d641b3f2704ed1c114a92652acb9df8bad042f9563f2f6b0e69634ff",
+      "sha256": "0be8b1a1436d358d753ee2eb3da4ac3b7a86ddff0c720bb337301ae33abe31eb",
+      "size": 5337,
+      "source_blob_sha256": "0be8b1a1436d358d753ee2eb3da4ac3b7a86ddff0c720bb337301ae33abe31eb",
       "source_path": "tests/test_identity_web_adapter.py",
       "transformation": "verbatim"
     },
@@ -5562,9 +5860,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_music_plugin.py",
-      "sha256": "916f945563f4c05e5502915d9f73d73f05a2bdfd2722ea477842baf217b43327",
-      "size": 57308,
-      "source_blob_sha256": "916f945563f4c05e5502915d9f73d73f05a2bdfd2722ea477842baf217b43327",
+      "sha256": "6a1005e04369f243954789f8ee22c997df748c679082433ab4876551f5f57688",
+      "size": 59372,
+      "source_blob_sha256": "6a1005e04369f243954789f8ee22c997df748c679082433ab4876551f5f57688",
       "source_path": "tests/test_music_plugin.py",
       "transformation": "verbatim"
     },
@@ -5589,9 +5887,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_music_service.py",
-      "sha256": "a436f4cb6d5cd2ad3c28ce6fe93eb54496a554ae243b7aa64fda2deba2ec45f4",
-      "size": 90956,
-      "source_blob_sha256": "a436f4cb6d5cd2ad3c28ce6fe93eb54496a554ae243b7aa64fda2deba2ec45f4",
+      "sha256": "da48ddc5472c45dc7ca110e8b19af80dae80bd5359c3596e673964cf7aa902fa",
+      "size": 96450,
+      "source_blob_sha256": "da48ddc5472c45dc7ca110e8b19af80dae80bd5359c3596e673964cf7aa902fa",
       "source_path": "tests/test_music_service.py",
       "transformation": "verbatim"
     },
@@ -5669,19 +5967,28 @@
     },
     {
       "classification": "public_shared",
-      "path": "tests/test_run_bot_from_src.py",
-      "sha256": "d72d8344a8fb03f48c531496803302e8c322c799d09cd3829e90f9e8fd7b22fb",
-      "size": 622,
-      "source_blob_sha256": "d72d8344a8fb03f48c531496803302e8c322c799d09cd3829e90f9e8fd7b22fb",
-      "source_path": "tests/test_run_bot_from_src.py",
+      "path": "tests/test_public_capability_truth.py",
+      "sha256": "49dbe39409e2618f1520335521da69971d2c8eb60cafc0450a2becf8ec18627b",
+      "size": 8587,
+      "source_blob_sha256": "49dbe39409e2618f1520335521da69971d2c8eb60cafc0450a2becf8ec18627b",
+      "source_path": "tests/test_public_capability_truth.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "tests/test_public_vm_profiles.py",
+      "sha256": "c42b7c06135f90e9784c028212e6f57f5f95e77ae2826890fd16b17ed4ee6ba4",
+      "size": 11336,
+      "source_blob_sha256": "c42b7c06135f90e9784c028212e6f57f5f95e77ae2826890fd16b17ed4ee6ba4",
+      "source_path": "tests/test_public_vm_profiles.py",
       "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
       "path": "tests/test_runtime_manifest_fragments.py",
-      "sha256": "fa90f8fdc45b372d27aeaba0cc3bd6e5fff7376001f3203d840d21974e7c946a",
-      "size": 4870,
-      "source_blob_sha256": "fa90f8fdc45b372d27aeaba0cc3bd6e5fff7376001f3203d840d21974e7c946a",
+      "sha256": "1548a36dc1c225e394c3831391ece28f2a5f56760d9880ff1ea51a5786e8aafa",
+      "size": 4922,
+      "source_blob_sha256": "1548a36dc1c225e394c3831391ece28f2a5f56760d9880ff1ea51a5786e8aafa",
       "source_path": "tests/test_runtime_manifest_fragments.py",
       "transformation": "verbatim"
     },
@@ -5701,6 +6008,15 @@
       "size": 2021,
       "source_blob_sha256": "790b7de653641e33ab3768f1fcc57c29254d7bfa11a9ffb05ef91034ec1dc25e",
       "source_path": "tests/test_runtime_readiness.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "tests/test_sandbox_operator_cli.py",
+      "sha256": "73d3e7f6f3dacbf8980ec31d40dd3517a12468416a882d0395dd8ccc981812ab",
+      "size": 18030,
+      "source_blob_sha256": "73d3e7f6f3dacbf8980ec31d40dd3517a12468416a882d0395dd8ccc981812ab",
+      "source_path": "tests/test_sandbox_operator_cli.py",
       "transformation": "verbatim"
     },
     {
@@ -5859,9 +6175,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_security_preflight.py",
-      "sha256": "56d4b1376e0c9750165a9031de521219b611bfc6c70089341b1804deba24349f",
-      "size": 2086,
-      "source_blob_sha256": "56d4b1376e0c9750165a9031de521219b611bfc6c70089341b1804deba24349f",
+      "sha256": "426804dea9ac3fedd77c15856228fc2f18acee3e2f5428307b8ed30e39b2aea9",
+      "size": 6960,
+      "source_blob_sha256": "426804dea9ac3fedd77c15856228fc2f18acee3e2f5428307b8ed30e39b2aea9",
       "source_path": "tests/test_security_preflight.py",
       "transformation": "verbatim"
     },
@@ -5895,9 +6211,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_speech_audio_provider_adapters.py",
-      "sha256": "c914cfd5bbaa0c2865040e43f5709ce31cfbec9432cd34cb2c8ae0aa901af21b",
-      "size": 22958,
-      "source_blob_sha256": "c914cfd5bbaa0c2865040e43f5709ce31cfbec9432cd34cb2c8ae0aa901af21b",
+      "sha256": "d16b86c0152048bbee3d02a96aa4fed686bbf6d3b1e93066c8689fb6ab43cb3a",
+      "size": 25440,
+      "source_blob_sha256": "d16b86c0152048bbee3d02a96aa4fed686bbf6d3b1e93066c8689fb6ab43cb3a",
       "source_path": "tests/test_speech_audio_provider_adapters.py",
       "transformation": "verbatim"
     },
@@ -5994,9 +6310,9 @@
     {
       "classification": "public_shared",
       "path": "tests/test_v0_discord_commit_guard.py",
-      "sha256": "828d0d79771d41b914544c5d85c0591d2b339eb3969a3a8af3ccf5ad2a90e34d",
-      "size": 3446,
-      "source_blob_sha256": "828d0d79771d41b914544c5d85c0591d2b339eb3969a3a8af3ccf5ad2a90e34d",
+      "sha256": "76be0aa4a70aa254c3173199aad26128dbc6b5676782e1dc8d8dadafdb33a131",
+      "size": 14689,
+      "source_blob_sha256": "76be0aa4a70aa254c3173199aad26128dbc6b5676782e1dc8d8dadafdb33a131",
       "source_path": "tests/test_v0_discord_commit_guard.py",
       "transformation": "verbatim"
     },
@@ -6102,18 +6418,18 @@
     {
       "classification": "public_shared",
       "path": "tests/test_voice_read_aloud.py",
-      "sha256": "bdb26d25ef52258840af33df0266471dff69fb1dbe3fbb574e14d90dee54163b",
-      "size": 37007,
-      "source_blob_sha256": "bdb26d25ef52258840af33df0266471dff69fb1dbe3fbb574e14d90dee54163b",
+      "sha256": "bae69521ba650720b5835b1b5abc9f897e31b3796f6f56ce727244e892fef404",
+      "size": 37132,
+      "source_blob_sha256": "bae69521ba650720b5835b1b5abc9f897e31b3796f6f56ce727244e892fef404",
       "source_path": "tests/test_voice_read_aloud.py",
       "transformation": "verbatim"
     },
     {
       "classification": "public_shared",
       "path": "tests/test_voice_service.py",
-      "sha256": "19db7357ce933a2d2bf63a7c403d6fe540fb0ff4327df7bd22a10e39606874e6",
-      "size": 36294,
-      "source_blob_sha256": "19db7357ce933a2d2bf63a7c403d6fe540fb0ff4327df7bd22a10e39606874e6",
+      "sha256": "2ba0c3dbfd1dc641e69b53a563e96750ace0bb70a87312bc5e0f01c7f59141dc",
+      "size": 54085,
+      "source_blob_sha256": "2ba0c3dbfd1dc641e69b53a563e96750ace0bb70a87312bc5e0f01c7f59141dc",
       "source_path": "tests/test_voice_service.py",
       "transformation": "verbatim"
     },
@@ -6147,10 +6463,19 @@
     {
       "classification": "public_shared",
       "path": "tests/test_yonerai_plugin.py",
-      "sha256": "8232a35b44a5fcfe49b53614ee7c364e73381a4102cad5515d8f1fcf1ecdf5f2",
-      "size": 1166,
-      "source_blob_sha256": "8232a35b44a5fcfe49b53614ee7c364e73381a4102cad5515d8f1fcf1ecdf5f2",
+      "sha256": "59ae40498a56917171d4f437fb28ac79324c77d74b44041f2ae88ebd37cf43fb",
+      "size": 2080,
+      "source_blob_sha256": "59ae40498a56917171d4f437fb28ac79324c77d74b44041f2ae88ebd37cf43fb",
       "source_path": "tests/test_yonerai_plugin.py",
+      "transformation": "verbatim"
+    },
+    {
+      "classification": "public_shared",
+      "path": "tests/test_yonerai_readiness.py",
+      "sha256": "cb3ed0cdafdb9f54a07abfde39ed1a3ae55cd454e9d487b773a6319fd628ebbb",
+      "size": 5363,
+      "source_blob_sha256": "cb3ed0cdafdb9f54a07abfde39ed1a3ae55cd454e9d487b773a6319fd628ebbb",
+      "source_path": "tests/test_yonerai_readiness.py",
       "transformation": "verbatim"
     },
     {
@@ -6244,10 +6569,15 @@
       "transformation": "verbatim"
     }
   ],
+  "generated_audit_file_count": 2,
+  "generated_receipt_file_count": 1,
   "history_included": false,
-  "policy_sha256": "0e0f89bb760773f2ce46fd8bb1e86d625daa8f24726bb5adb72f2d5675843464",
-  "public_file_count": 693,
+  "materialized_file_count": 727,
+  "non_materialized_control_file_count": 1,
+  "policy_sha256": "bbec31abbe5292fd3340da0780ba342094037333087276b96fc7a67fa1fce111",
+  "public_classified_source_count": 728,
+  "public_file_count": 727,
   "schema_version": 1,
-  "source_commit": "a8ace0bb763ab5aabcc9fc6dac92e0153711fc59",
-  "tracked_file_count": 929
+  "source_commit": "0b00981b2ca7409fc1d9bb35fa25869209ed1583",
+  "tracked_file_count": 1067
 }

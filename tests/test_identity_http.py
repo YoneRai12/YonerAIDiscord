@@ -40,7 +40,11 @@ def test_security_headers_are_immutable_and_defensive() -> None:
     headers = security_headers()
     assert headers["Cache-Control"] == "no-store"
     assert headers["X-Frame-Options"] == "DENY"
-    assert "challenges.cloudflare.com" in headers["Content-Security-Policy"]
+    assert headers["Content-Security-Policy"] == (
+        "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; "
+        "script-src https://challenges.cloudflare.com; "
+        "frame-src https://challenges.cloudflare.com; base-uri 'none'"
+    )
     try:
         headers["unsafe"] = "value"  # type: ignore[index]
     except TypeError:

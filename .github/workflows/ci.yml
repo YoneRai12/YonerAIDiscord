@@ -35,7 +35,9 @@ jobs:
           ruff format --check src tests scripts ci
           python -m compileall -q src tests scripts ci
       - name: Capability catalog drift check
-        run: python scripts/generate_capability_catalog.py --check
+        run: |
+          python scripts/generate_capability_catalog.py --check
+          python scripts/generate_public_capability_truth.py --check-public
       - name: Secret and artifact preflight
         run: python scripts/security_preflight.py --workspace .
       - name: Tests

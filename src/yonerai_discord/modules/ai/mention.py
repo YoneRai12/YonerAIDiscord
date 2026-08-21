@@ -177,6 +177,7 @@ from .task_routing import (
     UNKNOWN_OPERATION_REPLY,
     classify_ai_task,
     parse_media_inspection_request,
+    requests_multi_step_execution,
 )
 from .site_delivery import (
     DiscordAISiteDelivery,
@@ -997,6 +998,8 @@ class AIMentionListener:
                     )
                     return
 
+        if prompt:
+            early_route = self._bounded_browser_planner_route(prompt, early_route)
         if prompt and "browser_operation_unavailable" in early_route.reason_codes:
             self._log_message_event(
                 "ai_unknown_operation_rejected",
@@ -1158,6 +1161,7 @@ class AIMentionListener:
             prompt=routing_prompt,
             snapshot=snapshot,
         )
+        task_route = self._bounded_browser_planner_route(user_prompt, task_route)
         if local_evidence_reply is not None:
             task_route = replace(
                 task_route,
@@ -1978,6 +1982,26 @@ class AIMentionListener:
             return planner.registry is engine.registry and self._planner_candidate_policy(instruction, route)[0] > 0
         except (TypeError, ValueError):
             return False
+
+    def _bounded_browser_planner_route(self, instruction: str, route: AITaskRoute) -> AITaskRoute:
+        """Route only compound browser requests with an existing bounded planner candidate."""
+
+        if "browser_operation_unavailable" not in route.reason_codes or not requests_multi_step_execution(instruction):
+            return route
+        candidate = replace(
+            route,
+            intent=AIIntent.MEDIA,
+            complexity=TaskComplexity.COMPLEX,
+            execution_mode=AIExecutionMode.TASK,
+            show_progress=True,
+            reason_codes=(
+                "intent_media",
+                "complexity_complex",
+                "multi_step_requested",
+                "bounded_browser_planner_candidate",
+            ),
+        )
+        return candidate if self._planner_can_attempt(instruction, candidate) else route
 
     def _planner_candidate_policy(self, instruction: str, route: AITaskRoute) -> tuple[int, tuple[str, ...]]:
         if OrchestrationPlanner.instruction_is_question_or_explanation(instruction):

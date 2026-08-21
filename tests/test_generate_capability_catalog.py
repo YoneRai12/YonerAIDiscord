@@ -5,6 +5,7 @@ from pathlib import Path
 
 from scripts import generate_capability_catalog as generator
 from yonerai_discord.capabilities import (
+    ACTION_CAPABILITIES,
     COMMAND_CAPABILITIES,
     EVENT_CAPABILITIES,
     MODEL_TOOL_CAPABILITY_BINDINGS,
@@ -36,7 +37,8 @@ def test_production_projection_matches_snapshot_counts_and_revision() -> None:
     )
 
     surface_ids = set(COMMAND_CAPABILITIES.values()) | set(EVENT_CAPABILITIES.values())
-    projected_ids = surface_ids | set(MODEL_TOOL_CAPABILITY_BINDINGS.values())
+    direct_projected_ids = surface_ids | set(MODEL_TOOL_CAPABILITY_BINDINGS.values())
+    projected_ids = direct_projected_ids | set(ACTION_CAPABILITIES.values())
     runtime_ids = {item.capability_id for item in RUNTIME_CAPABILITIES}
     assert document["counts"] == {
         "historical_canonical": 656,
@@ -54,14 +56,30 @@ def test_production_projection_matches_snapshot_counts_and_revision() -> None:
         "command_paths": len(COMMAND_CAPABILITIES),
         "event_capability_ids": len(set(EVENT_CAPABILITIES.values())),
         "event_paths": len(EVENT_CAPABILITIES),
+        "action_capability_ids": len(set(ACTION_CAPABILITIES.values())),
+        "action_paths": len(ACTION_CAPABILITIES),
         "model_tool_bindings": len(MODEL_TOOL_CAPABILITY_BINDINGS),
+        "direct_surface_unbound_runtime": len(runtime_ids - direct_projected_ids),
         "unbound_runtime": len(runtime_ids - projected_ids),
     }
+    assert document["runtime_binding_gaps"] == {
+        "direct_surface_unbound_ids": sorted(runtime_ids - direct_projected_ids),
+        "unbound_ids": sorted(runtime_ids - projected_ids),
+    }
+    assert document["runtime_binding_gaps"]["unbound_ids"] == [
+        "cap-run-admin-ui-read",
+        "cap-run-ai-attachment-understand",
+        "cap-run-audio-ducking-core",
+        "cap-run-capability-forge-owner-notification",
+        "cap-run-memory-context-recall",
+        "cap-run-speech-synthesize",
+        "cap-run-speech-transcribe",
+    ]
     assert (
         document["counts"]["projected_total"],
         document["counts"]["projected_canonical_provenance"],
         document["counts"]["projected_runtime_provenance"],
-    ) == (171, 17, 154)
+    ) == (187, 17, 170)
 
 
 def test_rendering_is_deterministic_utf8_lf_and_path_free(tmp_path: Path) -> None:

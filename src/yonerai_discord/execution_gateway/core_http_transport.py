@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 import asyncio
-import ipaddress
 import json
 import math
 import re
-from urllib.parse import urlsplit
 from collections.abc import AsyncIterator, Mapping
 from dataclasses import dataclass, field
 from typing import Protocol
+from urllib.parse import urlsplit
 
 import aiohttp
+
+from yonerai_discord.secret_policy import is_loopback_endpoint
 
 from .core_contract import (
     CoreCancelOutcomeV01,
@@ -70,9 +71,15 @@ class AiohttpCoreHttpTransport:
         bearer_token: str,
         *,
         timeout_seconds: float = 20.0,
+        allow_unauthenticated_loopback: bool = False,
     ) -> None:
         self._origin = _validated_origin(origin)
-        self._authorization = _bearer_authorization(bearer_token)
+        if type(allow_unauthenticated_loopback) is not bool:
+            raise TypeError("allow_unauthenticated_loopback must be a boolean")
+        if bearer_token == "" and allow_unauthenticated_loopback and is_loopback_endpoint(self._origin):
+            self._authorization: str | None = None
+        else:
+            self._authorization = _bearer_authorization(bearer_token)
         if (
             isinstance(timeout_seconds, bool)
             or not isinstance(timeout_seconds, (int, float))
@@ -105,14 +112,16 @@ class AiohttpCoreHttpTransport:
             raise CoreHttpTransportError("Core request body is invalid")
         try:
             async with aiohttp.ClientSession(timeout=self._post_timeout) as session:
+                headers = {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                }
+                if self._authorization is not None:
+                    headers["Authorization"] = self._authorization
                 async with session.post(
                     url,
                     data=body,
-                    headers={
-                        "Accept": "application/json",
-                        "Authorization": self._authorization,
-                        "Content-Type": "application/json",
-                    },
+                    headers=headers,
                     allow_redirects=False,
                 ) as response:
                     response_body = await _read_bounded_response(
@@ -140,12 +149,12 @@ class AiohttpCoreHttpTransport:
         url = self._request_url(path, allow_redirects=allow_redirects)
         session = aiohttp.ClientSession(timeout=self._stream_timeout)
         try:
+            headers = {"Accept": "text/event-stream"}
+            if self._authorization is not None:
+                headers["Authorization"] = self._authorization
             response = await session.get(
                 url,
-                headers={
-                    "Accept": "text/event-stream",
-                    "Authorization": self._authorization,
-                },
+                headers=headers,
                 allow_redirects=False,
             )
             return _AiohttpCoreEventStream(session, response)
@@ -240,14 +249,10 @@ def _validated_origin(value: object) -> str:
         or parsed.fragment
     ):
         raise ValueError("origin must be an absolute HTTP(S) origin")
-    if parsed.scheme == "http":
-        try:
-            is_loopback = ipaddress.ip_address(parsed.hostname or "").is_loopback
-        except ValueError:
-            is_loopback = False
-        if not is_loopback:
-            raise ValueError("plain HTTP origin must be loopback")
-    return f"{parsed.scheme}://{parsed.netloc}"
+    normalized = f"{parsed.scheme}://{parsed.netloc}"
+    if parsed.scheme == "http" and not is_loopback_endpoint(normalized):
+        raise ValueError("plain HTTP origin must be loopback")
+    return normalized
 
 
 def _bearer_authorization(value: object) -> str:
@@ -530,14 +535,21 @@ def _validate_v01_result_response(response: object) -> None:
         body = response.body
     except Exception:
         raise CoreHttpTransportError("Core v0.1 result response is invalid") from None
-    if status_code == 204 and content_type in {"", "application/json"} and body == b"":
-        return
+    if _successful_status(status_code) and status_code == 204:
+        if (
+            isinstance(content_type, str)
+            and (content_type == "" or _content_type_is(content_type, "application/json"))
+            and isinstance(body, bytes)
+            and body == b""
+        ):
+            return
+        raise CoreHttpTransportError("Core v0.1 result response is invalid")
     if not _successful_status(status_code) or not _content_type_is(content_type, "application/json"):
         raise CoreHttpTransportError("Core v0.1 result response is invalid")
     if not isinstance(body, bytes) or len(body) > MAX_CORE_RUN_RESPONSE_BYTES:
         raise CoreHttpTransportError("Core v0.1 result response is invalid")
     payload = _strict_json_object(body)
-    if payload != {"accepted": True}:
+    if set(payload) != {"accepted"} or payload["accepted"] is not True:
         raise CoreHttpTransportError("Core v0.1 result response is invalid")
 
 

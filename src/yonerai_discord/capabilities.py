@@ -110,6 +110,13 @@ COMMAND_RBAC_FLOORS: Mapping[str, RbacLevel] = MappingProxyType(
         # RbacLevel has no MEMBER sentinel; fresh guild fetch is the membership floor.
         "music read-aloud my-preset": RbacLevel.EVERYONE,
         "music read-aloud preset": RbacLevel.EVERYONE,
+        "sandbox status": RbacLevel.BOT_OWNER,
+        "sandbox doctor": RbacLevel.BOT_OWNER,
+        "sandbox plan": RbacLevel.BOT_OWNER,
+        "sandbox run-template": RbacLevel.BOT_OWNER,
+        "sandbox jobs": RbacLevel.BOT_OWNER,
+        "sandbox receipt": RbacLevel.BOT_OWNER,
+        "sandbox cancel": RbacLevel.BOT_OWNER,
     }
 )
 
@@ -152,6 +159,13 @@ SURFACE_RATE_LIMITS: Mapping[str, int] = MappingProxyType(
         "earthquake unsubscribe": 3,
         "earthquake_feed_delivery": 60,
         "weather": 10,
+        "sandbox status": 10,
+        "sandbox doctor": 3,
+        "sandbox plan": 10,
+        "sandbox run-template": 2,
+        "sandbox jobs": 10,
+        "sandbox receipt": 10,
+        "sandbox cancel": 3,
         "warning": 10,
         "holiday next": 10,
         "holiday year": 10,
@@ -310,6 +324,7 @@ COMMAND_PLUGIN_BY_ROOT: Mapping[str, str] = MappingProxyType(
         "music": "music",
         "site": "site_publish",
         "help": "discovery",
+        "sandbox": "capability_forge",
     }
 )
 

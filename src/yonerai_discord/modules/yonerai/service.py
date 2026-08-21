@@ -39,17 +39,17 @@ class YonerAIStatusService:
         self._gateway = gateway
 
     def status(self) -> BoundaryStatus:
+        local_probe = getattr(self._gateway, "local_only", False) is True
         if not self.config.enabled:
             state = BoundaryState.DISABLED
+        elif self._gateway is not None and (self.config.remote_permitted or local_probe):
+            state = BoundaryState.READY_TO_PROBE
         elif not self.config.allow_remote and not self.config.remote_status_opt_in:
             state = BoundaryState.LOCAL_ONLY
         elif not self.config.remote_permitted:
             state = BoundaryState.REMOTE_OPT_IN_INCOMPLETE
-        elif self._gateway is None:
-            # 公式API contractが未確定の現時点では、ここで止めて外へ接続しない。
-            state = BoundaryState.CONTRACT_PENDING
         else:
-            state = BoundaryState.READY_TO_PROBE
+            state = BoundaryState.CONTRACT_PENDING
         return BoundaryStatus(
             state=state,
             enabled=self.config.enabled,
@@ -59,7 +59,8 @@ class YonerAIStatusService:
 
     async def health(self) -> BoundaryStatus:
         current = self.status()
-        if not self.config.remote_permitted or self._gateway is None:
+        local_probe = getattr(self._gateway, "local_only", False) is True
+        if not self.config.enabled or self._gateway is None or (not self.config.remote_permitted and not local_probe):
             return current
         budget = ProbeBudget(
             timeout_seconds=float(self.config.timeout_seconds),
@@ -79,6 +80,6 @@ class YonerAIStatusService:
         return BoundaryStatus(
             state=state,
             enabled=True,
-            remote_permitted=True,
+            remote_permitted=self.config.remote_permitted,
             token_configured=self.config.token_configured,
         )

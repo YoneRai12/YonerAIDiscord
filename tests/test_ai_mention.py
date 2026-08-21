@@ -2666,6 +2666,50 @@ async def test_unmatched_browser_operation_stops_before_consent_planner_and_prov
 
 
 @pytest.mark.asyncio
+async def test_compound_browser_operation_reaches_only_bounded_planner_candidates() -> None:
+    service = FakeService()
+    message = FakeMessage("<@99> https://a.exampleをスクショして、そのあとhttps://b.exampleをスクショして")
+    planner = _PlannerPort()
+    listener = _listener(service)
+    _enable_planner(listener, message, planner)
+
+    await listener.on_message(message)  # type: ignore[arg-type]
+
+    assert service.requests == []
+    assert len(planner.requests) == 1
+    assert [candidate.action_id for candidate in planner.requests[0].candidates] == ["browser.screenshot"]
+    assert planner.requests[0].allowed_tools == ()
+    assert planner.requests[0].max_tool_calls == 0
+
+
+def test_compound_browser_operation_stays_denied_without_current_planner_identity() -> None:
+    instruction = "https://a.exampleをスクショして、そのあとhttps://b.exampleをスクショして"
+    listener = _listener(FakeService())
+    route = classify_ai_task(instruction)
+
+    assert listener._bounded_browser_planner_route(instruction, route) is route
+    assert route.reason_codes == ("browser_operation_unavailable",)
+
+
+@pytest.mark.asyncio
+async def test_compound_browser_operation_revoked_capability_calls_no_provider() -> None:
+    service = FakeService()
+    message = FakeMessage("<@99> https://a.exampleをスクショして、そのあとhttps://b.exampleをスクショして")
+    planner = _PlannerPort()
+    listener = _listener(service)
+    _enable_planner(listener, message, planner)
+    engine = listener.orchestration_engine
+    assert engine is not None
+    capability_id = engine.registry.get("browser.screenshot").capability_id
+    listener.bot.capability_guard.capability_states[capability_id] = False
+
+    await listener.on_message(message)  # type: ignore[arg-type]
+
+    assert service.requests == []
+    assert planner.requests == []
+
+
+@pytest.mark.asyncio
 async def test_unmatched_media_inspection_stops_before_consent_planner_and_provider() -> None:
     service = FakeService()
     message = FakeMessage(

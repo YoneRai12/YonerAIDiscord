@@ -9,6 +9,12 @@ from urllib.parse import urlparse
 
 import aiohttp
 
+from yonerai_discord.modules.speech_synthesis.provider_voicevox import (
+    MAX_VOICEVOX_PLAYBACK_WAV_BYTES,
+    canonicalize_voicevox_playback_wav,
+)
+from yonerai_discord.voice_contract import MIN_VOICEVOX_WAV_BYTES
+
 from .models import SpeechRequest, SynthesizedSpeech
 
 
@@ -47,7 +53,10 @@ class VoicevoxClient:
         self._endpoint = endpoint.rstrip("/")
         if not _loopback(self._endpoint) and not allow_remote:
             raise VoicevoxConfigurationError("remote VOICEVOX requires VOICE_ALLOW_REMOTE=true")
-        if not 1_024 <= max_response_bytes <= 50 * 1024 * 1024:
+        if (
+            type(max_response_bytes) is not int
+            or not MIN_VOICEVOX_WAV_BYTES <= max_response_bytes <= MAX_VOICEVOX_PLAYBACK_WAV_BYTES
+        ):
             raise VoicevoxConfigurationError("VOICE_MAX_RESPONSE_BYTES is outside the allowed range")
         self._timeout = aiohttp.ClientTimeout(total=timeout_seconds)
         self._max_response_bytes = max_response_bytes
@@ -113,7 +122,15 @@ class VoicevoxClient:
             if response.status != 200:
                 raise RuntimeError("VOICEVOX synthesis failed")
             wav = await _read_limited(response, self._max_response_bytes)
-        return SynthesizedSpeech(wav=wav)
+        try:
+            canonical = canonicalize_voicevox_playback_wav(
+                wav,
+                max_input_bytes=self._max_response_bytes,
+            )
+        except Exception:
+            raise RuntimeError("VOICEVOX returned an invalid WAV") from None
+        sample_rate = int.from_bytes(canonical[24:28], "little")
+        return SynthesizedSpeech(wav=canonical, sample_rate=sample_rate)
 
     async def close(self) -> None:
         if self._session is not None and not self._session.closed:
@@ -121,6 +138,8 @@ class VoicevoxClient:
 
 
 async def _read_limited(response: Any, limit: int) -> bytes:
+    if type(limit) is not int or not 1 <= limit <= MAX_VOICEVOX_PLAYBACK_WAV_BYTES:
+        raise RuntimeError("VOICEVOX response limit is invalid")
     declared = getattr(response, "content_length", None)
     if isinstance(declared, int) and declared > limit:
         raise RuntimeError("VOICEVOX response exceeds the configured limit")

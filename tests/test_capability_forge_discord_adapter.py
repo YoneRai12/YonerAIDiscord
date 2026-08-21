@@ -377,6 +377,7 @@ class _PluginBot(_Bot):
         super().__init__()
         self.settings.database_path = database_path
         self.dynamic: list[object] = []
+        self.tree = _CommandTree()
 
     def add_dynamic_items(self, *items: object) -> None:
         self.dynamic.extend(items)
@@ -384,6 +385,22 @@ class _PluginBot(_Bot):
     def remove_dynamic_items(self, *items: object) -> None:
         for item in items:
             self.dynamic.remove(item)
+
+
+class _CommandTree:
+    def __init__(self) -> None:
+        self.commands: dict[str, object] = {}
+
+    def add_command(self, command: object) -> None:
+        self.commands[command.name] = command  # type: ignore[attr-defined]
+
+    def get_command(self, name: str, *, type: object) -> object | None:
+        assert type is discord.AppCommandType.chat_input
+        return self.commands.get(name)
+
+    def remove_command(self, name: str, *, type: object) -> object | None:
+        assert type is discord.AppCommandType.chat_input
+        return self.commands.pop(name, None)
 
 
 async def test_plugin_opens_one_repository_registers_routing_and_cleans_up(tmp_path: Path) -> None:

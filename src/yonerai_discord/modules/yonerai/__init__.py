@@ -13,6 +13,7 @@ from .contract import (
     YonerAIReadinessGateway,
 )
 from .service import BoundaryState, BoundaryStatus, YonerAIStatusService
+from .readiness import AiohttpYonerAIReadinessGateway, build_yonerai_readiness_gateway
 from .transport import YonerAIResponseLimitError, read_bounded_response
 
 
@@ -25,8 +26,9 @@ class YonerAIPlugin:
         if self._bot is not None:
             return
         config = YonerAIRuntimeConfig.load(bot.settings)
-        # 公式API仕様が確定するまでgatewayは注入しない。remote opt-inが揃っても外へ接続しない。
-        service = YonerAIStatusService(config)
+        gateway = build_yonerai_readiness_gateway(bot.settings, config)
+        # 実Coreのcode-owned /health contractだけを使い、remote設定不足時はgatewayを構成しない。
+        service = YonerAIStatusService(config, gateway)
         bot.tree.add_command(YonerAIGroup(service))
         setattr(bot, "yonerai_status_service", service)
         self.service = service
@@ -49,6 +51,7 @@ def setup(registry: Any) -> None:
 
 
 __all__ = [
+    "AiohttpYonerAIReadinessGateway",
     "BoundaryState",
     "BoundaryStatus",
     "ProbeBudget",
@@ -60,6 +63,7 @@ __all__ = [
     "YonerAIResponseLimitError",
     "YonerAIRuntimeConfig",
     "YonerAIStatusService",
+    "build_yonerai_readiness_gateway",
     "render_status",
     "read_bounded_response",
     "setup",

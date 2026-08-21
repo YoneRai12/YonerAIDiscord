@@ -9,6 +9,7 @@ from typing import Any
 
 import pytest
 
+from yonerai_discord.modules.music_generation.artifacts import MusicArtifactStore
 from yonerai_discord.modules.speech_synthesis.domain import (
     speech_artifact_request_binding,
 )
@@ -199,6 +200,20 @@ class _HttpSession:
     def get(self, url: str, **kwargs: Any) -> _HttpResponse:
         self.calls.append((url, kwargs))
         return self.response
+
+    async def close(self) -> None:
+        self.closed = True
+
+
+class _SequencedHttpSession:
+    def __init__(self, responses: list[_HttpResponse]) -> None:
+        self.responses = responses
+        self.closed = False
+        self.calls: list[tuple[str, dict[str, Any]]] = []
+
+    def post(self, url: str, **kwargs: Any) -> _HttpResponse:
+        self.calls.append((url, kwargs))
+        return self.responses.pop(0)
 
     async def close(self) -> None:
         self.closed = True
@@ -515,6 +530,59 @@ async def test_voicevox_tts_commits_canonical_request_bound_new_wav() -> None:
     assert result.artifacts[0].artifact_id == "speech-output-1"
     assert result.artifacts[0].sha256 == hashlib.sha256(wav).hexdigest()
     assert result.text == ""
+
+
+async def test_real_voicevox_client_adapter_commits_request_bound_artifact(tmp_path) -> None:
+    request = _tts_request()
+    invocation = _invocation("voicevox-local", VOICEVOX_PROVIDER_MODEL)
+    session = _SequencedHttpSession(
+        [
+            _HttpResponse(200, b'{"speedScale": 1.0}'),
+            _HttpResponse(200, _wav()),
+        ]
+    )
+    client = VoicevoxClient(endpoint="http://127.0.0.1:50021")
+    client._session = session
+    root = tmp_path / "request-bound-voicevox"
+    root.mkdir()
+    store = MusicArtifactStore(root)
+    adapter = VoicevoxSpeechSynthesisProviderAdapter(
+        client,
+        store,
+        readiness_current=lambda: True,
+    )
+
+    result = await adapter.execute(request, invocation, execution_allowed=lambda: True)
+
+    binding = speech_artifact_request_binding(
+        request,
+        provider_id="voicevox-local",
+        provider_model=invocation.provider_model,
+        model_alias=invocation.model_alias,
+        quality_tier=invocation.quality_tier,
+    )
+    assert len(result.artifacts) == 1
+    stored = store.read_wav(result.artifacts[0], request_binding=binding)
+    assert struct.unpack_from("<I", stored, 24)[0] == 48_000
+    assert len(session.calls) == 2
+    assert session.calls[1][1]["json"]["speedScale"] == 1.0
+    assert session.calls[1][1]["json"]["volumeScale"] == 1.0
+    await adapter.close()
+
+
+@pytest.mark.parametrize("volume_scale", (0.5, 1, True, float("nan")))
+def test_voicevox_provider_request_rejects_non_exact_volume_scale(volume_scale: object) -> None:
+    with pytest.raises(ValueError, match="fixed contract") as caught:
+        VoicevoxSynthesisRequest(  # type: ignore[arg-type]
+            request_id="request-volume",
+            trace_id="trace-volume",
+            actor_ref="discord-user-123",
+            request_binding="a" * 64,
+            text="private speech text",
+            volume_scale=volume_scale,
+        )
+
+    assert "private speech text" not in str(caught.value)
 
 
 async def test_voicevox_tts_revoke_at_commit_keeps_artifact_store_unchanged() -> None:

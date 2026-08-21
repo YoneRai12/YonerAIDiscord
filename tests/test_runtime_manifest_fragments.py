@@ -46,7 +46,7 @@ EXPECTED_FRAGMENT_ORDER = (
     "video_generation",
     "web_search",
 )
-EXPECTED_MANIFEST_SHA256 = "3c12e5fe6bdbd5685a9b9f05ad89265dfdc1d83053f92c5e845b82f490eb245f"
+EXPECTED_MANIFEST_SHA256 = "cfb47e01fba45da24973895b232b5021a06fe83b6dbcd43c7996cf385d9dab6c"
 
 
 def test_explicit_fragments_reconstruct_public_aggregate_in_original_order() -> None:
@@ -67,7 +67,8 @@ def test_ordered_manifest_fingerprint_preserves_every_public_definition_field() 
     serialized = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
 
     assert len(RUNTIME_MODULES) == 17
-    assert len(RUNTIME_CAPABILITIES) == 170
+    assert len(RUNTIME_CAPABILITIES) == 177
+    assert len(RUNTIME_COMMAND_CAPABILITIES) == 159
     assert hashlib.sha256(serialized.encode("utf-8")).hexdigest() == EXPECTED_MANIFEST_SHA256
 
 

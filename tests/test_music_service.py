@@ -23,6 +23,8 @@ from yonerai_discord.modules.music.models import (
     MusicAuthorizationError,
     MusicSeekUnsupportedError,
     MusicSessionError,
+    MusicSpeechReceipt,
+    MusicSpeechStatus,
     MusicUnavailableError,
     PersistedMusicTrackRef,
     PlaylistError,
@@ -168,6 +170,7 @@ def _service(
     *,
     max_queue: int = 5,
     max_tracks_per_requester: int | None = None,
+    max_speech_queue: int = 2,
     factory: FakeFactory | None = None,
     approved: bool = True,
     state_observer: Callable[[int], None] | None = None,
@@ -189,7 +192,7 @@ def _service(
         indexed_tracks=3,
         max_queue=max_queue,
         max_tracks_per_requester=max_tracks_per_requester,
-        max_speech_queue=2,
+        max_speech_queue=max_speech_queue,
         state_observer=state_observer,
     )
     return service, factory, repository
@@ -1777,6 +1780,129 @@ async def test_speech_enters_ducking_mixer_without_stopping_music(tmp_path: Path
 
 
 @pytest.mark.asyncio
+async def test_direct_speech_records_only_bounded_scope_receipt_after_enqueue(tmp_path: Path) -> None:
+    service, _, repository = _service(tmp_path)
+    actor = MusicActor(10, 500)
+    secret_text = "never retain this text"
+    secret_wav = b"RIFF-private-wav"
+    try:
+        await service.join(100, FakeVoiceClient(), actor, voice_channel_id=500)
+
+        receipt = await service.add_speech_wav(
+            100,
+            actor,
+            secret_wav,
+            receipt_source_channel_id=200,
+        )
+
+        assert receipt == MusicSpeechReceipt(100, 200, 10, 500, 1, MusicSpeechStatus.QUEUED)
+        assert service.speech_receipts(guild_id=100, source_channel_id=200, requester_id=10) == (receipt,)
+        assert service.speech_receipts(guild_id=100, source_channel_id=201, requester_id=10) == ()
+        assert service.speech_receipts(guild_id=100, source_channel_id=200, requester_id=11) == ()
+        assert secret_text not in repr(receipt)
+        assert secret_wav not in repr(receipt).encode()
+        assert "path" not in repr(receipt).casefold()
+    finally:
+        await service.close()
+        assert service.speech_receipts(guild_id=100, source_channel_id=200, requester_id=10) == ()
+        repository.close()
+
+
+@pytest.mark.asyncio
+async def test_direct_speech_queue_failure_does_not_create_second_receipt(tmp_path: Path) -> None:
+    service, _, repository = _service(tmp_path, max_speech_queue=1)
+    actor = MusicActor(10, 500)
+    try:
+        await service.join(100, FakeVoiceClient(), actor, voice_channel_id=500)
+        first = await service.add_speech_wav(
+            100,
+            actor,
+            b"RIFF-first",
+            receipt_source_channel_id=200,
+        )
+
+        with pytest.raises(MusicSessionError, match="speech queue is full"):
+            await service.add_speech_wav(
+                100,
+                actor,
+                b"RIFF-second",
+                receipt_source_channel_id=200,
+            )
+
+        assert service.speech_receipts(guild_id=100, source_channel_id=200, requester_id=10) == (first,)
+    finally:
+        await service.close()
+        repository.close()
+
+
+@pytest.mark.asyncio
+async def test_direct_speech_commit_and_close_are_linearized_without_stale_receipt(tmp_path: Path) -> None:
+    service, _, repository = _service(tmp_path)
+    actor = MusicActor(10, 500)
+    commit_started = asyncio.Event()
+    commit_release = asyncio.Event()
+
+    async def fresh_actor() -> MusicActor:
+        commit_started.set()
+        await commit_release.wait()
+        return actor
+
+    await service.join(100, FakeVoiceClient(), actor, voice_channel_id=500)
+    add_task = asyncio.create_task(
+        service.add_speech_wav(
+            100,
+            actor,
+            b"RIFF-linearized",
+            commit_check=fresh_actor,
+            receipt_source_channel_id=200,
+        )
+    )
+    close_task: asyncio.Task[None] | None = None
+    try:
+        await asyncio.wait_for(commit_started.wait(), timeout=1.0)
+        close_task = asyncio.create_task(service.close())
+        await asyncio.sleep(0)
+        assert not close_task.done()
+
+        commit_release.set()
+        receipt = await add_task
+        assert isinstance(receipt, MusicSpeechReceipt)
+        await close_task
+        assert service.speech_receipts(guild_id=100, source_channel_id=200, requester_id=10) == ()
+        with pytest.raises(MusicUnavailableError):
+            await service.add_speech_wav(
+                100,
+                actor,
+                b"RIFF-after-close",
+                receipt_source_channel_id=200,
+            )
+        assert service.speech_receipts(guild_id=100, source_channel_id=200, requester_id=10) == ()
+    finally:
+        commit_release.set()
+        if not add_task.done():
+            await add_task
+        if close_task is not None and not close_task.done():
+            await close_task
+        await service.close()
+        repository.close()
+
+
+def test_speech_receipt_projection_is_bounded_to_latest_one_hundred(tmp_path: Path) -> None:
+    service, _, repository = _service(tmp_path)
+    try:
+        service._speech_receipts.extend(
+            MusicSpeechReceipt(100, 200, 10, 500, position, MusicSpeechStatus.QUEUED) for position in range(1, 102)
+        )
+
+        receipts = service.speech_receipts(guild_id=100, source_channel_id=200, requester_id=10)
+        assert len(receipts) == 100
+        assert receipts[0].queue_position == 2
+        assert receipts[-1].queue_position == 101
+    finally:
+        repository.close()
+
+
+@pytest.mark.asyncio
 async def test_failed_speech_source_cleanup_runs_off_event_loop_thread(tmp_path: Path) -> None:
     factory = BrokenSpeechFactory()
     service, _, repository = _service(tmp_path, factory=factory)
@@ -1965,7 +2091,15 @@ async def test_speech_rechecks_fresh_voice_after_source_creation_before_enqueue(
     async def fresh_actor() -> MusicActor:
         return MusicActor(actor.user_id, current_voice_channel_id)
 
-    task = asyncio.create_task(service.add_speech_wav(100, actor, b"RIFF-fresh-voice", commit_check=fresh_actor))
+    task = asyncio.create_task(
+        service.add_speech_wav(
+            100,
+            actor,
+            b"RIFF-fresh-voice",
+            commit_check=fresh_actor,
+            receipt_source_channel_id=200,
+        )
+    )
     try:
         assert await asyncio.to_thread(factory.started.wait, 1.0)
         current_voice_channel_id = None
@@ -1974,6 +2108,7 @@ async def test_speech_rechecks_fresh_voice_after_source_creation_before_enqueue(
             await task
         assert len(factory.speech_sources) == 1
         assert factory.speech_sources[0].cleaned
+        assert service.speech_receipts(guild_id=100, source_channel_id=200, requester_id=10) == ()
     finally:
         factory.release.set()
         await service.close()
@@ -2067,12 +2202,27 @@ async def test_close_guild_disconnects_only_the_target_session(tmp_path: Path) -
     try:
         await service.join(100, first_voice, first_actor, voice_channel_id=500)
         await service.join(200, second_voice, second_actor, voice_channel_id=600)
+        first_receipt = await service.add_speech_wav(
+            100,
+            first_actor,
+            b"RIFF-first-guild",
+            receipt_source_channel_id=300,
+        )
+        second_receipt = await service.add_speech_wav(
+            200,
+            second_actor,
+            b"RIFF-second-guild",
+            receipt_source_channel_id=400,
+        )
 
         assert await service.close_guild(100)
         assert first_voice.disconnected
         assert service.session_channel_id(100) is None
+        assert service.speech_receipts(guild_id=100, source_channel_id=300, requester_id=10) == ()
         assert not second_voice.disconnected
         assert service.session_channel_id(200) == 600
+        assert service.speech_receipts(guild_id=200, source_channel_id=400, requester_id=11) == (second_receipt,)
+        assert first_receipt != second_receipt
         assert not await service.close_guild(999)
     finally:
         await service.close()

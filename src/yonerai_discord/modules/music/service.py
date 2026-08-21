@@ -33,6 +33,8 @@ from .models import (
     MusicAuthorizationError,
     MusicError,
     MusicRuntimeStatus,
+    MusicSpeechReceipt,
+    MusicSpeechStatus,
     MusicSeekUnsupportedError,
     MusicSessionError,
     MusicUnavailableError,
@@ -63,6 +65,7 @@ _DEFAULT_LISTENER_IDLE_TIMEOUT_SECONDS = 300
 _MIN_LISTENER_IDLE_TIMEOUT_SECONDS = 30
 _MAX_LISTENER_IDLE_TIMEOUT_SECONDS = 3_600
 _MAX_RADIO_RECENT_REFS = 20
+_MAX_SPEECH_RECEIPTS = 100
 
 
 logger = logging.getLogger(__name__)
@@ -176,6 +179,7 @@ class MusicService:
         self._radio_fill_tasks: dict[int, asyncio.Task[None]] = {}
         self._radio_generation = 0
         self._manual_enqueue_waiters: dict[int, int] = {}
+        self._speech_receipts: deque[MusicSpeechReceipt] = deque(maxlen=_MAX_SPEECH_RECEIPTS)
         self._lifecycle_lock = asyncio.Lock()
         self._import_lock = asyncio.Lock()
         self._closing = False
@@ -203,6 +207,23 @@ class MusicService:
             return None
         binding = self._sessions.get(guild_id)
         return binding.voice_channel_id if binding is not None else None
+
+    def speech_receipts(
+        self,
+        *,
+        guild_id: int,
+        source_channel_id: int,
+        requester_id: int,
+    ) -> tuple[MusicSpeechReceipt, ...]:
+        if any(type(value) is not int or value <= 0 for value in (guild_id, source_channel_id, requester_id)):
+            raise ValueError("music speech receipt scope is invalid")
+        return tuple(
+            receipt
+            for receipt in self._speech_receipts
+            if receipt.guild_id == guild_id
+            and receipt.source_channel_id == source_channel_id
+            and receipt.requester_id == requester_id
+        )
 
     def listener_session_identity(self, guild_id: int) -> object | None:
         """Return an opaque identity token for exact lifecycle commit checks."""
@@ -1410,29 +1431,47 @@ class MusicService:
         wav: bytes,
         *,
         commit_check: MusicCommitCheck | None = None,
-    ) -> int:
+        receipt_source_channel_id: int | None = None,
+    ) -> int | MusicSpeechReceipt:
+        if receipt_source_channel_id is not None and (
+            type(receipt_source_channel_id) is not int or receipt_source_channel_id <= 0
+        ):
+            raise ValueError("music speech receipt scope is invalid")
         self._require_available()
         assert self.source_factory is not None
-        async with self._lock(guild_id):
-            binding = self._binding(guild_id)
-            self._require_same_channel(binding, actor)
-            try:
-                source = await asyncio.to_thread(self.source_factory.create_speech, wav)
-            except Exception as exc:
-                raise MusicSessionError("speech source could not be prepared") from exc
-            self._require_available()
-            try:
+        try:
+            source = await asyncio.to_thread(self.source_factory.create_speech, wav)
+        except Exception as exc:
+            raise MusicSessionError("speech source could not be prepared") from exc
+        try:
+            async with self._lifecycle_lock, self._lock(guild_id):
+                self._require_available()
+                binding = self._binding(guild_id)
+                self._require_same_channel(binding, actor)
                 fresh_actor = await self._require_fresh_actor(commit_check, actor)
                 self._require_same_channel(binding, fresh_actor)
-                return await _session(binding).add_speech(source)
-            except QueueFullError as exc:
-                with suppress(Exception):
-                    await asyncio.to_thread(source.cleanup)
-                raise MusicSessionError("speech queue is full") from exc
-            except Exception:
-                with suppress(Exception):
-                    await asyncio.to_thread(source.cleanup)
-                raise
+                self._require_available()
+                position = await _session(binding).add_speech(source)
+                if receipt_source_channel_id is None:
+                    return position
+                receipt = MusicSpeechReceipt(
+                    guild_id=guild_id,
+                    source_channel_id=receipt_source_channel_id,
+                    requester_id=fresh_actor.user_id,
+                    voice_channel_id=binding.voice_channel_id,
+                    queue_position=position,
+                    status=MusicSpeechStatus.QUEUED,
+                )
+                self._speech_receipts.append(receipt)
+                return receipt
+        except QueueFullError as exc:
+            with suppress(Exception):
+                await asyncio.to_thread(source.cleanup)
+            raise MusicSessionError("speech queue is full") from exc
+        except Exception:
+            with suppress(Exception):
+                await asyncio.to_thread(source.cleanup)
+            raise
 
     async def save_playlist(
         self,
@@ -1614,6 +1653,7 @@ class MusicService:
             radio_tasks = tuple(self._radio_fill_tasks.values())
             self._radio_fill_tasks.clear()
             self._radio_bindings.clear()
+            self._speech_receipts.clear()
             for task in radio_tasks:
                 task.cancel()
             if radio_tasks:
@@ -1633,6 +1673,7 @@ class MusicService:
             radio_tasks = tuple(self._radio_fill_tasks.values())
             self._radio_fill_tasks.clear()
             self._radio_bindings.clear()
+            self._speech_receipts.clear()
             for task in radio_tasks:
                 task.cancel()
             try:
@@ -1667,6 +1708,10 @@ class MusicService:
         operation_error: BaseException | None = None
         radio_task: asyncio.Task[None] | None = None
         async with self._lock(guild_id):
+            self._speech_receipts = deque(
+                (receipt for receipt in self._speech_receipts if receipt.guild_id != guild_id),
+                maxlen=_MAX_SPEECH_RECEIPTS,
+            )
             binding = self._sessions.pop(guild_id, None)
             pending = self._pending_projections.pop(guild_id, None)
             self._suspended_voice_channels.pop(guild_id, None)

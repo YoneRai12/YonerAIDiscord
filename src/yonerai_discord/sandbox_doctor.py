@@ -30,6 +30,16 @@ from yonerai_discord.capability_broker import (
 from yonerai_discord.capability_broker.contract import (
     ArtifactKind,
 )
+from yonerai_discord.capability_forge.execution_sandbox_signing import (
+    JOB_SCHEMA_VERSION,
+    RECEIPT_SCHEMA_VERSION,
+)
+from yonerai_discord.capability_forge.hyperv_socket_transport import (
+    AF_HYPERV,
+    GUEST_PORT,
+    HV_PROTOCOL_RAW,
+    SERVICE_ID,
+)
 from yonerai_discord.modules.media_inspection.domain import (
     MediaInspectionResult,
 )
@@ -60,6 +70,10 @@ class SandboxDoctorReport:
     audit: bool
     timeout_cleanup: bool
     cancel_cleanup: bool
+    transport_contract: bool
+    signed_job_contract: bool
+    signed_receipt_contract: bool
+    durable_replay_contract: bool
     error_code: str | None = None
 
     def to_mapping(self) -> dict[str, object]:
@@ -71,6 +85,20 @@ class SandboxDoctorReport:
                 "actual_vm_contacted": False,
                 "live_ready": False,
             },
+            "components": {
+                "transport": "implemented_offline" if self.transport_contract else "unavailable",
+                "signed_job": "implemented_offline" if self.signed_job_contract else "unavailable",
+                "signed_receipt": "implemented_offline" if self.signed_receipt_contract else "unavailable",
+                "durable_replay": "implemented_offline" if self.durable_replay_contract else "unavailable",
+                "trusted_broker": "unconfigured",
+                "guest_worker": "unconfigured",
+                "vm_lifecycle": "unconfigured",
+            },
+            "blockers": [
+                "trusted_broker_unconfigured",
+                "actual_vm_absent",
+                "canary_not_run",
+            ],
             "checks": {
                 "typed_status": self.typed_status,
                 "exact_binding": self.exact_binding,
@@ -268,6 +296,7 @@ async def run_sandbox_doctor() -> SandboxDoctorReport:
     checks = (False, False, False, False, False)
     timeout_cleanup = False
     cancel_cleanup = False
+    components = _verify_execution_sandbox_components()
     try:
         checks = await _verify_success()
         timeout_cleanup = await _verify_timeout_cleanup()
@@ -280,16 +309,37 @@ async def run_sandbox_doctor() -> SandboxDoctorReport:
             *checks,
             timeout_cleanup,
             cancel_cleanup,
+            *components,
             error_code="contract_check_failed",
         )
-    ready = all((*checks, timeout_cleanup, cancel_cleanup))
+    ready = all((*checks, timeout_cleanup, cancel_cleanup, *components))
     return SandboxDoctorReport(
         SandboxDoctorState.CONTRACT_READY if ready else SandboxDoctorState.FAILED,
         *checks,
         timeout_cleanup,
         cancel_cleanup,
+        *components,
         error_code=None if ready else "contract_check_failed",
     )
+
+
+def _verify_execution_sandbox_components() -> tuple[bool, bool, bool, bool]:
+    """Verify code-owned C1 identities without contacting a broker or VM."""
+    try:
+        transport = (
+            AF_HYPERV == 34
+            and HV_PROTOCOL_RAW == 1
+            and GUEST_PORT == 40_509
+            and str(SERVICE_ID) == "00009e3d-facb-11e6-bd58-64006a7986d3"
+        )
+        signed_job = JOB_SCHEMA_VERSION == "yonerai.exec-sandbox.signed-job.v1"
+        signed_receipt = RECEIPT_SCHEMA_VERSION == "yonerai.exec-sandbox.signed-receipt.v1"
+        from yonerai_discord.capability_forge.execution_sandbox_replay import SqliteExecutionReplayLedger
+
+        durable_replay = SqliteExecutionReplayLedger.__name__ == "SqliteExecutionReplayLedger"
+    except Exception:
+        return False, False, False, False
+    return transport, signed_job, signed_receipt, durable_replay
 
 
 def main(argv: Sequence[str] | None = None) -> int:

@@ -313,20 +313,48 @@ async def test_unconfirmed_or_unclean_termination_never_returns_fake_success(tmp
 
 
 @pytest.mark.asyncio
-async def test_timeout_kills_and_reaps_without_stderr_or_command_leak(tmp_path: Path) -> None:
+async def test_timeout_kills_and_reaps_without_stderr_or_command_leak(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     transport = _transport(tmp_path, "hang", timeout=0.05)
+    process = _ControlledProcess()
+    process.release_wait.set()
+
+    async def fake_spawn() -> None:
+        transport._process = process  # type: ignore[assignment]
+
+    async def blocked_exchange(*_args: object) -> object:
+        await asyncio.Event().wait()
+        raise AssertionError("blocked exchange unexpectedly resumed")
+
+    monkeypatch.setattr(transport, "_spawn", fake_spawn)
+    monkeypatch.setattr(transport, "_exchange", blocked_exchange)
     with pytest.raises(BrowserWorkerSubprocessError) as raised:
         await transport.handshake(_handshake())
     assert "-c" not in str(raised.value)
     assert transport.state is BrowserWorkerSubprocessState.FAILED
     assert transport._process is not None and transport._process.returncode is not None
+    assert process.kill_calls == 1
+    assert process.wait_calls == 1
 
 
 @pytest.mark.asyncio
-async def test_cancellation_kills_and_reaps_then_preserves_cancel(tmp_path: Path) -> None:
+async def test_cancellation_kills_and_reaps_then_preserves_cancel(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     transport = _transport(tmp_path, "hang")
+    spawned = asyncio.Event()
+    original_spawn = transport._spawn
+
+    async def observed_spawn() -> None:
+        await original_spawn()
+        spawned.set()
+
+    monkeypatch.setattr(transport, "_spawn", observed_spawn)
     task = asyncio.create_task(transport.handshake(_handshake()))
-    await asyncio.sleep(0.05)
+    await asyncio.wait_for(spawned.wait(), timeout=5.0)
     task.cancel()
     with pytest.raises(asyncio.CancelledError):
         await task

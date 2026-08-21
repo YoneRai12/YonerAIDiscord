@@ -173,6 +173,70 @@ async def test_http_port_treats_422_and_ambiguous_result_receipt_as_failure() ->
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("accepted", (1, 1.0))
+async def test_http_port_rejects_numeric_result_acceptance(accepted: int | float) -> None:
+    transport = _Transport(
+        _Stream((b"event: final\ndata: {}\n\n",)),
+        result_response=CoreHttpResponse(
+            200,
+            "application/json",
+            json.dumps({"accepted": accepted}, separators=(",", ":")).encode("ascii"),
+        ),
+    )
+    port = YonerAIInternalRunHttpPortV01(transport)
+
+    with pytest.raises(CoreHttpTransportError, match="result response"):
+        await port.submit_result(
+            "run-v01-1",
+            CoreToolResultV01("discord.read.v1", {"output": "ok"}, "call-1"),
+        )
+
+
+@pytest.mark.asyncio
+async def test_http_port_accepts_parameterized_empty_204_result_receipt() -> None:
+    transport = _Transport(
+        _Stream((b"event: final\ndata: {}\n\n",)),
+        result_response=CoreHttpResponse(
+            204,
+            " Application/JSON ; Charset=UTF-8 ",
+            b"",
+        ),
+    )
+
+    await YonerAIInternalRunHttpPortV01(transport).submit_result(
+        "run-v01-1",
+        CoreToolResultV01("discord.read.v1", {"output": "ok"}, "call-1"),
+    )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "response",
+    (
+        CoreHttpResponse(204.0, "", b""),
+        CoreHttpResponse(204, "application/json", b'{"accepted":true}'),
+        CoreHttpResponse(204, "text/plain", b""),
+        CoreHttpResponse(204, "application/json; charset=iso-8859-1", b""),
+        CoreHttpResponse(204, "application/json; profile=result", b""),
+        CoreHttpResponse(204, "application/json", bytearray()),
+    ),
+)
+async def test_http_port_rejects_invalid_204_result_receipts(
+    response: CoreHttpResponse,
+) -> None:
+    transport = _Transport(
+        _Stream((b"event: final\ndata: {}\n\n",)),
+        result_response=response,
+    )
+
+    with pytest.raises(CoreHttpTransportError, match="result response"):
+        await YonerAIInternalRunHttpPortV01(transport).submit_result(
+            "run-v01-1",
+            CoreToolResultV01("discord.read.v1", {"output": "ok"}, "call-1"),
+        )
+
+
+@pytest.mark.asyncio
 async def test_v01_stream_has_an_overall_deadline_and_closes_on_timeout() -> None:
     class WaitingStream(_Stream):
         def iter_bytes(self) -> AsyncIterator[bytes]:

@@ -26,6 +26,7 @@ from yonerai_discord.modules.voice.read_aloud import (
     ReadAloudRoute,
     SqliteReadAloudRouteRepository,
 )
+from yonerai_discord.voice_contract import VOICEVOX_SPEAKER_ID
 
 from .authorization import build_music_commit_check
 from .models import MusicActor
@@ -147,7 +148,7 @@ class MusicReadAloudAdapter:
             text=FOCUS_TIMER_COMPLETION_MESSAGE,
             guild_id=binding.guild_id,
             channel_id=binding.source_channel_id,
-            speaker_id=3,
+            speaker_id=VOICEVOX_SPEAKER_ID,
             speed_scale=preset.values.speed_scale,
             volume_scale=preset.values.volume_scale,
         )

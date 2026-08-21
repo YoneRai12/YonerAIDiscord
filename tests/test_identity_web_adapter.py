@@ -86,7 +86,11 @@ async def test_get_page_uses_socket_peer_not_forwarded_header_and_escapes_site_k
     assert "<script>alert(1)</script>" not in body
     assert "&quot;&gt;&lt;script&gt;" in body
     assert response.headers["Cache-Control"] == "no-store"
-    assert "frame-src https://challenges.cloudflare.com" in response.headers["Content-Security-Policy"]
+    assert response.headers["Content-Security-Policy"] == (
+        "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; "
+        "script-src https://challenges.cloudflare.com; "
+        "frame-src https://challenges.cloudflare.com; base-uri 'none'"
+    )
 
 
 async def test_post_accepts_only_same_public_origin_and_fixed_form_field() -> None:

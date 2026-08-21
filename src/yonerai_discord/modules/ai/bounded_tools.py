@@ -26,6 +26,7 @@ from yonerai_discord.capability_metadata_contract import (
     capability_metadata_list_digest,
 )
 from yonerai_discord.capabilities import (
+    ACTION_CAPABILITIES,
     COMMAND_CAPABILITIES,
     EVENT_CAPABILITIES,
     MODEL_TOOL_CAPABILITY_BINDINGS,
@@ -688,6 +689,8 @@ def build_static_capability_snapshot(
         surface_bindings_by_id.setdefault(capability_id, set()).add(_surface_binding("command", path))
     for event_name, capability_id in EVENT_CAPABILITIES.items():
         surface_bindings_by_id.setdefault(capability_id, set()).add(_surface_binding("event", event_name))
+    for action_path, capability_id in ACTION_CAPABILITIES.items():
+        surface_bindings_by_id.setdefault(capability_id, set()).add(_surface_binding("action", action_path))
     model_tools_by_id: dict[str, set[str]] = {}
     for tool_id, capability_id in MODEL_TOOL_CAPABILITY_BINDINGS.items():
         model_tools_by_id.setdefault(capability_id, set()).add(_model_tool_identifier(tool_id))
@@ -844,6 +847,9 @@ def _capability_intents(
         primary = BoundedIntent.MUSIC
         tags.update((BoundedIntent.MUSIC, BoundedIntent.MEDIA))
     elif "voice" in roots or module in {"media.voice", "media.audio-core"}:
+        primary = BoundedIntent.MEDIA
+        tags.add(BoundedIntent.MEDIA)
+    elif roots.intersection({"browser", "image", "media"}):
         primary = BoundedIntent.MEDIA
         tags.add(BoundedIntent.MEDIA)
     elif "memory" in roots or module.startswith("intelligence.personal-memory"):

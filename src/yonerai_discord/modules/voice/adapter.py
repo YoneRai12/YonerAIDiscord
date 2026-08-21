@@ -9,6 +9,7 @@ from discord import app_commands
 
 from yonerai_discord.capabilities import COMMAND_CAPABILITIES, COMMAND_RBAC_FLOORS
 from yonerai_discord.control_plane import RbacLevel
+from yonerai_discord.voice_contract import VOICEVOX_SPEAKER_ID
 
 from .models import SpeechRequest
 from .service import SpeechQueue, SpeechUnavailableError
@@ -29,7 +30,15 @@ class VoiceGroup(app_commands.Group):
 
     @app_commands.command(name="synthesize", description="VOICEVOXでWAV音声を作成します")
     @app_commands.describe(text="読み上げる日本語（500文字以内）", speaker_id="VOICEVOX話者ID")
-    async def synthesize(self, interaction: discord.Interaction, text: str, speaker_id: int = 3) -> None:
+    @app_commands.choices(
+        speaker_id=[app_commands.Choice(name="3", value=VOICEVOX_SPEAKER_ID)],
+    )
+    async def synthesize(
+        self,
+        interaction: discord.Interaction,
+        text: str,
+        speaker_id: int = VOICEVOX_SPEAKER_ID,
+    ) -> None:
         if interaction.guild_id is None or interaction.channel_id is None:
             await interaction.response.send_message("サーバー内でのみ利用できます。", ephemeral=True)
             return

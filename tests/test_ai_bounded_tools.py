@@ -13,6 +13,7 @@ from yonerai_discord.capability_metadata_contract import (
     capability_metadata_content_revision,
 )
 from yonerai_discord.capabilities import (
+    ACTION_CAPABILITIES,
     COMMAND_CAPABILITIES,
     CATALOG_CONNECTED_CAPABILITY_IDS,
     EVENT_CAPABILITIES,
@@ -379,13 +380,14 @@ def test_production_projection_indexes_only_implemented_connected_surfaces() -> 
     register_runtime_capabilities(registry)
     expected_ids = set(COMMAND_CAPABILITIES.values())
     expected_ids.update(EVENT_CAPABILITIES.values())
+    expected_ids.update(ACTION_CAPABILITIES.values())
     expected_ids.update(MODEL_TOOL_CAPABILITY_BINDINGS.values())
     expected_ids = {capability_id for capability_id in expected_ids if registry.capability(capability_id).implemented}
 
     snapshot = build_static_capability_snapshot(registry)
 
     assert {item.capability_id for item in snapshot.entries} == expected_ids
-    assert len(snapshot.entries) == len(expected_ids) == 171
+    assert len(snapshot.entries) == len(expected_ids) == 187
     assert "cap-can-0003" not in expected_ids
     assert StaticCapabilitySnapshot(tuple(reversed(snapshot.entries))).content_revision == snapshot.content_revision
     for intent in ("conversation", "code", "site", "music", "memory", "web_research"):
@@ -405,6 +407,9 @@ def test_production_projection_indexes_only_implemented_connected_surfaces() -> 
     web_candidates = snapshot.retrieve("web_research")
     assert web_candidates[0].capability_id == OPENAI_PAID_WEB_SEARCH_CAPABILITY_ID
     assert web_candidates[0].bindings == ("web_search",)
+    for action_path, capability_id in ACTION_CAPABILITIES.items():
+        entry = next(item for item in snapshot.entries if item.capability_id == capability_id)
+        assert f"action:{'.'.join(action_path.split())}" in entry.surface_bindings
     assert all(item.surface_bindings or item.bindings for item in snapshot.entries)
 
 
@@ -425,6 +430,38 @@ def test_production_projection_excludes_connected_but_unimplemented_specs() -> N
     snapshot = build_static_capability_snapshot(RegistryView())
 
     assert "cap-can-0161" not in {item.capability_id for item in snapshot.entries}
+
+
+@pytest.mark.parametrize("action_path, capability_id", sorted(ACTION_CAPABILITIES.items()))
+def test_action_surface_media_capability_is_retrievable_only_when_authorized(
+    action_path: str,
+    capability_id: str,
+) -> None:
+    registry = load_capability_catalog(
+        Path(__file__).parents[1] / "docs" / "CAPABILITY_COUNTS.json",
+        connected_capability_ids=CATALOG_CONNECTED_CAPABILITY_IDS,
+    )
+    register_runtime_modules(registry)
+    register_runtime_capabilities(registry)
+    snapshot = build_static_capability_snapshot(registry)
+
+    candidates = snapshot.retrieve_authorized(
+        "media",
+        query=action_path,
+        eligible_capability_ids=(capability_id,),
+    )
+
+    assert [item.capability_id for item in candidates] == [capability_id]
+    assert candidates[0].primary_intent is BoundedIntent.MEDIA
+    assert candidates[0].bindings == ()
+    assert (
+        snapshot.retrieve_authorized(
+            "web_research",
+            query=action_path,
+            eligible_capability_ids=(capability_id,),
+        )
+        == ()
+    )
 
 
 def test_execution_seal_binds_scope_route_revisions_ttl_and_capability() -> None:

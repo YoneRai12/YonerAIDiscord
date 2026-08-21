@@ -1,20 +1,23 @@
 {
-  "catalog_revision": "a53b95fb8eeb47f375d1d82c8fa22deef4e24496ccbc0dca12cf679eef257063",
+  "catalog_revision": "447cb7ff8a98d5bf4d95b29579aeb1da30a09710a76c3e6ac40e221524ebb758",
   "catalog_scope": "static_candidate_metadata",
   "counts": {
-    "command_capability_ids": 157,
-    "command_paths": 175,
+    "action_capability_ids": 9,
+    "action_paths": 9,
+    "command_capability_ids": 164,
+    "command_paths": 182,
+    "direct_surface_unbound_runtime": 16,
     "event_capability_ids": 14,
     "event_paths": 14,
     "historical_canonical": 656,
     "model_tool_bindings": 1,
     "projected_canonical_provenance": 17,
-    "projected_runtime_provenance": 154,
-    "projected_total": 171,
-    "registry_total": 826,
-    "runtime_declared": 170,
-    "surface_unique": 170,
-    "unbound_runtime": 16
+    "projected_runtime_provenance": 170,
+    "projected_total": 187,
+    "registry_total": 833,
+    "runtime_declared": 177,
+    "surface_unique": 177,
+    "unbound_runtime": 7
   },
   "entries": [
     {
@@ -552,6 +555,159 @@
     },
     {
       "bindings": [],
+      "capability_id": "cap-run-browser-remote-interactive",
+      "content_revision": "da6d4ba930b6802235c56e1f8f673258369a8dbfbcda9d677dca2815b85a8eb3",
+      "intent_tags": [
+        "media"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "web.browser-rendering",
+      "name": "明示opt-inしたCloudflare Browser Runの固定YouTube操作経路",
+      "primary_intent": "media",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:browser.interact"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-browser-remote-screenshot",
+      "content_revision": "62920e3d497346ac3ad3c2021d483956dc092ec7f15551bed45de5f32b2212ec",
+      "intent_tags": [
+        "media"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "web.browser-rendering",
+      "name": "明示opt-inしたCloudflare Browser Rendering remote screenshot経路",
+      "primary_intent": "media",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:browser.screenshot"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-cancel",
+      "content_revision": "aeeefd6b40506f60226c58cd184222d18ff15a5a65d667281ed04ea23b7e8faf",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner cancellation",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.cancel"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-doctor",
+      "content_revision": "f6c62db9f83e152a6c8f0fdddd73152c700fd9ef4360ccb16e0d09f8a349f636",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner doctor",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.doctor"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-jobs",
+      "content_revision": "11b45df612a8786a2d043b65d7a9d036cc95143fa4631ee1bf113bce3526f3b8",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner job projection",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.jobs"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-plan",
+      "content_revision": "5a2a9adb9cf4de487876ff33807d7c1849dc9bae9db9166e13c293c379736aac",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner plan",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.plan"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-receipt",
+      "content_revision": "0c1579f76dce3e61070a2822d32a729f2ced10757e0166fe3850345a23444120",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner receipt projection",
+      "primary_intent": "unknown",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.receipt"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-run-template",
+      "content_revision": "72acd4ad06dbbff3d8f13ba8d0ae636a737ff2de7a9076763173054089e8070c",
+      "intent_tags": [
+        "unknown"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner fixed-template run",
+      "primary_intent": "unknown",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.run-template"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-capability-forge-sandbox-status",
+      "content_revision": "2aacf12c75798e6eff26e4a75e311029baf7109fac4e716f3d426311d33c43cb",
+      "intent_tags": [
+        "knowledge"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "intelligence.capability-forge",
+      "name": "Execution Sandbox owner status",
+      "primary_intent": "knowledge",
+      "risk": "low",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "command:sandbox.status"
+      ]
+    },
+    {
+      "bindings": [],
       "capability_id": "cap-run-discovery-help",
       "content_revision": "acd11ab2eed19560e8e8c1cc84e9125ce836ca6a491c7614fe78cc6313116de6",
       "intent_tags": [
@@ -803,15 +959,32 @@
     },
     {
       "bindings": [],
-      "capability_id": "cap-run-image-generate",
-      "content_revision": "865fe2a35d2e70d19a0683fdfe0dfc3c4c345cf4fe3214c621c8b9d4164e8b20",
+      "capability_id": "cap-run-image-edit",
+      "content_revision": "e3339b9c4255dc8b74f8d894e6011a4c277a57d4927f98d573a841c2dab0b80c",
       "intent_tags": [
-        "unknown"
+        "media"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.image-editing",
+      "name": "検証済みPNGを別IDのcanonical PNGへ編集",
+      "primary_intent": "media",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:image.edit"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-image-generate",
+      "content_revision": "ec8d9eb282d231028c8466542c891a6ba822b467e02fa64cb88d096ff8c216a9",
+      "intent_tags": [
+        "media"
       ],
       "minimum_rbac": "trusted",
       "module_id": "media.image-generation",
       "name": "明示promptから検証済みPNG画像を生成",
-      "primary_intent": "unknown",
+      "primary_intent": "media",
       "risk": "high",
       "source_provenance": "runtime_manifest",
       "surface_bindings": [
@@ -1003,6 +1176,108 @@
       "source_provenance": "runtime_manifest",
       "surface_bindings": [
         "command:jobs.status"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-compose-grid",
+      "content_revision": "fff92d5b8879726339257d7acee54a30fb49039ce5ba40ea26dbf3fcfcdd1ea8",
+      "intent_tags": [
+        "media"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.pipeline",
+      "name": "同一scopeの1〜8画像artifactをローカルgridへ合成",
+      "primary_intent": "media",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.compose-grid"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-discord-asset-inspect",
+      "content_revision": "25901b5834ce22570f7e696313cfe7f512475ea395cd3fbea7e1292793ba235b",
+      "intent_tags": [
+        "media"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.pipeline",
+      "name": "明示されたDiscord絵文字またはスタンプを読み取り専用で検査",
+      "primary_intent": "media",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.discord-asset-inspect"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-place-on-canvas",
+      "content_revision": "99a887b48ff815da19a8ce3cc552aef309687a6654a8775cfe295b026e8b7195",
+      "intent_tags": [
+        "media"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.pipeline",
+      "name": "同一scopeの画像artifactをローカルcanvasへ配置",
+      "primary_intent": "media",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.place-on-canvas"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-qr-encode",
+      "content_revision": "b99d17c34f519c8de6638a47f881794a6292a5a325ba0cbccb92bf4aec31ca85",
+      "intent_tags": [
+        "media"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.pipeline",
+      "name": "制限付きテキストからローカルQR画像artifactを生成",
+      "primary_intent": "media",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.qr-encode"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-quote-card",
+      "content_revision": "f3ee72a14801237fa3bd06bcfae32d57581624f9c54d8d391ca072ba5c05d240",
+      "intent_tags": [
+        "media"
+      ],
+      "minimum_rbac": "trusted",
+      "module_id": "media.pipeline",
+      "name": "本文と実行者情報からローカル引用カードartifactを生成",
+      "primary_intent": "media",
+      "risk": "medium",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.quote-card"
+      ]
+    },
+    {
+      "bindings": [],
+      "capability_id": "cap-run-media-url-inspection",
+      "content_revision": "5f816c63724a50a9e17a67dbf74b1c9432f31f07f7cc7493d5495bcd5f34e8ad",
+      "intent_tags": [
+        "media"
+      ],
+      "minimum_rbac": "bot_owner",
+      "module_id": "media.url-inspection",
+      "name": "明示された公開YouTube URLを隔離Hyper-V VMまたは明示remote providerで解析",
+      "primary_intent": "media",
+      "risk": "high",
+      "source_provenance": "runtime_manifest",
+      "surface_bindings": [
+        "action:media.url-inspect"
       ]
     },
     {
@@ -3003,8 +3278,37 @@
       ]
     }
   ],
+  "runtime_binding_gaps": {
+    "direct_surface_unbound_ids": [
+      "cap-run-admin-ui-read",
+      "cap-run-ai-attachment-understand",
+      "cap-run-audio-ducking-core",
+      "cap-run-browser-remote-interactive",
+      "cap-run-browser-remote-screenshot",
+      "cap-run-capability-forge-owner-notification",
+      "cap-run-image-edit",
+      "cap-run-media-compose-grid",
+      "cap-run-media-discord-asset-inspect",
+      "cap-run-media-place-on-canvas",
+      "cap-run-media-qr-encode",
+      "cap-run-media-quote-card",
+      "cap-run-media-url-inspection",
+      "cap-run-memory-context-recall",
+      "cap-run-speech-synthesize",
+      "cap-run-speech-transcribe"
+    ],
+    "unbound_ids": [
+      "cap-run-admin-ui-read",
+      "cap-run-ai-attachment-understand",
+      "cap-run-audio-ducking-core",
+      "cap-run-capability-forge-owner-notification",
+      "cap-run-memory-context-recall",
+      "cap-run-speech-synthesize",
+      "cap-run-speech-transcribe"
+    ]
+  },
   "schema_version": "yonerai.discord.capability-catalog.v1",
-  "source_revision": "9ec1d6b242c82258a268abfd3071921b33c87bb3f3b81b1f20b1636d34f38d5e",
+  "source_revision": "ddbb783da6cc9d568b1a88457054e4be03299d5fc55f50a9b4a806e137bdcdf4",
   "sources": [
     {
       "path": "docs/CAPABILITY_COUNTS.json",
@@ -3012,15 +3316,15 @@
     },
     {
       "path": "scripts/generate_capability_catalog.py",
-      "sha256": "54555061940bc05025b3f03c9557d0d05af00ffac9e1775b75cea471bed54fc6"
+      "sha256": "c273cc9d65fa9c16236a3640290b381b6fd3e5bbead86d127be0f8056083ca42"
     },
     {
       "path": "src/yonerai_discord/__init__.py",
-      "sha256": "d84071a263cf050b63d2eb6990638180835145596b3ca3c794f684c5c9a7515f"
+      "sha256": "0bc9a92b231c8539b1d6edd2a6316e3f07e1caa7665abac85d65e0b341aebef7"
     },
     {
       "path": "src/yonerai_discord/capabilities.py",
-      "sha256": "aabd9857a9f5d6a90f188aa748623238252d39c9cf35baeddd55bfeb5f9258d6"
+      "sha256": "d426e70d386c7d0282dd45d2d95e449bf99c20504494104564a0e446c8186bea"
     },
     {
       "path": "src/yonerai_discord/capability_metadata_contract.py",
@@ -3028,7 +3332,7 @@
     },
     {
       "path": "src/yonerai_discord/config.py",
-      "sha256": "ca498bd88b8ce5ee803ce349d3e06d5de4ed6a820d5aa246922d2d9d6df45b3e"
+      "sha256": "9c49e6373ce7f143d9ae0e21787ff1ee5af63008997dfb65723737230f0dc505"
     },
     {
       "path": "src/yonerai_discord/secret_detection.py",
@@ -3064,7 +3368,7 @@
     },
     {
       "path": "src/yonerai_discord/modules/ai/bounded_tools.py",
-      "sha256": "a0b6105ae082ebc735729fb58e30b42ebc5a955f1efbf8613c9b2adc9714caf7"
+      "sha256": "24dad4ae87f2ce8f18b2b90e9c38c861cee213c200df6077b24dbe4d405fa409"
     },
     {
       "path": "src/yonerai_discord/runtime_manifest.py",
@@ -3092,7 +3396,7 @@
     },
     {
       "path": "src/yonerai_discord/runtime_manifests/capability_forge.py",
-      "sha256": "8c3f55c0fac6b99cddedf7e2a3ada30e6130b648d72d7becb45123a89d3154a1"
+      "sha256": "28a492c13993f6a101bd4dac5cbabae1b25586f09447b6835f35030809b4651d"
     },
     {
       "path": "src/yonerai_discord/runtime_manifests/discovery.py",

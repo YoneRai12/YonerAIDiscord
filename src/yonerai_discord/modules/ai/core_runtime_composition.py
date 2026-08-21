@@ -4,10 +4,11 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Protocol
 
 from yonerai_discord.execution_gateway.core_http_transport import (
-    AiohttpCoreHttpTransport,
     YonerAIInternalRunHttpPortV01,
 )
 from yonerai_discord.execution_gateway.core_v01 import YonerAIInternalRunGatewayV01
+from yonerai_discord.execution_gateway.ora_core_transport import OraCoreHttpTransport
+from yonerai_discord.secret_policy import is_loopback_endpoint
 
 from .core_surface import DiscordCoreSurfaceGateway
 from .execution_profiles import (
@@ -51,7 +52,7 @@ class DirectCoreGatewayFactory:
         return "DirectCoreGatewayFactory()"
 
     def __call__(self, _service: AIService) -> DiscordCoreSurfaceGateway:
-        transport = AiohttpCoreHttpTransport(
+        transport = OraCoreHttpTransport(
             self._origin,
             self._bearer_token,
             timeout_seconds=self._timeout_seconds,
@@ -78,11 +79,14 @@ def build_direct_core_gateway_factory(
     except Exception:
         raise DirectCoreRuntimeCompositionError("Direct Core runtime configuration is unavailable") from None
 
-    if enabled is not True or allow_remote is not True or remote_status_opt_in is not True:
+    if enabled is not True:
         raise DirectCoreRuntimeCompositionError("Direct Core runtime is not explicitly enabled")
     if not isinstance(origin, str) or not origin:
         raise DirectCoreRuntimeCompositionError("Direct Core origin is unavailable")
-    if not isinstance(bearer_token, str) or not bearer_token:
+    local_origin = is_loopback_endpoint(origin)
+    if not local_origin and (allow_remote is not True or remote_status_opt_in is not True):
+        raise DirectCoreRuntimeCompositionError("Direct Core runtime is not explicitly enabled")
+    if not isinstance(bearer_token, str) or (not bearer_token and not local_origin):
         raise DirectCoreRuntimeCompositionError("Direct Core authorization is unavailable")
 
     try:
@@ -100,7 +104,7 @@ def build_direct_core_gateway_factory(
                 PackagingDependencyClass.PRIVATE_ENDPOINT,
             ),
         )
-        AiohttpCoreHttpTransport(
+        OraCoreHttpTransport(
             origin,
             bearer_token,
             timeout_seconds=timeout_seconds,

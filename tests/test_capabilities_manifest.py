@@ -17,7 +17,10 @@ from yonerai_discord.config import SAFE_DEFAULT_PLUGINS, Settings
 from yonerai_discord.control_plane import InMemoryStateStore, RbacLevel, RiskLevel
 from yonerai_discord.runtime_manifest import RUNTIME_CAPABILITIES
 from yonerai_discord.runtime_manifests.ai_memory import AI_ATTACHMENT_UNDERSTANDING_CAPABILITY_ID
-from yonerai_discord.runtime_manifests.capability_forge import FORGE_OWNER_NOTIFICATION_CAPABILITY_ID
+from yonerai_discord.runtime_manifests.capability_forge import (
+    FORGE_OWNER_NOTIFICATION_CAPABILITY_ID,
+    SANDBOX_COMMAND_CAPABILITY_IDS,
+)
 from yonerai_discord.runtime_manifests.image_editing import IMAGE_EDITING_CAPABILITY_ID
 from yonerai_discord.runtime_manifests.image_generation import IMAGE_GENERATION_CAPABILITY_ID
 from yonerai_discord.runtime_manifests.music_generation import MUSIC_GENERATION_CAPABILITY_ID
@@ -217,6 +220,26 @@ def test_manifest_keeps_656_canonical_rows_and_registers_only_real_runtime_entri
     assert forge.default_enabled is False
     assert forge.owner_only is True
     assert forge.module_id == "intelligence.capability-forge"
+    assert COMMAND_PLUGIN_BY_ROOT["sandbox"] == "capability_forge"
+    assert PLUGIN_MODULES["capability_forge"] == ("intelligence.capability-forge",)
+    expected_rates = {
+        "status": 10,
+        "doctor": 3,
+        "plan": 10,
+        "run-template": 2,
+        "jobs": 10,
+        "receipt": 10,
+        "cancel": 3,
+    }
+    for command, capability_id in SANDBOX_COMMAND_CAPABILITY_IDS.items():
+        path = f"sandbox {command}"
+        definition = registry.capability(capability_id)
+        assert COMMAND_CAPABILITIES[path] == capability_id
+        assert COMMAND_RBAC_FLOORS[path] is RbacLevel.BOT_OWNER
+        assert SURFACE_RATE_LIMITS[path] == expected_rates[command]
+        assert definition.module_id == "intelligence.capability-forge"
+        assert definition.owner_only is True
+        assert definition.default_enabled is (command in {"status", "doctor", "plan"})
 
 
 def test_minecraft_remains_off_even_if_capability_override_is_on() -> None:
