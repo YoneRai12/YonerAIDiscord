@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 import aiohttp
 
 from yonerai_discord.modules.music_generation.artifacts import MAX_WAV_BYTES
-from yonerai_discord.modules.speech_synthesis.provider_voicevox import canonicalize_voicevox_wav
+from yonerai_discord.modules.speech_synthesis.provider_voicevox import canonicalize_voicevox_playback_wav
 from yonerai_discord.voice_contract import MIN_VOICEVOX_WAV_BYTES
 
 from .models import SpeechRequest, SynthesizedSpeech
@@ -118,7 +118,7 @@ class VoicevoxClient:
                 raise RuntimeError("VOICEVOX synthesis failed")
             wav = await _read_limited(response, min(self._max_response_bytes, MAX_WAV_BYTES))
         try:
-            canonical = canonicalize_voicevox_wav(wav)
+            canonical = canonicalize_voicevox_playback_wav(wav)
         except Exception:
             raise RuntimeError("VOICEVOX returned an invalid WAV") from None
         sample_rate = int.from_bytes(canonical[24:28], "little")

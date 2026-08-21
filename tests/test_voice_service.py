@@ -10,7 +10,11 @@ import pytest
 
 from yonerai_discord.control_plane import RbacLevel
 from yonerai_discord.modules.music_generation.artifacts import MAX_WAV_BYTES
-from yonerai_discord.modules.speech_synthesis.provider_voicevox import canonicalize_voicevox_wav
+from yonerai_discord.modules.speech_synthesis import provider_voicevox as voicevox_provider_module
+from yonerai_discord.modules.speech_synthesis.provider_voicevox import (
+    canonicalize_voicevox_playback_wav,
+    canonicalize_voicevox_wav,
+)
 from yonerai_discord.modules.voice import SpeechQueue, SpeechRequest, SynthesizedSpeech
 from yonerai_discord.modules.voice import VoicePlugin
 from yonerai_discord.modules.voice.adapter import VoiceGroup
@@ -370,6 +374,59 @@ async def test_voicevox_requires_http_200_and_disables_redirects_for_both_posts(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("duration_seconds", "text"),
+    ((0.25, "short utterance"), (31.0, "x" * 500)),
+    ids=("shorter-than-artifact-minimum", "longer-than-artifact-maximum"),
+)
+async def test_voicevox_direct_playback_accepts_valid_non_artifact_durations(
+    duration_seconds: float,
+    text: str,
+) -> None:
+    session = FakeHttpSession(
+        [
+            FakeHttpResponse(200, b'{"speedScale": 1.0}'),
+            FakeHttpResponse(200, _voicevox_wav(duration_seconds=duration_seconds)),
+        ]
+    )
+    client = VoicevoxClient(endpoint="http://127.0.0.1:50021")
+    client._session = session
+
+    result = await client.synthesize(SpeechRequest(text=text, guild_id=1, channel_id=2))
+
+    assert result.sample_rate == 48_000
+    assert len(result.wav) == 44 + round(duration_seconds * 48_000) * 2
+    await client.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "payload",
+    (
+        b"NOPE" + _voicevox_wav()[4:],
+        _voicevox_wav()[:-1],
+        _voicevox_wav(sample_rate=22_050),
+    ),
+    ids=("malformed", "truncated", "unsupported-format"),
+)
+async def test_voicevox_direct_playback_rejects_invalid_wav_content_free(payload: bytes) -> None:
+    session = FakeHttpSession(
+        [
+            FakeHttpResponse(200, b'{"speedScale": 1.0}'),
+            FakeHttpResponse(200, payload),
+        ]
+    )
+    client = VoicevoxClient(endpoint="http://127.0.0.1:50021")
+    client._session = session
+
+    with pytest.raises(RuntimeError, match="invalid WAV") as caught:
+        await client.synthesize(SpeechRequest(text="voice", guild_id=1, channel_id=2))
+
+    assert payload not in str(caught.value).encode()
+    await client.close()
+
+
+@pytest.mark.asyncio
 async def test_voicevox_response_limit_is_enforced_without_trusting_content_length() -> None:
     response = SimpleNamespace(content_length=None, content=None)
 
@@ -476,12 +533,165 @@ def test_voicevox_wav_contract_accepts_default_24khz_and_canonicalizes_to_48khz(
     assert struct.unpack_from("<I", result, 24)[0] == 48_000
 
 
+def test_voicevox_playback_rejects_24khz_expansion_before_conversion(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    frames = (MAX_WAV_BYTES - 44) // 4 + 1
+    payload = _voicevox_wav(duration_seconds=frames / 24_000)
+    conversion_started: list[str] = []
+
+    def unexpected_conversion(*_args: object, **_kwargs: object) -> bytes:
+        conversion_started.append("started")
+        raise AssertionError("24 kHz conversion started before expanded-size validation")
+
+    monkeypatch.setattr(voicevox_provider_module, "_upsample_24khz_pcm16", unexpected_conversion, raising=False)
+    monkeypatch.setattr(voicevox_provider_module, "range", unexpected_conversion, raising=False)
+
+    assert len(payload) < MAX_WAV_BYTES
+    assert 44 + (len(payload) - 44) * 2 > MAX_WAV_BYTES
+    with pytest.raises(RuntimeError, match="exceeds the fixed size limit"):
+        canonicalize_voicevox_playback_wav(payload)
+    assert conversion_started == []
+
+
+def test_voicevox_playback_upsamples_near_cap_24khz_exactly() -> None:
+    frames = (MAX_WAV_BYTES - 44) // 4
+    pairs, tail = divmod(frames, 2)
+    pcm = b"\x01\x02\x03\x04" * pairs + b"\x01\x02" * tail
+    payload = (
+        b"RIFF"
+        + struct.pack("<I", 36 + len(pcm))
+        + b"WAVEfmt "
+        + struct.pack("<IHHIIHH", 16, 1, 1, 24_000, 48_000, 2, 16)
+        + b"data"
+        + struct.pack("<I", len(pcm))
+        + pcm
+    )
+
+    result = canonicalize_voicevox_playback_wav(payload)
+
+    assert len(result) == MAX_WAV_BYTES
+    assert struct.unpack_from("<I", result, 24)[0] == 48_000
+    assert result[44:60] == b"\x01\x02\x01\x02\x03\x04\x03\x04" * 2
+    assert result[-8:] == (b"\x03\x04\x03\x04\x01\x02\x01\x02" if tail else b"\x01\x02\x01\x02\x03\x04\x03\x04")
+
+
+def test_voicevox_playback_upsamples_stereo_frames_without_channel_reordering() -> None:
+    pcm = b"\x01\x02\x03\x04\x05\x06\x07\x08"
+    payload = (
+        b"RIFF"
+        + struct.pack("<I", 36 + len(pcm))
+        + b"WAVEfmt "
+        + struct.pack("<IHHIIHH", 16, 1, 2, 24_000, 96_000, 4, 16)
+        + b"data"
+        + struct.pack("<I", len(pcm))
+        + pcm
+    )
+
+    result = canonicalize_voicevox_playback_wav(payload)
+
+    assert struct.unpack_from("<I", result, 24)[0] == 48_000
+    assert result[44:] == b"\x01\x02\x03\x04" * 2 + b"\x05\x06\x07\x08" * 2
+
+
+@pytest.mark.parametrize(("block_align", "maximum_slices"), ((2, 2), (4, 4)), ids=("mono", "stereo"))
+def test_voicevox_24khz_upsample_has_fixed_slice_and_allocation_shape(
+    monkeypatch: pytest.MonkeyPatch,
+    block_align: int,
+    maximum_slices: int,
+) -> None:
+    source_size = ((MAX_WAV_BYTES - 44) // 2 // block_align) * block_align
+    slices: list[slice] = []
+
+    class SliceCountingBytes(bytes):
+        def __getitem__(self, key):
+            if isinstance(key, slice):
+                slices.append(key)
+                if len(slices) > maximum_slices:
+                    raise AssertionError("24 kHz upsample exceeded its fixed source-slice budget")
+            return super().__getitem__(key)
+
+    source = SliceCountingBytes(b"\0" * source_size)
+    allocations: list[int] = []
+    allocate = bytearray
+
+    def tracked_bytearray(size: int) -> bytearray:
+        allocations.append(size)
+        return allocate(size)
+
+    monkeypatch.setattr(voicevox_provider_module, "bytearray", tracked_bytearray, raising=False)
+
+    result = voicevox_provider_module._upsample_24khz_pcm16(source, block_align=block_align)
+
+    assert len(result) == source_size * 2
+    assert [(value.start, value.stop, value.step) for value in slices] == [
+        (byte_offset, None, block_align) for byte_offset in range(block_align)
+    ]
+    assert allocations == [source_size * 2]
+
+
+@pytest.mark.parametrize(
+    ("channels", "expected_block_align"),
+    ((1, 2), (2, 4)),
+    ids=("mono", "stereo"),
+)
+def test_voicevox_24khz_canonicalizer_calls_bounded_upsample_once(
+    monkeypatch: pytest.MonkeyPatch,
+    channels: int,
+    expected_block_align: int,
+) -> None:
+    source_size = (voicevox_provider_module.MAX_WAV_BYTES - 44) // 2 // expected_block_align * expected_block_align
+    pcm = b"\0" * source_size
+    payload = (
+        b"RIFF"
+        + (36 + len(pcm)).to_bytes(4, "little")
+        + b"WAVEfmt "
+        + (16).to_bytes(4, "little")
+        + (1).to_bytes(2, "little")
+        + channels.to_bytes(2, "little")
+        + (24_000).to_bytes(4, "little")
+        + (24_000 * expected_block_align).to_bytes(4, "little")
+        + expected_block_align.to_bytes(2, "little")
+        + (16).to_bytes(2, "little")
+        + b"data"
+        + len(pcm).to_bytes(4, "little")
+        + pcm
+    )
+    calls: list[tuple[int, int]] = []
+    delegate = voicevox_provider_module._upsample_24khz_pcm16
+    builtin_range = range
+
+    def guarded_range(*args: int) -> range:
+        if args != (expected_block_align,):
+            raise AssertionError("canonicalizer bypassed bounded upsample helper")
+        return builtin_range(*args)
+
+    def tracked_upsample(value: bytes, *, block_align: int) -> bytes:
+        calls.append((len(value), block_align))
+        return delegate(value, block_align=block_align)
+
+    monkeypatch.setattr(voicevox_provider_module, "range", guarded_range, raising=False)
+    monkeypatch.setattr(
+        voicevox_provider_module,
+        "_upsample_24khz_pcm16",
+        tracked_upsample,
+    )
+
+    result = canonicalize_voicevox_playback_wav(payload)
+
+    assert calls == [(source_size, expected_block_align)]
+    assert len(result) == 44 + source_size * 2
+    assert int.from_bytes(result[24:28], "little") == 48_000
+
+
 @pytest.mark.parametrize(
     "payload",
-    (b"RIFF", _voicevox_wav(duration_seconds=31.0)),
-    ids=("truncated", "overlong"),
+    (b"RIFF", _voicevox_wav(duration_seconds=0.5), _voicevox_wav(duration_seconds=31.0)),
+    ids=("truncated", "shorter-than-artifact-minimum", "longer-than-artifact-maximum"),
 )
-def test_voicevox_wav_contract_rejects_truncated_or_overlong_payload_content_free(payload: bytes) -> None:
+def test_voicevox_artifact_wav_contract_rejects_truncated_or_outside_duration_content_free(
+    payload: bytes,
+) -> None:
     with pytest.raises(RuntimeError, match="VOICEVOX") as caught:
         canonicalize_voicevox_wav(payload)
 

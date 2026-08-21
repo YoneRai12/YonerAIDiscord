@@ -48,6 +48,7 @@ class VoicevoxSynthesisRequest:
     language_code: str = "ja-jp"
     speaker_id: int = VOICEVOX_SPEAKER_ID
     speed_scale: float = 1.0
+    volume_scale: float = 1.0
 
     def __post_init__(self) -> None:
         if (
@@ -61,6 +62,8 @@ class VoicevoxSynthesisRequest:
             or type(self.speaker_id) is not int
             or self.speaker_id not in VOICEVOX_ALLOWED_SPEAKER_IDS
             or self.speed_scale != 1.0
+            or type(self.volume_scale) is not float
+            or self.volume_scale != 1.0
         ):
             raise ValueError("VOICEVOX synthesis request is outside the fixed contract")
 
@@ -242,7 +245,31 @@ def _model_aliases(values: tuple[str, ...]) -> tuple[str, ...]:
 
 
 def canonicalize_voicevox_wav(data: object) -> bytes:
-    """VOICEVOXのexact PCM16 fmt/dataをStage 1 canonical WAVへ変換する。"""
+    """VOICEVOXのexact PCM16 fmt/dataを1–30秒のartifact WAVへ変換する。"""
+
+    return _canonicalize_voicevox_wav(data, enforce_artifact_duration=True)
+
+
+def canonicalize_voicevox_playback_wav(data: object) -> bytes:
+    """VOICEVOXのexact PCM16 fmt/dataをbounded direct-playback WAVへ変換する。"""
+
+    return _canonicalize_voicevox_wav(data, enforce_artifact_duration=False)
+
+
+def _upsample_24khz_pcm16(pcm: bytes, *, block_align: int) -> bytes:
+    """1個の上限付き出力へ、frame順を保ってPCM列を複製する。"""
+
+    expanded = bytearray(len(pcm) * 2)
+    output_stride = block_align * 2
+    for byte_offset in range(block_align):
+        column = pcm[byte_offset::block_align]
+        expanded[byte_offset::output_stride] = column
+        expanded[byte_offset + block_align :: output_stride] = column
+    return bytes(expanded)
+
+
+def _canonicalize_voicevox_wav(data: object, *, enforce_artifact_duration: bool) -> bytes:
+    """構造・format・sizeを共有し、artifact固有のdurationだけを分離する。"""
 
     if (
         not isinstance(data, bytes)
@@ -290,12 +317,12 @@ def canonicalize_voicevox_wav(data: object) -> bytes:
         raise RuntimeError("VOICEVOX WAV format is unsupported")
     frames = len(pcm) // block_align
     duration = frames / sample_rate
-    if not 1.0 <= duration <= 30.0:
+    if enforce_artifact_duration and not 1.0 <= duration <= 30.0:
         raise RuntimeError("VOICEVOX WAV duration is outside the fixed contract")
     if sample_rate == 24_000:
-        pcm = b"".join(
-            frame for index in range(0, len(pcm), block_align) for frame in (pcm[index : index + block_align],) * 2
-        )
+        if 44 + len(pcm) * 2 > MAX_WAV_BYTES:
+            raise RuntimeError("VOICEVOX WAV exceeds the fixed size limit")
+        pcm = _upsample_24khz_pcm16(pcm, block_align=block_align)
         sample_rate = 48_000
     byte_rate = sample_rate * block_align
     if 44 + len(pcm) > MAX_WAV_BYTES:
@@ -313,6 +340,7 @@ def canonicalize_voicevox_wav(data: object) -> bytes:
 
 __all__ = [
     "VOICEVOX_PROVIDER_MODEL",
+    "canonicalize_voicevox_playback_wav",
     "canonicalize_voicevox_wav",
     "VoicevoxSpeechSynthesisProviderAdapter",
     "VoicevoxSynthesisPort",
